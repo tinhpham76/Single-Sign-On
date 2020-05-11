@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SSO.Backend.Data;
 using SSO.Backend.Data.Entities;
+using SSO.Backend.Services;
 
 namespace SSO.Backend
 {
@@ -61,7 +62,8 @@ namespace SSO.Backend
             {
                 options.ConfigureDbContext = b => b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
                 options.EnableTokenCleanup = true;
-            });
+            })
+            .AddDeveloperSigningCredential();
 
 
             services.Configure<IdentityOptions>(options =>
@@ -82,7 +84,7 @@ namespace SSO.Backend
            
             services.AddRazorPages();
             services.AddTransient<DbInitializer>();
-           
+            services.AddTransient<IEmailSender, EmailSenderService>();
 
             
         }
