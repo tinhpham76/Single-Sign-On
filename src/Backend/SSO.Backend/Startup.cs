@@ -1,5 +1,3 @@
-
-
 using FluentValidation.AspNetCore;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -184,11 +182,13 @@ namespace SSO.Backend
             });
 
         }
-
-
-
         private void InitializeDatabase(IApplicationBuilder app)
         {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();               
+            }
+
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
@@ -221,7 +221,9 @@ namespace SSO.Backend
                     }
                     context.SaveChanges();
                 }
-            }
+            }            
         }
+
+        
     }
 }
