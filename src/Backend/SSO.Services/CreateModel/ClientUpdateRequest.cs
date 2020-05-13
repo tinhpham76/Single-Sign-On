@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SSO.Services.CreateModel
 {
-    public class ClientCreateRequestUpdate
+    public class ClientUpdateRequest
     {
         public string ClientId { get; set; }
         public string ClientName { get; set; } 

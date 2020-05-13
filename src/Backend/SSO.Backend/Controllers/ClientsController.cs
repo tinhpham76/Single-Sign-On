@@ -39,31 +39,32 @@ namespace SSO.Backend.Controllers
         public async Task<IActionResult> PostClient([FromBody]ClientCreateRequest request)
         {
             var clientFind = await _clientStore.FindClientByIdAsync(request.ClientId);
-            
+
             if (clientFind != null)
             {
                 return BadRequest($"ClientId {request.ClientId} already exist");
             }
-            if(request.AllowedGrantTypes == "Authorization Code Flow")
+            if (request.AllowedGrantTypes == "Authorization Code Flow")
             {
                 foreach (var client in SaveClientAuthorizationCodeFlow(request))
                 {
                     _configurationDbContext.Clients.Add(client.ToEntity());
                 }
             }
-            else if(request.AllowedGrantTypes == "Implicit Flow")
+            else if (request.AllowedGrantTypes == "Implicit Flow")
             {
                 foreach (var client in SaveClientImplicitFlow(request))
                 {
                     _configurationDbContext.Clients.Add(client.ToEntity());
                 }
-            }else if(request.AllowedGrantTypes == "Hybrid Flow")
+            }
+            else if (request.AllowedGrantTypes == "Hybrid Flow")
             {
                 foreach (var client in SaveClientHybridFlow(request))
                 {
                     _configurationDbContext.Clients.Add(client.ToEntity());
                 }
-            }           
+            }
             _configurationDbContext.SaveChanges();
             return Ok();
         }
@@ -71,7 +72,7 @@ namespace SSO.Backend.Controllers
         //Get all client
         [HttpGet]
         public async Task<IActionResult> GetClients()
-        {            
+        {
             var clientViewModel = await _context.Clients.Select(u => new ClientQuickView()
             {
                 ClientId = u.ClientId,
@@ -82,12 +83,12 @@ namespace SSO.Backend.Controllers
         // Get client với clientId
         [HttpGet("{clientId}")]
         public async Task<IActionResult> GetClientByClientId(string clientId)
-        {           
+        {
             var client = await _clientStore.FindClientByIdAsync(clientId);
-            if(client == null)
+            if (client == null)
             {
                 return NotFound();
-            }      
+            }
             var clientData = new ClientViewModel()
             {
                 ClientId = client.ClientId,
@@ -99,7 +100,7 @@ namespace SSO.Backend.Controllers
                 AllowOfflineAccess = client.AllowOfflineAccess,
                 AllowedCorsOrigins = client.AllowedCorsOrigins,
                 AllowedScopes = client.AllowedScopes
-            };  
+            };
             return Ok(clientData);
         }
 
@@ -107,11 +108,11 @@ namespace SSO.Backend.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> GetClientsPaging(string filter, int pageIndex, int pageSize)
         {
-                       
+
             if (!string.IsNullOrEmpty(filter))
             {
-                var query = _context.Clients.Where(x => 
-                x.ClientId.Contains(filter) || 
+                var query = _context.Clients.Where(x =>
+                x.ClientId.Contains(filter) ||
                 x.ClientName.Contains(filter));
 
                 var totalRecords = await _context.Clients.CountAsync();
@@ -130,10 +131,10 @@ namespace SSO.Backend.Controllers
                 return Ok(pagination);
             }
             return BadRequest();
-            
+
         }
         [HttpPut("{clientId}")]
-        public async Task<IActionResult> PutClient(string clientId,[FromBody]ClientCreateRequestUpdate request)
+        public async Task<IActionResult> PutClient(string clientId, [FromBody]ClientUpdateRequest request)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -159,7 +160,7 @@ namespace SSO.Backend.Controllers
             _context.ClientPostLogoutRedirectUris.Update(clientPostLogoutRedirectUris);
 
             var result = await _context.SaveChangesAsync();
-            if(result > 0)
+            if (result > 0)
             {
                 return Ok();
             }
@@ -169,8 +170,8 @@ namespace SSO.Backend.Controllers
         [HttpDelete("{clientId}")]
         public async Task<IActionResult> DeleteClient(string clientId)
         {
-            var client = await _context.Clients.FirstOrDefaultAsync(c=>c.ClientId == clientId);            
-            if(client == null)
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
+            if (client == null)
             {
                 return NotFound($"Can not found client with client id {clientId}");
             }
@@ -179,7 +180,7 @@ namespace SSO.Backend.Controllers
             _context.Clients.Remove(client);
             //Xoa RedirecUri
             var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(ru => ru.ClientId == id);
-            if(clientRedirectUri != null)
+            if (clientRedirectUri != null)
                 _context.ClientRedirectUris.Remove(clientRedirectUri);
             //Xoa ClientPostLogoutRedirectUri
             var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(pl => pl.ClientId == id);
@@ -200,9 +201,9 @@ namespace SSO.Backend.Controllers
             //Xoa Secret
             var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(pl => pl.ClientId == id);
             if (clientSecret != null)
-                _context.ClientSecrets.Remove(clientSecret);                
+                _context.ClientSecrets.Remove(clientSecret);
             var result = await _context.SaveChangesAsync();
-            if(result > 0)
+            if (result > 0)
             {
                 return Ok();
             }
