@@ -5,7 +5,7 @@ using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
-using SSO.Backend.Models;
+using SSO.Service.CreateModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

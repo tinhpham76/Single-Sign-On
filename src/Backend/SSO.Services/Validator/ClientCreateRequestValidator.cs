@@ -1,10 +1,12 @@
-﻿using FluentValidation;
+﻿
+using FluentValidation;
+using SSO.Service.CreateModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace SSO.Backend.Models
+namespace SSO.Service.Validator
 {
     public class ClientCreateRequestValidator : AbstractValidator<ClientCreateRequest>
     {
