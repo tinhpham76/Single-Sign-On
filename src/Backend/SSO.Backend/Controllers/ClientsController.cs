@@ -5,23 +5,36 @@ using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Data;
 using SSO.Service.CreateModel;
+using SSO.Services;
+using SSO.Services.CreateModel;
+using SSO.Services.ViewModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers
 {
     public class ClientsController : BaseController
     {
+        private readonly ApplicationDbContext _context;
         private readonly IClientStore _clientStore;
         private readonly ConfigurationDbContext _configurationDbContext;
 
-        public ClientsController(IClientStore clientStore, ConfigurationDbContext configurationDbContext)
+        public ClientsController(IClientStore clientStore,
+            ConfigurationDbContext configurationDbContext,
+            ApplicationDbContext context)
         {
+            _context = context;
             _clientStore = clientStore;
             _configurationDbContext = configurationDbContext;
         }
 
+
+        //Đăng ký 1 client mới
         [HttpPost]
         public async Task<IActionResult> PostClient([FromBody]ClientCreateRequest request)
         {
@@ -54,14 +67,120 @@ namespace SSO.Backend.Controllers
             _configurationDbContext.SaveChanges();
             return Ok();
         }
-        
+
+        //Get all client
+        [HttpGet]
+        public async Task<IActionResult> GetClients()
+        {            
+            var clientViewModel = await _context.Clients.Select(u => new ClientQuickView()
+            {
+                ClientId = u.ClientId,
+                ClientName = u.ClientName
+            }).ToListAsync();
+            return Ok(clientViewModel);
+        }
+        // Get client với clientId
         [HttpGet("{clientId}")]
         public async Task<IActionResult> GetClientByClientId(string clientId)
-        {
+        {           
             var client = await _clientStore.FindClientByIdAsync(clientId);
-
-            return Ok(client);
+            if(client == null)
+            {
+                return NotFound();
+            }      
+            var clientData = new ClientViewModel()
+            {
+                ClientId = client.ClientId,
+                ClientName = client.ClientName,
+                ProtocolType = client.ProtocolType,
+                AllowedGrantTypes = client.AllowedGrantTypes,
+                RedirectUris = client.RedirectUris,
+                PostLogoutRedirectUris = client.PostLogoutRedirectUris,
+                AllowOfflineAccess = client.AllowOfflineAccess,
+                AllowedCorsOrigins = client.AllowedCorsOrigins,
+                AllowedScopes = client.AllowedScopes
+            };  
+            return Ok(clientData);
         }
+
+        //Get client voi pageIndex, page Size
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetClientsPaging(string filter, int pageIndex, int pageSize)
+        {
+                       
+            if (!string.IsNullOrEmpty(filter))
+            {
+                var query = _context.Clients.Where(x => 
+                x.ClientId.Contains(filter) || 
+                x.ClientName.Contains(filter));
+
+                var totalRecords = await _context.Clients.CountAsync();
+                var items = await query.Skip((pageIndex - 1 * pageSize))
+                    .Take(pageSize)
+                    .Select(c => new ClientQuickView()
+                    {
+                        ClientId = c.ClientId,
+                        ClientName = c.ClientName
+                    }).ToListAsync();
+                var pagination = new Pagination<ClientQuickView>
+                {
+                    Items = items,
+                    TotalRecords = totalRecords,
+                };
+                return Ok(pagination);
+            }
+            return BadRequest();
+            
+        }
+        [HttpPut("{clientId}")]
+        /*public async Task<IActionResult> PutClient(string clientId)
+        {
+
+        }*/
+        //Delete client
+        [HttpDelete("{clientId}")]
+        public async Task<IActionResult> DeleteClient(string clientId)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c=>c.ClientId == clientId);            
+            if(client == null)
+            {
+                return NotFound($"Can not found client with client id {clientId}");
+            }
+            //Xoa client
+            var id = client.Id;
+            _context.Clients.Remove(client);
+            //Xoa RedirecUri
+            var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(ru => ru.Id == id);
+            if(clientRedirectUri != null)
+                _context.ClientRedirectUris.Remove(clientRedirectUri);
+            //Xoa ClientPostLogoutRedirectUri
+            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(pl => pl.Id == id);
+            if (clientPostLogoutRedirectUri != null)
+                _context.ClientPostLogoutRedirectUris.Remove(clientPostLogoutRedirectUri);
+            //Xoa ClientCorsOrigin
+            var clientCorsOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(cc => cc.Id == id);
+            if (clientCorsOrigin != null)
+                _context.ClientCorsOrigins.Remove(clientCorsOrigin);
+            //Xoa ClientGrantTypes
+            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(pl => pl.Id == id);
+            if (clientGrantType != null)
+                _context.ClientGrantTypes.Remove(clientGrantType);
+            //Xoa Scope
+            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(pl => pl.Id == id);
+            if (clientScope != null)
+                _context.ClientScopes.Remove(clientScope);
+            //Xoa Secret
+            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(pl => pl.Id == id);
+            if (clientSecret != null)
+                _context.ClientSecrets.Remove(clientSecret);                
+            var result = await _context.SaveChangesAsync();
+            if(result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
 
 
 
@@ -105,7 +224,7 @@ namespace SSO.Backend.Controllers
                 {
                     ClientId = request.ClientId,
                     ClientName = request.ClientName,
-                     AllowOfflineAccess = request.AllowOfflineAccess,
+                    AllowOfflineAccess = request.AllowOfflineAccess,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
