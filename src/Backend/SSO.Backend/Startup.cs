@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using IdentityServer4.Configuration;
+
+
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +15,10 @@ using SSO.Backend.Data;
 using SSO.Backend.Data.Entities;
 using SSO.Backend.Services;
 using SSO.BackendIdentityServer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace SSO.Backend
 {
@@ -43,34 +45,27 @@ namespace SSO.Backend
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            var builder = services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
-                /*options.UserInteraction.LoginUrl = "/Account/Login";
-                options.UserInteraction.LogoutUrl = "/Account/Logout";
-                options.Authentication = new AuthenticationOptions()
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
+                .AddAspNetIdentity<User>()
+                // this adds the config data from DB (clients, resources)
+                .AddConfigurationStore(options =>
                 {
-                    CookieLifetime = TimeSpan.FromHours(10), // ID server cookie timeout set to 10 hours
-                    CookieSlidingExpiration = true
-                };*/
-            })
-            /*.AddConfigurationStore(options =>
-            {
-                options.ConfigureDbContext = b => b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
-            })
-            .AddOperationalStore(options =>
-            {
-                options.ConfigureDbContext = b => b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
-                options.EnableTokenCleanup = true;
-            })*/
-            .AddInMemoryApiResources(Config.Apis)
-            .AddInMemoryClients(Config.Clients)
-            .AddInMemoryIdentityResources(Config.Ids)
-            .AddAspNetIdentity<User>()
-            .AddDeveloperSigningCredential();
+                    options.ConfigureDbContext = builder =>
+                    builder.UseSqlServer(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                })
+                 // this adds the operational data from DB (codes, tokens, consents)
+                .AddOperationalStore(options =>
+                 {
+                    options.ConfigureDbContext = builder =>
+                    builder.UseSqlServer(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly));
+
+                    // this enables automatic token cleanup. this is optional.
+                    options.EnableTokenCleanup = true;
+                    options.TokenCleanupInterval = 30;
+                    });
 
 
             services.Configure<IdentityOptions>(options =>
@@ -93,7 +88,7 @@ namespace SSO.Backend
             services.AddAuthentication()
                .AddLocalApi("Bearer", option =>
                {
-                   option.ExpectedScope = "api.sso";
+                   option.ExpectedScope = "sso.api";
                });
 
             services.AddAuthorization(options =>
@@ -132,7 +127,7 @@ namespace SSO.Backend
                         Implicit = new OpenApiOAuthFlow
                         {
                             AuthorizationUrl = new Uri("https://localhost:5000/connect/authorize"),
-                            Scopes = new Dictionary<string, string> { { "api.sso", "SSO API" } }
+                            Scopes = new Dictionary<string, string> { { "sso.api", "SSO API" } }
                         },
                     },
                 });
@@ -143,7 +138,7 @@ namespace SSO.Backend
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
                         },
-                        new List<string>{ "api.sso" }
+                        new List<string>{ "sso.api" }
                     }
                 });
             });
@@ -156,6 +151,8 @@ namespace SSO.Backend
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            InitializeDatabase(app);
 
             app.UseStaticFiles();
 
@@ -180,9 +177,48 @@ namespace SSO.Backend
             app.UseSwaggerUI(c =>
             {
                 c.OAuthClientId("swagger");
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Knowledge Space API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SSO API V1");
             });
 
+        }
+
+
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                context.Database.Migrate();
+                if (!context.Clients.Any())
+                {
+                    foreach (var client in Config.GetClients())
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in Config.GetIdentityResources())
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in Config.GetApiResources())
+                    {
+                        context.ApiResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

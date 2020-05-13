@@ -9,22 +9,31 @@ namespace SSO.BackendIdentityServer
 {
     public class Config
     {
-        public static IEnumerable<IdentityResource> Ids =>
-          new IdentityResource[]
-          {
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new List<IdentityResource>
+            {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
-          };
-
-        public static IEnumerable<ApiResource> Apis =>
-            new ApiResource[]
-            {
-                new ApiResource("api.sso", "SSO API")
+                new IdentityResources.Profile(),
+                new IdentityResources.Email(),
             };
+        }
 
-        public static IEnumerable<Client> Clients =>
-            new Client[]
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
             {
+                new ApiResource("sso.api", "SSO API")
+                {
+                    ApiSecrets = { new Secret("secret".Sha256()) }
+                }
+
+            };
+        }
+
+        public static IEnumerable<Client> GetClients()
+        {
+            return new List<Client> {            
                 new Client
                 {
                     ClientId = "webportal",
@@ -46,7 +55,7 @@ namespace SSO.BackendIdentityServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "api.sso"
+                        "sso.api"
                     }
                  },
                 new Client
@@ -66,7 +75,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api.sso"
+                        "sso.api"
                     }
                 },
                 new Client
@@ -101,9 +110,10 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api.sso"
+                        "sso.api"
                     }
                 }
             };
+        }        
     }
 }
