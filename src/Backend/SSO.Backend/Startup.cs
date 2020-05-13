@@ -1,5 +1,6 @@
 
 
+using FluentValidation.AspNetCore;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SSO.Backend.Data;
 using SSO.Backend.Data.Entities;
+using SSO.Backend.Models;
 using SSO.Backend.Services;
 using SSO.BackendIdentityServer;
 using System;
@@ -83,7 +85,8 @@ namespace SSO.Backend
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                  .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ClientCreateRequestValidator>());
 
             services.AddAuthentication()
                .AddLocalApi("Bearer", option =>

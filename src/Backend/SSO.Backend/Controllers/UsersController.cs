@@ -10,11 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data.Entities;
 
 namespace SSO.Backend.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize("Bearer")]
-    public class UsersController : ControllerBase
+{    
+    public class UsersController : BaseController
     {
         private readonly UserManager<User> _userManager;
         public UsersController(UserManager<User> userManager)
