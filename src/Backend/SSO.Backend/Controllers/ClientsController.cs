@@ -133,10 +133,38 @@ namespace SSO.Backend.Controllers
             
         }
         [HttpPut("{clientId}")]
-        /*public async Task<IActionResult> PutClient(string clientId)
+        public async Task<IActionResult> PutClient(string clientId,[FromBody]ClientCreateRequestUpdate request)
         {
+            var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+            {
+                return NotFound();
+            }
+            var id = client.Id;
+            //table client
+            client.ClientId = request.ClientId;
+            client.ClientName = request.ClientName;
+            client.Description = request.Description;
+            client.LogoUri = request.LogoUri;
+            _context.Clients.Update(client);
+            //table RedirectUris
+            var redirectUris = await _context.ClientRedirectUris.FirstOrDefaultAsync(x => x.ClientId == id);
+            if (redirectUris != null)
+                redirectUris.RedirectUri = request.RedirectUris;
+            _context.ClientRedirectUris.Update(redirectUris);
+            //table RedirectUris
+            var clientPostLogoutRedirectUris = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(x => x.ClientId == id);
+            if (clientPostLogoutRedirectUris != null)
+                clientPostLogoutRedirectUris.PostLogoutRedirectUri = request.PostLogoutRedirectUris;
+            _context.ClientPostLogoutRedirectUris.Update(clientPostLogoutRedirectUris);
 
-        }*/
+            var result = await _context.SaveChangesAsync();
+            if(result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
         //Delete client
         [HttpDelete("{clientId}")]
         public async Task<IActionResult> DeleteClient(string clientId)
@@ -150,27 +178,27 @@ namespace SSO.Backend.Controllers
             var id = client.Id;
             _context.Clients.Remove(client);
             //Xoa RedirecUri
-            var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(ru => ru.Id == id);
+            var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(ru => ru.ClientId == id);
             if(clientRedirectUri != null)
                 _context.ClientRedirectUris.Remove(clientRedirectUri);
             //Xoa ClientPostLogoutRedirectUri
-            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(pl => pl.Id == id);
+            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(pl => pl.ClientId == id);
             if (clientPostLogoutRedirectUri != null)
                 _context.ClientPostLogoutRedirectUris.Remove(clientPostLogoutRedirectUri);
             //Xoa ClientCorsOrigin
-            var clientCorsOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(cc => cc.Id == id);
+            var clientCorsOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(cc => cc.ClientId == id);
             if (clientCorsOrigin != null)
                 _context.ClientCorsOrigins.Remove(clientCorsOrigin);
             //Xoa ClientGrantTypes
-            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(pl => pl.Id == id);
+            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(pl => pl.ClientId == id);
             if (clientGrantType != null)
                 _context.ClientGrantTypes.Remove(clientGrantType);
             //Xoa Scope
-            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(pl => pl.Id == id);
+            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(pl => pl.ClientId == id);
             if (clientScope != null)
                 _context.ClientScopes.Remove(clientScope);
             //Xoa Secret
-            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(pl => pl.Id == id);
+            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(pl => pl.ClientId == id);
             if (clientSecret != null)
                 _context.ClientSecrets.Remove(clientSecret);                
             var result = await _context.SaveChangesAsync();

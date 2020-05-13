@@ -21,7 +21,8 @@ namespace SSO.Backend.Data
         public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
         public DbSet<ClientScope> ClientScopes { get; set; }
-        public DbSet<Secret> ClientSecrets { get; set; }
+        public DbSet<ClientSecret> ClientSecrets { get; set; }
+       
     protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
