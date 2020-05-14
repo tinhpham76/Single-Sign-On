@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SSO.Backend.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,8 +9,24 @@ using System.Threading.Tasks;
 
 namespace SSO.Backend.Data.Entities
 {
-    public class User : IdentityUser
+    public class User : IdentityUser, IDateTracking
     {
+        public User()
+        {
+        }
+
+        public User(string id, string userName, string firstName, string lastName,
+            string email, string phoneNumber, DateTime dob)
+        {
+            Id = id;
+            UserName = userName;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            Dob = dob;
+        }
+
         [MaxLength(50)]
         [Required]
         public string FirstName { get; set; }
@@ -20,5 +37,8 @@ namespace SSO.Backend.Data.Entities
 
         [Required]
         public DateTime Dob { get; set; }
+        
+        public DateTime CreateDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
     }
 }

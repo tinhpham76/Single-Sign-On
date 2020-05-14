@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SSO.Backend.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,7 +42,9 @@ namespace SSO.Backend.Data.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(maxLength: 50, nullable: false),
                     LastName = table.Column<string>(maxLength: 50, nullable: false),
-                    Dob = table.Column<DateTime>(nullable: false)
+                    Dob = table.Column<DateTime>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {

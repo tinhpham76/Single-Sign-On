@@ -10,8 +10,8 @@ using SSO.Backend.Data;
 namespace SSO.Backend.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200511072251_Initial")]
-    partial class Initial
+    [Migration("20200514085939_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -168,6 +168,9 @@ namespace SSO.Backend.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
 
@@ -182,6 +185,9 @@ namespace SSO.Backend.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()

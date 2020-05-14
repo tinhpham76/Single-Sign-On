@@ -14,7 +14,7 @@ namespace SSO.Backend.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-        }       
+        }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientClaim> ClientClaims { get; set; }
         public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
@@ -23,8 +23,8 @@ namespace SSO.Backend.Data
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
         public DbSet<ClientScope> ClientScopes { get; set; }
         public DbSet<ClientSecret> ClientSecrets { get; set; }
-       
-    protected override void OnModelCreating(ModelBuilder builder)
+
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
