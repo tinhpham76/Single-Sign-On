@@ -38,7 +38,6 @@ namespace SSO.BackendIdentityServer
                 {
                     ClientId = "webportal",
                     ClientSecrets = { new Secret("secret".Sha256()) },
-
                     AllowedGrantTypes = GrantTypes.Code,
                     RequireConsent = false,
                     RequirePkce = true,

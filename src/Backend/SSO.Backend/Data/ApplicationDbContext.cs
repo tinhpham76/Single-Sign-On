@@ -16,6 +16,7 @@ namespace SSO.Backend.Data
         {
         }       
         public DbSet<Client> Clients { get; set; }
+        public DbSet<ClientClaim> ClientClaims { get; set; }
         public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
         public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
         public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }

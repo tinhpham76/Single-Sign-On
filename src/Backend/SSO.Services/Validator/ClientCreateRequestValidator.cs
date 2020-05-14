@@ -18,11 +18,11 @@ namespace SSO.Service.Validator
             RuleFor(x => x.ClientName).NotEmpty().WithMessage("ClientName value is required")
               .MaximumLength(200).WithMessage("ClientName cannot over limit 200 characters");
 
-            RuleFor(x => x.ClientSecrets).MaximumLength(200).WithMessage("ClientSecrets cannot over limit 200 characters");
+            RuleFor(x => x.Description).MaximumLength(200).WithMessage("Description cannot over limit 200 characters");
 
             RuleFor(x => x.RedirectUris).NotEmpty().WithMessage("RedirectUris value is required");
 
-            RuleFor(x => x.PostLogoutRedirectUris).NotEmpty().WithMessage("PostLogoutRedirectUris value is required");
+            RuleFor(x => x.PostLogoutRedirectUris).NotEmpty().WithMessage("PostLogoutRedirectUris value is required");            
 
             RuleFor(x => x.AllowedCorsOrigins).NotEmpty().WithMessage("AllowedCorsOrigins value is required");
         }

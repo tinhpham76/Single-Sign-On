@@ -8,5 +8,6 @@ namespace SSO.Services.ViewModel
     {
         public string ClientId { get; set; }
         public string ClientName { get; set; }
+        public string LogoUri { get; set; }
     }
 }
