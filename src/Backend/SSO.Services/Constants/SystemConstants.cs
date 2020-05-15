@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SSO.Backend.Services
+namespace SSO.Services.Constants
 {
     public class SystemConstants
     {

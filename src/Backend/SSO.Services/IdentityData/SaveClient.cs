@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace SSO.Backend.Services
+namespace SSO.Services.IdentityData
 {
     public class SaveClient
     {
