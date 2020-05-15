@@ -67,7 +67,7 @@ namespace SSO.BackendIdentityServer
                     RequireConsent = false,
 
                     RedirectUris =           { "https://localhost:5000/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { "https://localhost:5000/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { "https://localhost:5000/swagger" },
                     AllowedCorsOrigins =     { "https://localhost:5000" },
 
                     AllowedScopes = new List<string>
@@ -79,7 +79,7 @@ namespace SSO.BackendIdentityServer
                 },
                 new Client
                 {
-                    ClientName = "Angular Admin",
+                   ClientName = "Angular Admin",
                     ClientId = "angular_admin",
                     AccessTokenType = AccessTokenType.Reference,
                     RequireConsent = false,
@@ -91,15 +91,15 @@ namespace SSO.BackendIdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RedirectUris = new List<string>
                     {
+
                         "http://localhost:4200",
-                        "http://localhost:4200/authentication/login-callback",
+                        "http://localhost:4200/auth-callback",
                         "http://localhost:4200/silent-renew.html"
+
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        "http://localhost:4200/unauthorized",
-                        "http://localhost:4200/authentication/logout-callback",
-                        "http://localhost:4200"
+                        "http://localhost:4200/"                        
                     },
                     AllowedCorsOrigins = new List<string>
                     {

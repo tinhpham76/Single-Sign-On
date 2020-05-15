@@ -24,6 +24,8 @@ namespace SSO.Backend
 {
     public class Startup
     {
+        private readonly string KspSpecificOrigins = "KspSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -66,6 +68,17 @@ namespace SSO.Backend
                     options.EnableTokenCleanup = true;
                     options.TokenCleanupInterval = 30;
                     });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(KspSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins(Configuration["AllowOrigins"])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
 
             services.Configure<IdentityOptions>(options =>
