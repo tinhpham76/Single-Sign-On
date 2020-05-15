@@ -24,8 +24,8 @@ namespace SSO.Services.IdentityData
                     LogoUri = request.LogoUri,
 
                     //Swagger chỉ sử dụng Implicit, sau này các client khác dử dụng code
-                    //RequireClientSecret = false,
-                    AllowedGrantTypes = GrantTypes.Implicit,
+                    RequireClientSecret = false,
+                    AllowedGrantTypes = GrantTypes.Code,
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
                     RedirectUris =           { request.RedirectUris },

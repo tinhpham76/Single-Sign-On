@@ -16,6 +16,8 @@ namespace SSO.BackendIdentityServer
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
+                new IdentityResources.Phone(),
+                new IdentityResources.Address()
             };
         }
 
@@ -79,7 +81,7 @@ namespace SSO.BackendIdentityServer
                 },
                 new Client
                 {
-                   ClientName = "Angular Admin",
+                    ClientName = "Angular Admin",
                     ClientId = "angular_admin",
                     AccessTokenType = AccessTokenType.Reference,
                     RequireConsent = false,
