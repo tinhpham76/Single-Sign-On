@@ -7,12 +7,38 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.CreateModel.Client;
+using SSO.Services.ViewModel.Client;
 
 namespace SSO.Backend.Controllers
 {
     
     public partial class ClientsController
     {
+
+        [HttpGet("{clientId}/secrets")]
+        public async Task<IActionResult> GetClientSecret(string clientId)
+        {
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+            {
+                return NotFound();
+            }
+            var query = _context.ClientSecrets.AsQueryable();
+            query = query.Where(x => x.ClientId == client.Id);
+            var clientRedirectUriViewModel = query.Select(x => new ClientSecretViewModel()
+            {
+                Id = x.Id,
+                Description = x.Description,
+                Expiration = x.Expiration,
+                Type = x.Type,
+                Value = x.Value,
+                Created = x.Created,
+                ClientId = x.ClientId
+            });
+
+            return Ok(clientRedirectUriViewModel);
+        }
+
         [HttpPost("{clientId}/secrets")]
         public async Task<IActionResult> PostClientSecret(string clientId, [FromBody]ClientSecretRequest request)
         {
@@ -31,6 +57,28 @@ namespace SSO.Backend.Controllers
             if (result > 0)
             {
                 return NoContent();
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete("{clientId}/secrets/{id}")]
+        public async Task<IActionResult> DeleteClientSecre(string clientId, int id)
+        {
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+            {
+                return NotFound();
+            }
+            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientSecret == null)
+            {
+                return NotFound();
+            }
+            _context.ClientSecrets.Remove(clientSecret);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return Ok();
             }
             return BadRequest();
         }

@@ -4,8 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
 using SSO.Service.CreateModel.Client;
+using SSO.Services;
 using SSO.Services.CreateModel.Client;
+using SSO.Services.ViewModel;
+using SSO.Services.ViewModel.Client;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers
@@ -25,7 +29,8 @@ namespace SSO.Backend.Controllers
             _configurationDbContext = configurationDbContext;
         }
 
-
+        //Tạo client mới với 1 số thông tin cơ bản, nhưng chưa cài đặt các thuộc tính đầy đủ
+        //Sau khi tạo xong thì sẽ bắt đầu thêm mới và cập nhật các cài đặt cho client. 
         [HttpPost]
         public async Task<IActionResult> PostClient([FromBody]ClientQuickRequest request)
         {
@@ -107,15 +112,63 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();        
         }                 
-        
-       
+        //Lấy thông tin cơ bản của các client
+        [HttpGet]
+        public async Task<IActionResult> GetClient()
+        {
+            var client = await _configurationDbContext.Clients.Select(x => new ClientQuickView()
+            {
+                ClientId = x.ClientId,
+                ClientName = x.ClientName,
+                LogoUri = x.LogoUri
+            }).ToListAsync();
+            return Ok(client);
+        }
+        // Tìm kiếm client
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetClientPaging(string filter, int pageIndex, int pageSize)
+        {
+            var query = _configurationDbContext.Clients.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(x => x.ClientId.Contains(filter) || x.ClientName.Contains(filter));
+               
+            }
+            var totalReconds = await query.CountAsync();
+            var items = await query.Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => new ClientQuickView()
+                {
+                    ClientId = x.ClientId,
+                    ClientName = x.ClientName,
+                    LogoUri = x.LogoUri
+                }).ToListAsync();
 
-
-
-       
-        
-
-
+            var pagination = new Pagination<ClientQuickView>
+            {
+                Items = items,
+                TotalRecords = totalReconds
+            };
+            return Ok(pagination);
+        }
+        //Xóa client
+        [HttpDelete("{clientId}")]
+        public async Task<IActionResult> DeleteClient(string clientId)
+        {
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if(client == null)
+            {
+                return NotFound();
+            }
+            _configurationDbContext.Clients.Remove(client);
+            var result = await _configurationDbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }  
     } 
         
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SSO.Services.ViewModel
+namespace SSO.Services.ViewModel.Client
 {
     public class ClientQuickView
     {
