@@ -1,6 +1,7 @@
 ﻿
 using FluentValidation;
 using SSO.Service.CreateModel;
+using SSO.Service.CreateModel.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace SSO.Service.Validator
 {
-    public class ClientCreateRequestValidator : AbstractValidator<ClientCreateRequest>
+    public class ClientCreateRequestValidator : AbstractValidator<ClientQuickRequest>
     {
         public ClientCreateRequestValidator()
         {
@@ -20,11 +21,7 @@ namespace SSO.Service.Validator
 
             RuleFor(x => x.Description).MaximumLength(200).WithMessage("Description cannot over limit 200 characters");
 
-            RuleFor(x => x.RedirectUris).NotEmpty().WithMessage("RedirectUris value is required");
-
-            RuleFor(x => x.PostLogoutRedirectUris).NotEmpty().WithMessage("PostLogoutRedirectUris value is required");            
-
-            RuleFor(x => x.AllowedCorsOrigins).NotEmpty().WithMessage("AllowedCorsOrigins value is required");
+            RuleFor(x => x.ClientUri).NotEmpty().WithMessage("ClientUri value is required");            
         }
     }
 }

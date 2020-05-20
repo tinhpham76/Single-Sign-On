@@ -10,7 +10,7 @@ namespace SSO.Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("Bearer")]
+    //[Authorize("Bearer")]
     public class BaseController : ControllerBase
     {
     }

@@ -23,6 +23,8 @@ namespace SSO.Backend.Data
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
         public DbSet<ClientScope> ClientScopes { get; set; }
         public DbSet<ClientSecret> ClientSecrets { get; set; }
+        public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get; set; }
+        public DbSet<ClientProperty> ClientProperties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

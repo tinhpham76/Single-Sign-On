@@ -1,26 +1,16 @@
-﻿
-
-using IdentityServer4;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Mappers;
-using IdentityServer4.Models;
+﻿using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
-using SSO.Backend.Services;
-using SSO.Service.CreateModel;
-using SSO.Services.CreateModel;
-using SSO.Services.IdentityData;
-using SSO.Services.ViewModel;
-using System.Collections.Generic;
-using System.Linq;
+using SSO.Service.CreateModel.Client;
+using SSO.Services.CreateModel.Client;
+using System;
 using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers
 {
-    public class ClientsController : BaseController
+    public partial class ClientsController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly IClientStore _clientStore;
@@ -36,103 +26,56 @@ namespace SSO.Backend.Controllers
         }
 
 
-        #region Thêm mới Client
-
-
         [HttpPost]
-        public async Task<IActionResult> PostClient([FromBody]ClientCreateRequest request)
+        public async Task<IActionResult> PostClient([FromBody]ClientQuickRequest request)
         {
             var clientFind = await _clientStore.FindClientByIdAsync(request.ClientId);
 
-            if (clientFind != null)            
-                return BadRequest($"ClientId {request.ClientId} already exist");                        
-            foreach (var client in SaveClient.ISaveClient(request))
+            if (clientFind != null)
+                return BadRequest($"ClientId {request.ClientId} already exist");
+            var client = new IdentityServer4.EntityFramework.Entities.Client()
             {
-                _configurationDbContext.Clients.Add(client.ToEntity());
-            }               
-            _configurationDbContext.SaveChanges();
-            return Ok();
+                ClientId = request.ClientId,
+                ClientName = request.ClientName,
+                Description = request.Description,
+                ClientUri = request.ClientUri,
+                LogoUri = request.LogoUri,
+                Created = DateTime.UtcNow
+            };
+            _configurationDbContext.Clients.Add(client);
+            var result = await _configurationDbContext.SaveChangesAsync();
+            if (result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
-            
-  
-
-        #endregion
-
-        #region Truy vấn thông tin client
-        [HttpGet]
-        public async Task<IActionResult> GetClients()
+        [HttpPut("{clientId}")]
+        public async Task<IActionResult> PutClient(string clientId,[FromBody]ClientRequest request)
         {
-            var clientQuickViews = await _context.Clients.Select(u => new ClientQuickView()
-            {
-                ClientId = u.ClientId,
-                ClientName = u.ClientName,
-                LogoUri = u.LogoUri
-            }).ToListAsync();
-            if (clientQuickViews == null)
-                return NotFound();
-            return Ok(clientQuickViews);
-        }     
-        
-        [HttpGet("{clientId}")]
-        public async Task<IActionResult> GetClientByClientId(string clientId)
-        {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
-            if (client == null)
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if(client == null)
             {
                 return NotFound();
             }
-            
-            return Ok(client);
-        }
-
-        ////Get client voi pageIndex, page Size
-        //[HttpGet("filter")]
-        //public async Task<IActionResult> GetClientsPaging(string filter, int pageIndex, int pageSize)
-        //{
-
-        //    if (!string.IsNullOrEmpty(filter))
-        //    {
-        //        var query = _context.Clients.Where(x =>
-        //        x.ClientId.Contains(filter) ||
-        //        x.ClientName.Contains(filter));
-
-        //        var totalRecords = await _context.Clients.CountAsync();
-        //        var items = await query.Skip((pageIndex - 1 * pageSize))
-        //            .Take(pageSize)
-        //            .Select(c => new ClientQuickView()
-        //            {
-        //                ClientId = c.ClientId,
-        //                ClientName = c.ClientName
-        //            }).ToListAsync();
-        //        var pagination = new Pagination<ClientQuickView>
-        //        {
-        //            Items = items,
-        //            TotalRecords = totalRecords,
-        //        };
-        //        return Ok(pagination);
-        //    }
-        //    return BadRequest();
-        //}
-        #endregion
-
-        #region Sửa thông tin Client
-        [HttpPut("{clientId}")]
-        public async Task<IActionResult> PutClient(string clientId, [FromBody]ClientUpdateRequest request)
-        {
-            var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            if (client == null)
-            {
-                return NotFound();
-            };
-            //Update bảng Client
-            #region table Client
             client.Enabled = request.Enabled;
             client.ClientId = request.ClientId;
+            client.ProtocolType = request.ProtocolType;
+            client.RequireClientSecret = request.RequireClientSecret;
             client.ClientName = request.ClientName;
             client.Description = request.Description;
             client.ClientUri = request.ClientUri;
             client.LogoUri = request.LogoUri;
             client.RequireConsent = request.RequireConsent;
+            client.AllowRememberConsent = request.AllowRememberConsent;
+            client.AlwaysIncludeUserClaimsInIdToken = request.AlwaysIncludeUserClaimsInIdToken;
+            client.RequirePkce = request.RequirePkce;
+            client.AllowPlainTextPkce = request.AllowPlainTextPkce;
+            client.AllowAccessTokensViaBrowser = request.AllowAccessTokensViaBrowser;
+            client.FrontChannelLogoutUri = request.FrontChannelLogoutUri;
+            client.FrontChannelLogoutSessionRequired = request.FrontChannelLogoutSessionRequired;
+            client.BackChannelLogoutUri = request.BackChannelLogoutUri;
+            client.BackChannelLogoutSessionRequired = request.BackChannelLogoutSessionRequired;
             client.AllowOfflineAccess = request.AllowOfflineAccess;
             client.IdentityTokenLifetime = request.IdentityTokenLifetime;
             client.AccessTokenLifetime = request.AccessTokenLifetime;
@@ -140,78 +83,39 @@ namespace SSO.Backend.Controllers
             client.ConsentLifetime = request.ConsentLifetime;
             client.AbsoluteRefreshTokenLifetime = request.AbsoluteRefreshTokenLifetime;
             client.SlidingRefreshTokenLifetime = request.SlidingRefreshTokenLifetime;
+            client.RefreshTokenUsage = request.RefreshTokenUsage;
+            client.UpdateAccessTokenClaimsOnRefresh = request.UpdateAccessTokenClaimsOnRefresh;
+            client.RefreshTokenExpiration = request.RefreshTokenExpiration;
+            client.AccessTokenType = request.AccessTokenType;
+            client.EnableLocalLogin = request.EnableLocalLogin;
+            client.IncludeJwtId = request.IncludeJwtId;
+            client.AlwaysSendClientClaims = request.AlwaysSendClientClaims;
+            client.ClientClaimsPrefix = request.ClientClaimsPrefix;
+            client.PairWiseSubjectSalt = request.PairWiseSubjectSalt;
+            client.Updated = DateTime.UtcNow;
+            client.LastAccessed = request.LastAccessed;
+            client.UserSsoLifetime = request.UserSsoLifetime;
+            client.UserCodeType = request.UserCodeType;
             client.DeviceCodeLifetime = request.DeviceCodeLifetime;
+            client.NonEditable = request.NonEditable;
 
-            _context.Clients.Update(client);
-
-            var result = await _context.SaveChangesAsync();
-            if (result > 0)
+            _configurationDbContext.Clients.Update(client);
+            var result = await _configurationDbContext.SaveChangesAsync();
+            if(result > 0)
             {
                 return Ok();
             }
-            return BadRequest();
-        }
-        #endregion
+            return BadRequest();        
+        }                 
+        
+       
 
 
 
+       
+        
 
 
-
-        #endregion
-
-        #region Xóa Client
-
-        //Delete client
-        [HttpDelete("{clientId}")]
-        public async Task<IActionResult> DeleteClient(string clientId)
-        {
-            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
-            if (client == null)
-            {
-                return NotFound($"Can not found client with client id {clientId}");
-            }
-            //Xóa
-            var id = client.Id;
-            _context.Clients.Remove(client);
-            //Xóa ClientClaims
-            var clientClaims = await _context.ClientClaims.FirstOrDefaultAsync(ru => ru.ClientId == id);
-            if (clientClaims != null)
-                _context.ClientClaims.Remove(clientClaims);
-            //Xoa ClientCorsOrigin
-            var clientCorsOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(cc => cc.ClientId == id);
-            if (clientCorsOrigin != null)
-                _context.ClientCorsOrigins.Remove(clientCorsOrigin);
-            //Xoa ClientGrantTypes
-            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(pl => pl.ClientId == id);
-            if (clientGrantType != null)
-                _context.ClientGrantTypes.Remove(clientGrantType);
-            //Xoa RedirecUri
-            var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(ru => ru.ClientId == id);
-            if (clientRedirectUri != null)
-                _context.ClientRedirectUris.Remove(clientRedirectUri);
-            //Xoa ClientPostLogoutRedirectUri
-            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(pl => pl.ClientId == id);
-            if (clientPostLogoutRedirectUri != null)
-                _context.ClientPostLogoutRedirectUris.Remove(clientPostLogoutRedirectUri);                     
-            //Xoa Scope
-            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(pl => pl.ClientId == id);
-            if (clientScope != null)
-                _context.ClientScopes.Remove(clientScope);
-            //Xoa Secret
-            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(pl => pl.ClientId == id);
-            if (clientSecret != null)
-                _context.ClientSecrets.Remove(clientSecret);
-            var result = await _context.SaveChangesAsync();
-            if (result > 0)
-            {
-                return Ok();
-            }
-            return BadRequest();
-
-
-        }
-
-    }
-#endregion
+    } 
+        
 }
