@@ -1,10 +1,5 @@
 ﻿using FluentValidation;
-using FluentValidation.Validators;
-using SSO.Services.CreateModel;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
+using SSO.Services.RequestModel.User;
 
 namespace SSO.Services.Validator
 {

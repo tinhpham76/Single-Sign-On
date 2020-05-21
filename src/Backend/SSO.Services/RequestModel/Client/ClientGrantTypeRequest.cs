@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SSO.Services.CreateModel.Client
+namespace SSO.Services.RequestModel.Client
 {
-    public class ClientRedirectUriRequest
+    public class ClientGrantTypeRequest
     {
-        public string RedirectUri { get; set; }
+        public string GrantType { get; set; }
         public string ClientId { get; set; }
     }
 }

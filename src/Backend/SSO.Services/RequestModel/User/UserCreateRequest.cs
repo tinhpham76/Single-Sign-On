@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SSO.Services.CreateModel
+namespace SSO.Services.RequestModel.User
 {
     public class UserCreateRequest
     {

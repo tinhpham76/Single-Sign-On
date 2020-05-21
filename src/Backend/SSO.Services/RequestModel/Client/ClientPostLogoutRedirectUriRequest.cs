@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SSO.Services.CreateModel.Client
+namespace SSO.Services.RequestModel.Client
 {
     public class ClientPostLogoutRedirectUriRequest
     {

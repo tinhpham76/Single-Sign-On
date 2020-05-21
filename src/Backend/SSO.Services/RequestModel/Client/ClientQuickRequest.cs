@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SSO.Service.CreateModel.Client
+namespace SSO.Service.RequestModel.Client
 {
     public class ClientQuickRequest
     {

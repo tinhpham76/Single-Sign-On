@@ -1,7 +1,6 @@
 ﻿
 using FluentValidation;
-using SSO.Service.CreateModel;
-using SSO.Service.CreateModel.Client;
+using SSO.Service.RequestModel.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;

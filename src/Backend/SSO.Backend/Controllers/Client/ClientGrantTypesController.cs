@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
-using SSO.Services.CreateModel.Client;
+using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 
 namespace SSO.Backend.Controllers.Client
