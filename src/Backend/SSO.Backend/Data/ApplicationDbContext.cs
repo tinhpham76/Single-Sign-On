@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,9 @@ namespace SSO.Backend.Data
         public DbSet<ClientSecret> ClientSecrets { get; set; }
         public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get; set; }
         public DbSet<ClientProperty> ClientProperties { get; set; }
+        //DbSet table Identity Resource
+        public DbSet<IdentityResource> IdentityResources { get; set; }
+        public DbSet<IdentityClaim> IdentityClaims { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

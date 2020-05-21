@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RequestModel\Identity\" />
     <Folder Include="RequestModel\Api\" />
   </ItemGroup>
 
