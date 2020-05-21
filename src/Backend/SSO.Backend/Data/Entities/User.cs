@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SSO.Backend.Services;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SSO.Backend.Data.Entities
 {
@@ -30,14 +26,11 @@ namespace SSO.Backend.Data.Entities
         [MaxLength(50)]
         [Required]
         public string FirstName { get; set; }
-
         [MaxLength(50)]
         [Required]
         public string LastName { get; set; }
-
         [Required]
         public DateTime Dob { get; set; }
-        
         public DateTime CreateDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
     }

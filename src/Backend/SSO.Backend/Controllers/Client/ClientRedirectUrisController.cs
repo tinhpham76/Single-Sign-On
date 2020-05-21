@@ -1,52 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Backend.Data;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
-{    
+namespace SSO.Backend.Controllers.Client
+{
     public partial class ClientsController
     {
-        [HttpGet("{clientId}/claims")]
-        public async Task<IActionResult> GetClientClaim(string clientId)
+        #region ClientRedirectUris
+        //Get Redirect Uri for client with client id
+        [HttpGet("{clientId}/redirectUris")]
+        public async Task<IActionResult> GetClientRedirectUri(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientClaims.AsQueryable();
+            var query = _context.ClientRedirectUris.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientClaimViewModels = query.Select(x => new ClientClaimViewModel()
+            var clientRedirectUriViewModel = query.Select(x => new ClientRedirectUriViewModel()
             {
                 Id = x.Id,
-                Type = x.Type,
-                Value = x.Value,
+                RedirectUri = x.RedirectUri,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientClaimViewModels);
+            return Ok(clientRedirectUriViewModel);
         }
 
-        [HttpPost("{clientId}/claims")]
-        public async Task<IActionResult> PostClientClaim(string clientId, [FromBody]ClientClaimRequest request)
+        //Post new Redirect Uri for client with client id
+        [HttpPost("{clientId}/redirectUris")]
+        public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody]ClientRedirectUriRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientClaimRequest = new ClientClaim()
+            var clientRedirectUriRequest = new ClientRedirectUri()
             {
-                Type = request.Type,
-                Value = request.Value,
+                RedirectUri = request.RedirectUri,
                 ClientId = client.Id
             };
-            _context.ClientClaims.Add(clientClaimRequest);
+            _context.ClientRedirectUris.Add(clientRedirectUriRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -55,20 +51,21 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{clientId}/claims/{id}")]
-        public async Task<IActionResult> DeleteClientClaim(string clientId, int id)
+        //Delete Redirect Uri for client with client id
+        [HttpDelete("{clientId}/redirectUris/{id}")]
+        public async Task<IActionResult> DeleteClientRedirectUri(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientClaim = await _context.ClientClaims.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientClaim == null)
+            var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientRedirectUri == null)
             {
                 return NotFound();
             }
-            _context.ClientClaims.Remove(clientClaim); 
+            _context.ClientRedirectUris.Remove(clientRedirectUri);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -76,5 +73,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }

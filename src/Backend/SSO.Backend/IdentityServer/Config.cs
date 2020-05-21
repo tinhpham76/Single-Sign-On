@@ -1,12 +1,10 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SSO.BackendIdentityServer
 {
+    //Seed data identity server if db is null
     public class Config
     {
         public static IEnumerable<IdentityResource> GetIdentityResources()
@@ -35,7 +33,7 @@ namespace SSO.BackendIdentityServer
 
         public static IEnumerable<Client> GetClients()
         {
-            return new List<Client> {            
+            return new List<Client> {
                 new Client
                 {
                     ClientId = "webportal",
@@ -101,7 +99,7 @@ namespace SSO.BackendIdentityServer
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        "http://localhost:4200/"                        
+                        "http://localhost:4200/"
                     },
                     AllowedCorsOrigins = new List<string>
                     {
@@ -115,6 +113,6 @@ namespace SSO.BackendIdentityServer
                     }
                 }
             };
-        }        
+        }
     }
 }

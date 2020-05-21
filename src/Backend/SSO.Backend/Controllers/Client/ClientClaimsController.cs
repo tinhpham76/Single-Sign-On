@@ -1,50 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-    
     public partial class ClientsController
     {
-
-        [HttpGet("{clientId}/scopes")]
-        public async Task<IActionResult> GetClientScope(string clientId)
+        #region ClientClaim
+        //Get Claim for client with client id
+        [HttpGet("{clientId}/claims")]
+        public async Task<IActionResult> GetClientClaim(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientScopes.AsQueryable();
+            var query = _context.ClientClaims.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientScopeViewModel = query.Select(x => new ClientScopeViewModel()
+            var clientClaimViewModels = query.Select(x => new ClientClaimViewModel()
             {
                 Id = x.Id,
-                Scope =x.Scope,
+                Type = x.Type,
+                Value = x.Value,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientScopeViewModel);
+            return Ok(clientClaimViewModels);
         }
-
-        [HttpPost("{clientId}/scopes")]
-        public async Task<IActionResult> PostClientScope(string clientId, [FromBody]ClientScopeRequest request)
+        //Post new claim for client with client id
+        [HttpPost("{clientId}/claims")]
+        public async Task<IActionResult> PostClientClaim(string clientId, [FromBody]ClientClaimRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientScopeRequest = new ClientScope()
+            var clientClaimRequest = new ClientClaim()
             {
-                Scope = request.Scope,
+                Type = request.Type,
+                Value = request.Value,
                 ClientId = client.Id
             };
-            _context.ClientScopes.Add(clientScopeRequest);
+            _context.ClientClaims.Add(clientClaimRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -52,21 +51,21 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
-
-        [HttpDelete("{clientId}/scopes/{id}")]
-        public async Task<IActionResult> DeleteClientScope(string clientId, int id)
+        //Delete Claim for client with client id
+        [HttpDelete("{clientId}/claims/{id}")]
+        public async Task<IActionResult> DeleteClientClaim(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientScope == null)
+            var clientClaim = await _context.ClientClaims.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientClaim == null)
             {
                 return NotFound();
             }
-            _context.ClientScopes.Remove(clientScope);
+            _context.ClientClaims.Remove(clientClaim);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -74,5 +73,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }

@@ -1,52 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Backend.Data;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-    
     public partial class ClientsController
     {
-        [HttpGet("{clientId}/grantTypes")]
-        public async Task<IActionResult> GetClientGrantType(string clientId)
+        #region ClientCorsOrigins
+        //Get Origins for client with client id
+        [HttpGet("{clientId}/corsOrigins")]
+        public async Task<IActionResult> GetClientCorsOrigins(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientGrantTypes.AsQueryable();
+            var query = _context.ClientCorsOrigins.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientGrantTypeViewModels = query.Select(x => new ClientGrantTypeViewModel()
+            var clientCorsOriginsViewModels = query.Select(x => new ClientCorsOriginsViewModel()
             {
                 Id = x.Id,
-                GrantType = x.GrantType,
+                Origin = x.Origin,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientGrantTypeViewModels);
+            return Ok(clientCorsOriginsViewModels);
         }
 
-        [HttpPost("{clientId}/grantTypes")]
-        public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody]ClientGrantTypeRequest request)
+        //Post new Origins for client with client id
+        [HttpPost("{clientId}/corsOrigins")]
+        public async Task<IActionResult> PostClientCorsOrigin(string clientId, [FromBody]ClientCorsOriginRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.ClientId == client.Id);
-            var clientGrantTypeRequest = new ClientGrantType()
+            var clientCorsOrigins = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.ClientId == client.Id);
+            var clientCorsOriginsRequest = new ClientCorsOrigin()
             {
-                GrantType = request.GrantType,
+                Origin = request.Origin,
                 ClientId = client.Id
             };
-            _context.ClientGrantTypes.Add(clientGrantTypeRequest);
+            _context.ClientCorsOrigins.Add(clientCorsOriginsRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -55,20 +52,21 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{clientId}/grantTypes/{id}")]
-        public async Task<IActionResult> DeleteGrantType(string clientId, int id)
+        //Delete Origins for client with client id
+        [HttpDelete("{clientId}/corsOrigins/{id}")]
+        public async Task<IActionResult> DeleteClientCorsOrigin(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientGrantType == null)
+            var clientCorsOrigins = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientCorsOrigins == null)
             {
                 return NotFound();
             }
-            _context.ClientGrantTypes.Remove(clientGrantType);
+            _context.ClientCorsOrigins.Remove(clientCorsOrigins);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -76,5 +74,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }

@@ -22,6 +22,7 @@ namespace SSO.Backend
                              .CreateLogger();
             var host = CreateHostBuilder(args).Build();
 
+            //Seed data user
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;

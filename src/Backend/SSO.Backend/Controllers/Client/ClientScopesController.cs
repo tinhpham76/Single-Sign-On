@@ -1,51 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-
     public partial class ClientsController
     {
-        [HttpGet("{clientId}/properties")]
-        public async Task<IActionResult> GetClientPropertie(string clientId)
+        #region ClientScopes
+        //Get Scope for client with client id
+        [HttpGet("{clientId}/scopes")]
+        public async Task<IActionResult> GetClientScope(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientProperties.AsQueryable();
+            var query = _context.ClientScopes.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientPropertyViewModel = query.Select(x => new ClientPropertyViewModel()
+            var clientScopeViewModel = query.Select(x => new ClientScopeViewModel()
             {
                 Id = x.Id,
-                Key = x.Key,
-                Value = x.Value,
+                Scope = x.Scope,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientPropertyViewModel);
+            return Ok(clientScopeViewModel);
         }
 
-        [HttpPost("{clientId}/properties")]
-        public async Task<IActionResult> PostClientPropertie(string clientId, [FromBody]ClientPropertyRequest request)
+        //Post new Scope for client with client id
+        [HttpPost("{clientId}/scopes")]
+        public async Task<IActionResult> PostClientScope(string clientId, [FromBody]ClientScopeRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientPropertyRequest = new ClientProperty()
+            var clientScopeRequest = new ClientScope()
             {
-                Key = request.Key,
-                Value = request.Value,
+                Scope = request.Scope,
                 ClientId = client.Id
             };
-            _context.ClientProperties.Add(clientPropertyRequest);
+            _context.ClientScopes.Add(clientScopeRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -54,20 +51,21 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{clientId}/properties/{id}")]
-        public async Task<IActionResult> DeleteClientPropertie(string clientId, int id)
+        //Delete client for client with client id
+        [HttpDelete("{clientId}/scopes/{id}")]
+        public async Task<IActionResult> DeleteClientScope(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientProperty = await _context.ClientProperties.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientProperty == null)
+            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientScope == null)
             {
                 return NotFound();
             }
-            _context.ClientProperties.Remove(clientProperty);
+            _context.ClientScopes.Remove(clientScope);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -75,6 +73,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
-
 }

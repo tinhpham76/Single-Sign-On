@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SSO.Backend.Data.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,9 +23,10 @@ namespace SSO.Backend.Data
             _roleManager = roleManager;
         }
 
+        //Seed data if data on database is null
         public async Task Seed()
         {
-            #region Quyền
+            #region Role
 
             if (!_roleManager.Roles.Any())
             {
@@ -44,9 +44,9 @@ namespace SSO.Backend.Data
                 });
             }
 
-            #endregion Quyền
+            #endregion
 
-            #region Người dùng
+            #region User
 
             if (!_userManager.Users.Any())
             {
@@ -80,8 +80,7 @@ namespace SSO.Backend.Data
                 }
             }
 
-            #endregion Người dùng
-           
+            #endregion
 
             await _context.SaveChangesAsync();
         }

@@ -13,7 +13,7 @@ namespace SSO.Services.CreateModel.Client
         public int RefreshTokenUsage { get; set; } = 1;
         public bool UpdateAccessTokenClaimsOnRefresh { get; set; }
         public int RefreshTokenExpiration { get; set; } = 1;
-        public int AccessTokenType { get; set; }
+        public int AccessTokenType { get; set; } = (int)0;
         public bool EnableLocalLogin { get; set; } = true;
 
         public int AccessTokenLifetime { get; set; } = 3600;
@@ -21,8 +21,8 @@ namespace SSO.Services.CreateModel.Client
         public bool AlwaysSendClientClaims { get; set; }
         public string ClientClaimsPrefix { get; set; } = "client_";
         public string PairWiseSubjectSalt { get; set; }
-        
-        public DateTime Created { get; set; }
+
+        public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime? Updated { get; set; }
         public DateTime? LastAccessed { get; set; }
         public int? UserSsoLifetime { get; set; }
@@ -32,7 +32,7 @@ namespace SSO.Services.CreateModel.Client
         
         public bool AllowOfflineAccess { get; set; }
         public int Id { get; set; }
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
         public string ClientId { get; set; }
         public string ProtocolType { get; set; } = "oidc";
 

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Backend.Data;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-    
     public partial class ClientsController
     {
+
+        #region ClientIdPRestrictions
+        //Get IdPRestrictions for client with client id
         [HttpGet("{clientId}/idPRestrictions")]
         public async Task<IActionResult> GetClientIdPRestriction(string clientId)
         {
@@ -29,13 +26,14 @@ namespace SSO.Backend.Controllers
             var clientIdPRestrictionViewModel = query.Select(x => new ClientIdPRestrictionViewModel()
             {
                 Id = x.Id,
-                Provider= x.Provider,
+                Provider = x.Provider,
                 ClientId = x.ClientId
             });
 
             return Ok(clientIdPRestrictionViewModel);
         }
 
+        //Post new IdPRestrictions for client with client id
         [HttpPost("{clientId}/idPRestrictions")]
         public async Task<IActionResult> PostClientIdPRestriction(string clientId, [FromBody]ClientIdPRestrictionRequest request)
         {
@@ -55,6 +53,7 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
+        //Delete IdPRestrictions for client with client id
         [HttpDelete("{clientId}/idPRestrictions/{id}")]
         public async Task<IActionResult> DeleteClientIdPRestriction(string clientId, int id)
         {
@@ -76,5 +75,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }

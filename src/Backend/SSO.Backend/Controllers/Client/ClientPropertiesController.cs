@@ -1,58 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-    
     public partial class ClientsController
     {
-
-        [HttpGet("{clientId}/secrets")]
-        public async Task<IActionResult> GetClientSecret(string clientId)
+        #region ClientProperties
+        //Get Properties for client with client id
+        [HttpGet("{clientId}/properties")]
+        public async Task<IActionResult> GetClientPropertie(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientSecrets.AsQueryable();
+            var query = _context.ClientProperties.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientRedirectUriViewModel = query.Select(x => new ClientSecretViewModel()
+            var clientPropertyViewModel = query.Select(x => new ClientPropertyViewModel()
             {
                 Id = x.Id,
-                Description = x.Description,
-                Expiration = x.Expiration,
-                Type = x.Type,
+                Key = x.Key,
                 Value = x.Value,
-                Created = x.Created,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientRedirectUriViewModel);
+            return Ok(clientPropertyViewModel);
         }
 
-        [HttpPost("{clientId}/secrets")]
-        public async Task<IActionResult> PostClientSecret(string clientId, [FromBody]ClientSecretRequest request)
+        //Post new Properties for client with client id
+        [HttpPost("{clientId}/properties")]
+        public async Task<IActionResult> PostClientPropertie(string clientId, [FromBody]ClientPropertyRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientSecretRequest = new ClientSecret()
+            var clientPropertyRequest = new ClientProperty()
             {
-                Description = request.Description,
+                Key = request.Key,
                 Value = request.Value,
-                Expiration = request.Expiration,
-                Type = request.Type,
-                Created = DateTime.UtcNow,
                 ClientId = client.Id
             };
-            _context.ClientSecrets.Add(clientSecretRequest);
+            _context.ClientProperties.Add(clientPropertyRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -61,20 +53,21 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{clientId}/secrets/{id}")]
-        public async Task<IActionResult> DeleteClientSecre(string clientId, int id)
+        //Delete Properties for client with client id
+        [HttpDelete("{clientId}/properties/{id}")]
+        public async Task<IActionResult> DeleteClientPropertie(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientSecret == null)
+            var clientProperty = await _context.ClientProperties.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientProperty == null)
             {
                 return NotFound();
             }
-            _context.ClientSecrets.Remove(clientSecret);
+            _context.ClientProperties.Remove(clientProperty);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -82,6 +75,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
-
+        #endregion
     }
 }

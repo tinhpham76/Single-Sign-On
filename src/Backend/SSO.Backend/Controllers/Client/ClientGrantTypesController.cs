@@ -11,44 +11,45 @@ using SSO.Backend.Data;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-    
+
     public partial class ClientsController
     {
-
-        [HttpGet("{clientId}/corsOrigins")]
-        public async Task<IActionResult> GetClientCorsOrigins(string clientId)
+        #region ClientGrantType
+        //Get GrantType for client with client id
+        [HttpGet("{clientId}/grantTypes")]
+        public async Task<IActionResult> GetClientGrantType(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var query = _context.ClientCorsOrigins.AsQueryable();
+            var query = _context.ClientGrantTypes.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientCorsOriginsViewModels = query.Select(x => new ClientCorsOriginsViewModel()
+            var clientGrantTypeViewModels = query.Select(x => new ClientGrantTypeViewModel()
             {
                 Id = x.Id,
-                Origin = x.Origin,
+                GrantType = x.GrantType,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientCorsOriginsViewModels);
+            return Ok(clientGrantTypeViewModels);
         }
 
-
-        [HttpPost("{clientId}/corsOrigins")]
-        public async Task<IActionResult> PostClientCorsOrigin(string clientId, [FromBody]ClientCorsOriginRequest request)
+        //Post new GrantType for client with client id
+        [HttpPost("{clientId}/grantTypes")]
+        public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody]ClientGrantTypeRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            var clientCorsOrigins = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.ClientId == client.Id);
-            var clientCorsOriginsRequest = new ClientCorsOrigin()
+            //var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.ClientId == client.Id);
+            var clientGrantTypeRequest = new ClientGrantType()
             {
-                Origin = request.Origin,
+                GrantType = request.GrantType,
                 ClientId = client.Id
             };
-            _context.ClientCorsOrigins.Add(clientCorsOriginsRequest);
+            _context.ClientGrantTypes.Add(clientGrantTypeRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -57,20 +58,21 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{clientId}/corsOrigins/{id}")]
-        public async Task<IActionResult> DeleteClientCorsOrigin(string clientId, int id)
+        //Delete GrantTye for client with client id
+        [HttpDelete("{clientId}/grantTypes/{id}")]
+        public async Task<IActionResult> DeleteGrantType(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
-            var clientCorsOrigins = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
-            if (clientCorsOrigins == null)
+            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
+            if (clientGrantType == null)
             {
                 return NotFound();
             }
-            _context.ClientCorsOrigins.Remove(clientCorsOrigins);
+            _context.ClientGrantTypes.Remove(clientGrantType);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -78,5 +80,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }

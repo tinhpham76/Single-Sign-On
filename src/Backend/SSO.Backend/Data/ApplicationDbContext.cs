@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SSO.Backend.Data
 {
@@ -15,6 +11,7 @@ namespace SSO.Backend.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+        //Db set table client
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientClaim> ClientClaims { get; set; }
         public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
@@ -32,9 +29,6 @@ namespace SSO.Backend.Data
 
             builder.Entity<IdentityRole>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
             builder.Entity<User>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
-
-
         }
-        
-}
+    }
 }

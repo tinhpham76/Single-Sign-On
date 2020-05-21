@@ -195,6 +195,8 @@ namespace SSO.Backend
             });
 
         }
+
+        //Initialize database and seed data: IdentityServer & AspNetIdentity if project can't found database on SqlServer
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())

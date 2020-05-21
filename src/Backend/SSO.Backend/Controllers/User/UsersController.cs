@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +11,10 @@ using SSO.Services.CreateModel;
 using SSO.Services.ViewModel;
 
 namespace SSO.Backend.Controllers
-{    
+{
     public class UsersController : BaseController
     {
+        #region User
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
@@ -24,6 +22,7 @@ namespace SSO.Backend.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+        //Post new user
         [HttpPost]
         public async Task<IActionResult> PostUser([FromBody]UserCreateRequest request)
         {
@@ -36,7 +35,7 @@ namespace SSO.Backend.Controllers
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 Dob = DateTime.Parse(request.Dob),
-                CreateDate = DateTime.UtcNow               
+                CreateDate = DateTime.UtcNow
 
             };
             var result = await _userManager.CreateAsync(user, request.Password);
@@ -46,10 +45,12 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+
+        //Get all user info
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users =await _userManager.Users.Select(x => new UserViewModel()
+            var users = await _userManager.Users.Select(x => new UserViewModel()
             {
                 Id = x.Id,
                 UserName = x.UserName,
@@ -57,11 +58,13 @@ namespace SSO.Backend.Controllers
                 LastName = x.FirstName,
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
-                Dob = x.Dob,              
+                Dob = x.Dob,
                 CreateDate = x.CreateDate
             }).ToListAsync();
             return Ok(users);
         }
+
+        //Find user with User Name, Email, First Name, Last Name, Phone Number 
         [HttpGet("filter")]
         public async Task<IActionResult> GetUsersPaging(string filter, int pageIndex, int pageSize)
         {
@@ -77,7 +80,7 @@ namespace SSO.Backend.Controllers
             var totalReconds = await query.CountAsync();
             var items = await query.Skip((pageIndex - 1 * pageSize))
                 .Take(pageSize)
-                .Select(x => new UserViewModel() 
+                .Select(x => new UserViewModel()
                 {
                     Id = x.Id,
                     UserName = x.UserName,
@@ -97,11 +100,12 @@ namespace SSO.Backend.Controllers
             return Ok(pagination);
         }
 
+        //Get detail user with user id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -118,11 +122,13 @@ namespace SSO.Backend.Controllers
             };
             return Ok(userViewModel);
         }
+
+        //Put user wiht user id
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, [FromBody]UserCreateRequest request) 
+        public async Task<IActionResult> PutUser(string id, [FromBody]UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -138,6 +144,7 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
+        //Put user password with user id
         [HttpPut("{id}/change-password")]
         public async Task<IActionResult> PutUserPassword(string id, [FromBody]UserPasswordChangeUpdateRequest request)
         {
@@ -152,13 +159,14 @@ namespace SSO.Backend.Controllers
                 return NoContent();
             }
             return BadRequest();
-        } 
+        }
 
+        //Delete user with user id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -186,8 +194,8 @@ namespace SSO.Backend.Controllers
                 return Ok(uservm);
             }
             return BadRequest();
-            
-        }
 
+        }
+        #endregion
     }
 }

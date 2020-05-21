@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Backend.Data;
 using SSO.Services.CreateModel.Client;
 using SSO.Services.ViewModel.Client;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Client
 {
-
     public partial class ClientsController
     {
+        #region ClientPostLogoutRedirectUris
+        //Get Logout Redirect Uri for client with client id
         [HttpGet("{clientId}/postLogoutRedirectUris")]
         public async Task<IActionResult> GetPostLogoutRedirectUri(string clientId)
         {
@@ -36,7 +32,7 @@ namespace SSO.Backend.Controllers
             return Ok(clientPostLogoutRedirectUriViewModels);
         }
 
-
+        //Post new Logout Redirect Uri for client with client id
         [HttpPost("{clientId}/postLogoutRedirectUris")]
         public async Task<IActionResult> PostClientPostLogoutRedirectUri(string clientId, [FromBody]ClientPostLogoutRedirectUriRequest request)
         {
@@ -55,6 +51,7 @@ namespace SSO.Backend.Controllers
             return BadRequest();
         }
 
+        //Delete Logout Redirect Uri for client with client id
         [HttpDelete("{clientId}/postLogoutRedirectUris/{id}")]
         public async Task<IActionResult> DeletePostLogoutRedirectUris(string clientId, int id)
         {
@@ -76,5 +73,6 @@ namespace SSO.Backend.Controllers
             }
             return BadRequest();
         }
+        #endregion
     }
 }
