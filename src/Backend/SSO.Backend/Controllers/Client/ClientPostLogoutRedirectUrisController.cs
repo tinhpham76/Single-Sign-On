@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientPostLogoutRedirectUris
         //Get Logout Redirect Uri for client with client id
         [HttpGet("{clientId}/postLogoutRedirectUris")]
-        public async Task<IActionResult> GetPostLogoutRedirectUri(string clientId)
+        public async Task<IActionResult> GetPostLogoutRedirectUris(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -22,14 +23,14 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientPostLogoutRedirectUris.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientPostLogoutRedirectUriViewModels = query.Select(x => new ClientPostLogoutRedirectUriViewModel()
+            var clientPostLogoutRedirectUrisViewModels = query.Select(x => new ClientPostLogoutRedirectUrisViewModel()
             {
                 Id = x.Id,
                 PostLogoutRedirectUri = x.PostLogoutRedirectUri,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientPostLogoutRedirectUriViewModels);
+            return Ok(clientPostLogoutRedirectUrisViewModels);
         }
 
         //Post new Logout Redirect Uri for client with client id
@@ -37,6 +38,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientPostLogoutRedirectUri(string clientId, [FromBody]ClientPostLogoutRedirectUriRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientPostLogoutRedirectUriRequest = new ClientPostLogoutRedirectUri()
             {
                 PostLogoutRedirectUri = request.PostLogoutRedirectUri,
@@ -46,6 +48,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -60,6 +64,7 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientPostLogoutRedirectUri == null)
             {
@@ -69,6 +74,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

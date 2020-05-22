@@ -4,9 +4,8 @@ using IdentityServer4.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
-using SSO.Service.RequestModel.IdentityResource;
-using SSO.Services.RequestModel.IdentityResource;
-using SSO.Services.ViewModel.IdentityResource;
+using SSO.Services.RequestModel.Identity;
+using SSO.Services.ViewModel.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace SSO.Backend.Controllers.Identity
         public async Task<IActionResult> GetIdentityResources()
         {
             var identityResources = _configurationDbContext.IdentityResources;
-            var identityResourcesQuickView = await identityResources.Select(x => new IdentityResourceQuickView()
+            var identityResourcesQuickView = await identityResources.Select(x => new IdentityResourcesQuickView()
             {
                 Enable = x.Enabled,
                 Name = x.Name,
@@ -80,6 +79,7 @@ namespace SSO.Backend.Controllers.Identity
                 Name = request.Name,
                 DisplayName = request.DisplayName,
                 Description = request.Description,
+
             };
             _configurationDbContext.IdentityResources.Add(identityResourceRequest.ToEntity());
             var result = await _configurationDbContext.SaveChangesAsync();

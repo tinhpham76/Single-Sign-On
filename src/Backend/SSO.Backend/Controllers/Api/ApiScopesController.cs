@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,6 +43,7 @@ namespace SSO.Backend.Controllers.Api
         public async Task<IActionResult> PostApiScope(int id, [FromBody]ApiScopeRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
+            apiResource.Updated = DateTime.UtcNow;
             var apiSope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
             var apiScopeRequest = new ApiScope()
             {
@@ -57,6 +59,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -71,6 +75,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            apiResource.Updated = DateTime.UtcNow;
             var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.Id == scopeId && x.ApiResourceId == apiResource.Id);
             if (apiScope == null)
             {
@@ -80,6 +85,9 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

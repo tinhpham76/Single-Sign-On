@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SSO.Services.ViewModel.IdentityResource
+namespace SSO.Services.ViewModel.Identity
 {
     public class IdentityResourceViewModel
     {

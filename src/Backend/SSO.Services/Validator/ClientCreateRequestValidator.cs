@@ -1,6 +1,6 @@
 ﻿
 using FluentValidation;
-using SSO.Service.RequestModel.Client;
+using SSO.Services.RequestModel.Client;
 
 namespace SSO.Service.Validator
 {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientProperties
         //Get Properties for client with client id
         [HttpGet("{clientId}/properties")]
-        public async Task<IActionResult> GetClientPropertie(string clientId)
+        public async Task<IActionResult> GetClientProperties(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -22,7 +23,7 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientProperties.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientPropertyViewModel = query.Select(x => new ClientPropertyViewModel()
+            var clientPropertiesViewModel = query.Select(x => new ClientPropertiesViewModel()
             {
                 Id = x.Id,
                 Key = x.Key,
@@ -30,14 +31,15 @@ namespace SSO.Backend.Controllers.Client
                 ClientId = x.ClientId
             });
 
-            return Ok(clientPropertyViewModel);
+            return Ok(clientPropertiesViewModel);
         }
 
         //Post new Properties for client with client id
         [HttpPost("{clientId}/properties")]
-        public async Task<IActionResult> PostClientPropertie(string clientId, [FromBody]ClientPropertyRequest request)
+        public async Task<IActionResult> PostClientProperty(string clientId, [FromBody]ClientPropertyRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientPropertyRequest = new ClientProperty()
             {
                 Key = request.Key,
@@ -48,6 +50,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -55,13 +59,14 @@ namespace SSO.Backend.Controllers.Client
 
         //Delete Properties for client with client id
         [HttpDelete("{clientId}/properties/{id}")]
-        public async Task<IActionResult> DeleteClientPropertie(string clientId, int id)
+        public async Task<IActionResult> DeleteClientProperty(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientProperty = await _context.ClientProperties.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientProperty == null)
             {
@@ -71,6 +76,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,28 +34,31 @@ namespace SSO.Backend.Controllers.Api
             return Ok(apiPropertiesViewModel);
         }
 
-        //Post new api property for api resource with id
+        //Post new api property for api with id
         [HttpPost("{id}/apiProperties")]
         public async Task<IActionResult> PostApiProperty(int id, [FromBody]ApiPropertyRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
+            apiResource.Updated = DateTime.UtcNow;
             var apiProperty = await _context.ApiProperties.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
-            var apiResourceRequest = new ApiResourceProperty()
+            var apiPropertyRequest = new ApiResourceProperty()
             {
                 Key = request.Key,
                 Value = request.Value,
                 ApiResourceId = request.ApiResourceId
             };
-            _context.ApiProperties.Add(apiResourceRequest);
+            _context.ApiProperties.Add(apiPropertyRequest);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
         }
 
-        //Delete api property for api resource with api id
+        //Delete api property for api with api id
         [HttpDelete("{id}/apiProperties/{propertyId}")]
         public async Task<IActionResult> DeleteApiProperty(int id, int propertyId)
         {
@@ -63,6 +67,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            apiResource.Updated = DateTime.UtcNow;
             var apiProperty = await _context.ApiProperties.FirstOrDefaultAsync(x => x.Id == propertyId && x.ApiResourceId == apiResource.Id);
             if (apiProperty == null)
             {
@@ -72,6 +77,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

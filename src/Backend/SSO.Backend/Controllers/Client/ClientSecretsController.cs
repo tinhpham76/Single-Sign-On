@@ -14,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientSecrets
         //Get Secrets for client with clien id
         [HttpGet("{clientId}/secrets")]
-        public async Task<IActionResult> GetClientSecret(string clientId)
+        public async Task<IActionResult> GetClientSecrets(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -23,7 +23,7 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientSecrets.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientRedirectUriViewModel = query.Select(x => new ClientSecretViewModel()
+            var clientSecretsViewModel = query.Select(x => new ClientSecretsViewModel()
             {
                 Id = x.Id,
                 Description = x.Description,
@@ -33,7 +33,7 @@ namespace SSO.Backend.Controllers.Client
                 Created = x.Created,
                 ClientId = x.ClientId
             });
-            return Ok(clientRedirectUriViewModel);
+            return Ok(clientSecretsViewModel);
         }
 
         //Post new Client Secrets for client with client id
@@ -41,6 +41,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientSecret(string clientId, [FromBody]ClientSecretRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientSecretRequest = new ClientSecret()
             {
                 Description = request.Description,
@@ -54,6 +55,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -68,6 +71,7 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientSecret == null)
             {
@@ -77,6 +81,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

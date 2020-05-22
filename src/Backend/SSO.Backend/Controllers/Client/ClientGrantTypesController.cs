@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientGrantType
         //Get GrantType for client with client id
         [HttpGet("{clientId}/grantTypes")]
-        public async Task<IActionResult> GetClientGrantType(string clientId)
+        public async Task<IActionResult> GetClientGrantTypes(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -23,14 +24,14 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientGrantTypes.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientGrantTypeViewModels = query.Select(x => new ClientGrantTypeViewModel()
+            var clientGrantTypesViewModels = query.Select(x => new ClientGrantTypesViewModel()
             {
                 Id = x.Id,
                 GrantType = x.GrantType,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientGrantTypeViewModels);
+            return Ok(clientGrantTypesViewModels);
         }
 
         //Post new GrantType for client with client id
@@ -38,7 +39,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody]ClientGrantTypeRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
-            //var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.ClientId == client.Id);
+            client.Updated = DateTime.UtcNow;
             var clientGrantTypeRequest = new ClientGrantType()
             {
                 GrantType = request.GrantType,
@@ -48,6 +49,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -62,6 +65,7 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientGrantType == null)
             {
@@ -71,6 +75,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

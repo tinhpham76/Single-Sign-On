@@ -1,6 +1,6 @@
 ﻿namespace SSO.Services.ViewModel.Client
 {
-    public class ClientClaimViewModel
+    public class ClientClaimsViewModel
     {
         public int Id { get; set; }
         public string Type { get; set; }

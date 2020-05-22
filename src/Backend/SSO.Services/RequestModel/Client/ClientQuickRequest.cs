@@ -1,4 +1,4 @@
-﻿namespace SSO.Service.RequestModel.Client
+﻿namespace SSO.Services.RequestModel.Client
 {
     public class ClientQuickRequest
     {

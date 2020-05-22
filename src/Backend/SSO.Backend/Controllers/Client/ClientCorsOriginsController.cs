@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,6 +38,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientCorsOrigin(string clientId, [FromBody]ClientCorsOriginRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientCorsOrigins = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.ClientId == client.Id);
             var clientCorsOriginsRequest = new ClientCorsOrigin()
             {
@@ -47,6 +49,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -57,6 +61,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> DeleteClientCorsOrigin(string clientId, int id)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             if (client == null)
             {
                 return NotFound();
@@ -70,6 +75,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

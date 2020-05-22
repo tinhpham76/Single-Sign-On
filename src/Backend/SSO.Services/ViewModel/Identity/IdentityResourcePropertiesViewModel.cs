@@ -1,6 +1,6 @@
-﻿namespace SSO.Services.ViewModel.IdentityResource
+﻿namespace SSO.Services.ViewModel.Identity
 {
-    public class IdentityResourcePropertyViewModel
+    public class IdentityResourcePropertiesViewModel
     {
         public int Id { get; set; }
         public string Key { get; set; }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientIdPRestrictions
         //Get IdPRestrictions for client with client id
         [HttpGet("{clientId}/idPRestrictions")]
-        public async Task<IActionResult> GetClientIdPRestriction(string clientId)
+        public async Task<IActionResult> GetClientIdPRestrictions(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -23,14 +24,14 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientIdPRestrictions.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientIdPRestrictionViewModel = query.Select(x => new ClientIdPRestrictionViewModel()
+            var clientIdPRestrictionsViewModel = query.Select(x => new ClientIdPRestrictionsViewModel()
             {
                 Id = x.Id,
                 Provider = x.Provider,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientIdPRestrictionViewModel);
+            return Ok(clientIdPRestrictionsViewModel);
         }
 
         //Post new IdPRestrictions for client with client id
@@ -38,6 +39,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientIdPRestriction(string clientId, [FromBody]ClientIdPRestrictionRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientIdPRestriction = await _context.ClientIdPRestrictions.FirstOrDefaultAsync(x => x.ClientId == client.Id);
             var clientIdPRestrictionRequest = new ClientIdPRestriction()
             {
@@ -48,6 +50,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -62,6 +66,7 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientIdPRestriction = await _context.ClientIdPRestrictions.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientIdPRestriction == null)
             {
@@ -71,6 +76,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

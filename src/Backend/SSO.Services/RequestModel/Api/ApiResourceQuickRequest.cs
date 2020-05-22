@@ -1,11 +1,9 @@
-﻿namespace SSO.Services.ViewModel.ApiResource
+﻿namespace SSO.Services.RequestModel.Api
 {
-    public class ApiResourceQuickView
+    public class ApiResourceQuickRequest
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }
-
     }
 }

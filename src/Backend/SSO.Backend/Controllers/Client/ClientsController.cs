@@ -3,7 +3,6 @@ using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
-using SSO.Service.RequestModel.Client;
 using SSO.Services;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
@@ -15,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
 {
     public partial class ClientsController : BaseController
     {
-        #region Client
+        #region Clients
         private readonly ApplicationDbContext _context;
         private readonly IClientStore _clientStore;
         private readonly ConfigurationDbContext _configurationDbContext;
@@ -31,20 +30,20 @@ namespace SSO.Backend.Controllers.Client
 
         //Get basic info clients 
         [HttpGet]
-        public async Task<IActionResult> GetClient()
+        public async Task<IActionResult> GetClients()
         {
-            var client = await _configurationDbContext.Clients.Select(x => new ClientQuickView()
+            var clients = await _configurationDbContext.Clients.Select(x => new ClientsQuickView()
             {
                 ClientId = x.ClientId,
                 ClientName = x.ClientName,
                 LogoUri = x.LogoUri
             }).ToListAsync();
-            return Ok(client);
+            return Ok(clients);
         }
 
-        // Find client with client name
+        // Find clients with client name
         [HttpGet("filter")]
-        public async Task<IActionResult> GetClientPaging(string filter, int pageIndex, int pageSize)
+        public async Task<IActionResult> GetClientsPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.Clients.AsQueryable();
 
@@ -56,14 +55,14 @@ namespace SSO.Backend.Controllers.Client
             var totalReconds = await query.CountAsync();
             var items = await query.Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .Select(x => new ClientQuickView()
+                .Select(x => new ClientsQuickView()
                 {
                     ClientId = x.ClientId,
                     ClientName = x.ClientName,
                     LogoUri = x.LogoUri
                 }).ToListAsync();
 
-            var pagination = new Pagination<ClientQuickView>
+            var pagination = new Pagination<ClientsQuickView>
             {
                 Items = items,
                 TotalRecords = totalReconds

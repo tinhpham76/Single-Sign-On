@@ -1,9 +1,9 @@
 ﻿namespace SSO.Services.ViewModel.Client
 {
-    public class ClientGrantTypeViewModel
+    public class ClientIdPRestrictionsViewModel
     {
         public int Id { get; set; }
-        public string GrantType { get; set; }
+        public string Provider { get; set; }
         public int ClientId { get; set; }
     }
 }

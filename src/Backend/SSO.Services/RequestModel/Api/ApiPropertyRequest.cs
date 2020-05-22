@@ -1,4 +1,4 @@
-﻿namespace SSO.Services.RequestModel.ApiResource
+﻿namespace SSO.Services.RequestModel.Api
 {
     public class ApiPropertyRequest
     {

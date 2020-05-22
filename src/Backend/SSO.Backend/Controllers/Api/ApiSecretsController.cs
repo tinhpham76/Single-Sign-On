@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +42,7 @@ namespace SSO.Backend.Controllers.Api
         public async Task<IActionResult> PostApiSecret(int id, [FromBody]ApiSecretRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
+            apiResource.Updated = DateTime.UtcNow;
             var apiSecret = new ApiSecret()
             {
                 Description = request.Description,
@@ -54,6 +56,9 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -68,6 +73,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            apiResource.Updated = DateTime.UtcNow;
             var apiSecret = await _context.ApiSecrets.FirstOrDefaultAsync(x => x.Id == secretId && x.ApiResourceId == apiResource.Id);
             if (apiSecret == null)
             {
@@ -77,6 +83,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

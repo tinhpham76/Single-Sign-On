@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,11 +33,12 @@ namespace SSO.Backend.Controllers.Api
             return Ok(apiClaimsViewModel);
         }
 
-        //Post new api claim for api resource with id
+        //Post new api claim for api with id
         [HttpPost("{id}/apiClaims")]
         public async Task<IActionResult> PostApiClaim(int id, [FromBody]ApiClaimRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
+            apiResource.Updated = DateTime.UtcNow;
             var apiClaim = await _context.ApiClaims.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
             var apiClaimRequest = new ApiResourceClaim()
             {
@@ -44,15 +46,18 @@ namespace SSO.Backend.Controllers.Api
                 ApiResourceId = request.ApiResourceId
             };
             _context.ApiClaims.Add(apiClaimRequest);
+            var update = DateTime.UtcNow;
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
         }
 
-        //Delete api claim for api claim with api id
+        //Delete api claim for api with api id
         [HttpDelete("{id}/apiClaims/{claimId}")]
         public async Task<IActionResult> DeleteApiClaim(int id, int claimId)
         {
@@ -61,6 +66,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            apiResource.Updated = DateTime.UtcNow;
             var apiClaim = await _context.ApiClaims.FirstOrDefaultAsync(x => x.Id == claimId && x.ApiResourceId == apiResource.Id);
             if (apiClaim == null)
             {
@@ -70,6 +76,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

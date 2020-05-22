@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientScopes
         //Get Scope for client with client id
         [HttpGet("{clientId}/scopes")]
-        public async Task<IActionResult> GetClientScope(string clientId)
+        public async Task<IActionResult> GetClientScopes(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -22,14 +23,14 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientScopes.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientScopeViewModel = query.Select(x => new ClientScopeViewModel()
+            var clientScopesViewModel = query.Select(x => new ClientScopesViewModel()
             {
                 Id = x.Id,
                 Scope = x.Scope,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientScopeViewModel);
+            return Ok(clientScopesViewModel);
         }
 
         //Post new Scope for client with client id
@@ -37,6 +38,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientScope(string clientId, [FromBody]ClientScopeRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientScopeRequest = new ClientScope()
             {
                 Scope = request.Scope,
@@ -46,6 +48,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -60,6 +64,7 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientScope == null)
             {
@@ -69,6 +74,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

@@ -1,4 +1,4 @@
-﻿namespace SSO.Service.RequestModel.IdentityResource
+﻿namespace SSO.Services.RequestModel.Identity
 {
     public class IdentityResourceQuickRequest
     {

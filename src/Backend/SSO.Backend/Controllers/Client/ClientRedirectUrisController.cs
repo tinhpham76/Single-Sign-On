@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace SSO.Backend.Controllers.Client
         #region ClientRedirectUris
         //Get Redirect Uri for client with client id
         [HttpGet("{clientId}/redirectUris")]
-        public async Task<IActionResult> GetClientRedirectUri(string clientId)
+        public async Task<IActionResult> GetClientRedirectUris(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -22,14 +23,14 @@ namespace SSO.Backend.Controllers.Client
             }
             var query = _context.ClientRedirectUris.AsQueryable();
             query = query.Where(x => x.ClientId == client.Id);
-            var clientRedirectUriViewModel = query.Select(x => new ClientRedirectUriViewModel()
+            var clientRedirectUrisViewModel = query.Select(x => new ClientRedirectUrisViewModel()
             {
                 Id = x.Id,
                 RedirectUri = x.RedirectUri,
                 ClientId = x.ClientId
             });
 
-            return Ok(clientRedirectUriViewModel);
+            return Ok(clientRedirectUrisViewModel);
         }
 
         //Post new Redirect Uri for client with client id
@@ -37,6 +38,7 @@ namespace SSO.Backend.Controllers.Client
         public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody]ClientRedirectUriRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            client.Updated = DateTime.UtcNow;
             var clientRedirectUriRequest = new ClientRedirectUri()
             {
                 RedirectUri = request.RedirectUri,
@@ -46,6 +48,8 @@ namespace SSO.Backend.Controllers.Client
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -60,9 +64,12 @@ namespace SSO.Backend.Controllers.Client
             {
                 return NotFound();
             }
+            client.Updated = DateTime.UtcNow;
             var clientRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(x => x.Id == id && x.ClientId == client.Id);
             if (clientRedirectUri == null)
             {
+                _context.Clients.Update(client);
+                await _context.SaveChangesAsync();
                 return NotFound();
             }
             _context.ClientRedirectUris.Remove(clientRedirectUri);

@@ -1,6 +1,6 @@
-﻿namespace SSO.Services.ViewModel.IdentityResource
+﻿namespace SSO.Services.ViewModel.Identity
 {
-    public class IdentityResourceQuickView
+    public class IdentityResourcesQuickView
     {
         public bool Enable { get; set; }
         public string Name { get; set; }

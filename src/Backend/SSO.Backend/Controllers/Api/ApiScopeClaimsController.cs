@@ -1,8 +1,9 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            var scopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.ApiScopeId == apiScope.Id);
+            if (scopeClaim == null)
+                return NotFound();
             var query = _context.ApiScopeClaims.AsQueryable();
             query = query.Where(x => x.ApiScopeId == apiScope.Id);
             var apiScopeClaimsViewModel = query.Select(x => new ApiScopeClaimsViewModel()
@@ -38,6 +42,7 @@ namespace SSO.Backend.Controllers.Api
         public async Task<IActionResult> PostApiProperty(int id, int scopeId, [FromBody]ApiScopeClaimRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
+            apiResource.Updated = DateTime.UtcNow;
             var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
             var apiScopeClaimRequest = new ApiScopeClaim()
             {
@@ -48,6 +53,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return NoContent();
             }
             return BadRequest();
@@ -63,6 +70,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
+            apiResource.Updated = DateTime.UtcNow;
             var apiScopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.Id == scopeClaimsId && x.ApiScopeId == scopeId);
             if (apiScopeClaim == null)
             {
@@ -72,6 +80,8 @@ namespace SSO.Backend.Controllers.Api
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
+                _context.ApiResources.Update(apiResource);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             return BadRequest();

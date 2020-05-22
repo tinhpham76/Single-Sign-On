@@ -5,7 +5,7 @@ using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
-using SSO.Services.RequestModel.ApiResource;
+using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.ApiResource;
 using System;
 using System.Linq;
@@ -30,14 +30,14 @@ namespace SSO.Backend.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetApiResources()
         {
-            var apiResource = await _context.ApiResources.Select(x => new ApiResourceQuickView()
+            var apiResources = await _context.ApiResources.Select(x => new ApiResourcesQuickView()
             {
                 Id = x.Id,
                 Name = x.Name,
                 DisplayName = x.DisplayName,
                 Description = x.Description
             }).ToListAsync();
-            return Ok(apiResource);
+            return Ok(apiResources);
         }
 
         //Get Api Resource detail
@@ -75,7 +75,8 @@ namespace SSO.Backend.Controllers.Api
             {
                 Name = request.Name,
                 DisplayName = request.DisplayName,
-                Description = request.Description
+                Description = request.Description,
+                Created = DateTime.UtcNow
             };
             _context.ApiResources.Add(apiResourceRequest);
             var result = await _context.SaveChangesAsync();
@@ -127,8 +128,6 @@ namespace SSO.Backend.Controllers.Api
             }
             return BadRequest();
         }
-
-
 
         #endregion
     }
