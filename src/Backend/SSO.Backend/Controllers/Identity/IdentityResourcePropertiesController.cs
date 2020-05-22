@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.IdentityResource;
 using SSO.Services.ViewModel.IdentityResource;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Identity
-{    
+{
     public partial class IdentityResourcesController
     {
         #region IdentityResourceProperties

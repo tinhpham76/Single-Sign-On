@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SSO.Services.ViewModel.IdentityResource
 {
@@ -13,7 +11,7 @@ namespace SSO.Services.ViewModel.IdentityResource
         public string Description { get; set; }
         public bool Required { get; set; }
         public bool Emphasize { get; set; }
-        public bool ShowInDiscoveryDocument { get; set; }        
+        public bool ShowInDiscoveryDocument { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public bool NonEditable { get; set; }

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.ApiResource;
 using SSO.Services.ViewModel.ApiResource;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
-{    
+{
     public partial class ApiResourcesController
     {
         #region ApiProperties
@@ -29,7 +26,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 Id = x.Id,
                 Key = x.Key,
-                Value =x.Value,
+                Value = x.Value,
                 ApiResourceId = x.ApiResourceId
             });
 
@@ -44,9 +41,9 @@ namespace SSO.Backend.Controllers.Api
             var apiProperty = await _context.ApiProperties.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
             var apiResourceRequest = new ApiResourceProperty()
             {
-               Key = request.Key,
-               Value = request.Value,
-               ApiResourceId =request.ApiResourceId
+                Key = request.Key,
+                Value = request.Value,
+                ApiResourceId = request.ApiResourceId
             };
             _context.ApiProperties.Add(apiResourceRequest);
             var result = await _context.SaveChangesAsync();

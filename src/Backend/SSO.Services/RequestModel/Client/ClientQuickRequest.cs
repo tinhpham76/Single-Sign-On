@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SSO.Service.RequestModel.Client
+﻿namespace SSO.Service.RequestModel.Client
 {
     public class ClientQuickRequest
     {
@@ -11,6 +6,6 @@ namespace SSO.Service.RequestModel.Client
         public string ClientName { get; set; }
         public string Description { get; set; }
         public string ClientUri { get; set; }
-        public string LogoUri { get; set; }        
+        public string LogoUri { get; set; }
     }
 }

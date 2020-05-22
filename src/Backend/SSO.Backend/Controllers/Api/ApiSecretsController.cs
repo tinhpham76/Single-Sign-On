@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.ApiResource;
 using SSO.Services.ViewModel.ApiResource;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
-{   
+{
     public partial class ApiResourcesController
     {
         #region ApiSecrets
@@ -43,7 +40,7 @@ namespace SSO.Backend.Controllers.Api
         [HttpPost("{id}/apiSecrets")]
         public async Task<IActionResult> PostApiSecret(int id, [FromBody]ApiSecretRequest request)
         {
-            var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);           
+            var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
             var apiSecret = new ApiSecret()
             {
                 Description = request.Description,

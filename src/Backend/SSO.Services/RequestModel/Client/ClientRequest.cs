@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SSO.Services.RequestModel.Client
 {
@@ -29,7 +27,7 @@ namespace SSO.Services.RequestModel.Client
         public string UserCodeType { get; set; }
 
         public int IdentityTokenLifetime { get; set; } = 300;
-        
+
         public bool AllowOfflineAccess { get; set; }
         public int Id { get; set; }
         public bool Enabled { get; set; } = true;
@@ -44,11 +42,11 @@ namespace SSO.Services.RequestModel.Client
         public bool RequireConsent { get; set; } = true;
         public bool AllowRememberConsent { get; set; } = true;
         public bool AlwaysIncludeUserClaimsInIdToken { get; set; }
-        
+
         public bool RequirePkce { get; set; }
         public bool AllowPlainTextPkce { get; set; }
         public bool AllowAccessTokensViaBrowser { get; set; }
-       
+
         public string FrontChannelLogoutUri { get; set; }
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
         public string BackChannelLogoutUri { get; set; }

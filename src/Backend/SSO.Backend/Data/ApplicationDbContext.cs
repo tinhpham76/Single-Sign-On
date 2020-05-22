@@ -1,5 +1,4 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

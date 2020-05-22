@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SSO.Services.RequestModel.ApiResource
+﻿namespace SSO.Services.RequestModel.ApiResource
 {
     public class ApiClaimRequest
     {

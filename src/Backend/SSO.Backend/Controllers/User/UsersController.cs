@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data.Entities;
@@ -9,6 +6,9 @@ using SSO.Services;
 using SSO.Services.Constants;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers
 {

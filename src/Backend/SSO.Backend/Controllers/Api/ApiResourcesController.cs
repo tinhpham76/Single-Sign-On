@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
 {
-    
+
     public partial class ApiResourcesController : BaseController
     {
         #region ApiResource
@@ -25,7 +25,7 @@ namespace SSO.Backend.Controllers.Api
             _configurationDbContext = configurationDbContext;
             _context = context;
         }
-        
+
         //Get Api Resource basic info
         [HttpGet]
         public async Task<IActionResult> GetApiResources()
@@ -51,14 +51,14 @@ namespace SSO.Backend.Controllers.Api
             }
             var apiResourceViewModel = new ApiResourceViewModel()
             {
-               Id = apiResource.Id,
-               Enabled = apiResource.Enabled,
-               Name = apiResource.Name,
-               DisplayName = apiResource.DisplayName,
-               Description = apiResource.Description,
-               Created = apiResource.Created,
-               Updated = apiResource.Updated,
-               LastAccessed = apiResource.LastAccessed
+                Id = apiResource.Id,
+                Enabled = apiResource.Enabled,
+                Name = apiResource.Name,
+                DisplayName = apiResource.DisplayName,
+                Description = apiResource.Description,
+                Created = apiResource.Created,
+                Updated = apiResource.Updated,
+                LastAccessed = apiResource.LastAccessed
             };
             return Ok(apiResourceViewModel);
         }
@@ -68,7 +68,7 @@ namespace SSO.Backend.Controllers.Api
         [HttpPost]
         public async Task<IActionResult> PostApiResource([FromBody]ApiResourceQuickRequest request)
         {
-            var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x=>x.Name == request.Name);
+            var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Name == request.Name);
             if (apiResource != null)
                 return BadRequest($"Api Resource {request.Name} already exist");
             var apiResourceRequest = new ApiResource()

@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.DbContexts;
+﻿using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Data;
 using SSO.Service.RequestModel.IdentityResource;
 using SSO.Services.RequestModel.IdentityResource;
 using SSO.Services.ViewModel.IdentityResource;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Identity
 {
@@ -33,7 +30,8 @@ namespace SSO.Backend.Controllers.Identity
         public async Task<IActionResult> GetIdentityResources()
         {
             var identityResources = _configurationDbContext.IdentityResources;
-            var identityResourcesQuickView = await identityResources.Select(x => new IdentityResourceQuickView() {
+            var identityResourcesQuickView = await identityResources.Select(x => new IdentityResourceQuickView()
+            {
                 Enable = x.Enabled,
                 Name = x.Name,
                 DisplayName = x.DisplayName
@@ -46,7 +44,7 @@ namespace SSO.Backend.Controllers.Identity
         public async Task<IActionResult> GetDetailIdentityResource(int id)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Id == id);
-            if(identityResource == null)
+            if (identityResource == null)
             {
                 return NotFound();
             }
@@ -72,20 +70,20 @@ namespace SSO.Backend.Controllers.Identity
         public async Task<IActionResult> PostIdentityResource([FromBody]IdentityResourceQuickRequest request)
         {
             var identityResource = await _context.IdentityResources.FirstOrDefaultAsync(x => x.Name == request.Name);
-            if(identityResource != null)
+            if (identityResource != null)
             {
                 return BadRequest($"Identity Resource with name {request.Name} already exist");
             }
             var identityResourceRequest = new IdentityResource()
             {
-               
+
                 Name = request.Name,
                 DisplayName = request.DisplayName,
                 Description = request.Description,
             };
             _configurationDbContext.IdentityResources.Add(identityResourceRequest.ToEntity());
             var result = await _configurationDbContext.SaveChangesAsync();
-            if(result > 0)
+            if (result > 0)
             {
                 return Ok();
             }
@@ -96,7 +94,7 @@ namespace SSO.Backend.Controllers.Identity
         public async Task<IActionResult> PutIdentityResource(int id, [FromBody]IdentityResourceRequest request)
         {
             var identityResource = await _context.IdentityResources.FirstOrDefaultAsync(x => x.Id == id);
-            if(identityResource == null)
+            if (identityResource == null)
             {
                 return NotFound();
             }
@@ -135,7 +133,7 @@ namespace SSO.Backend.Controllers.Identity
             }
             return BadRequest();
         }
-        
+
 
         #endregion
     }

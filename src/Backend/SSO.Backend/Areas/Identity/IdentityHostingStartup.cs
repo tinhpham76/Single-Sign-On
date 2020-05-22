@@ -1,12 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using SSO.Backend.Data;
-using SSO.Backend.Data.Entities;
+﻿using Microsoft.AspNetCore.Hosting;
 
 [assembly: HostingStartup(typeof(SSO.Backend.Areas.Identity.IdentityHostingStartup))]
 namespace SSO.Backend.Areas.Identity
@@ -15,7 +7,8 @@ namespace SSO.Backend.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
+            builder.ConfigureServices((context, services) =>
+            {
             });
         }
     }

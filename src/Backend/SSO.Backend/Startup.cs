@@ -57,17 +57,17 @@ namespace SSO.Backend
                     builder.UseSqlServer(connectionString,
                     sql => sql.MigrationsAssembly(migrationsAssembly));
                 })
-                 // this adds the operational data from DB (codes, tokens, consents)
+                // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                  {
-                    options.ConfigureDbContext = builder =>
-                    builder.UseSqlServer(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                     options.ConfigureDbContext = builder =>
+                     builder.UseSqlServer(connectionString,
+                     sql => sql.MigrationsAssembly(migrationsAssembly));
 
-                    // this enables automatic token cleanup. this is optional.
-                    options.EnableTokenCleanup = true;
-                    options.TokenCleanupInterval = 30;
-                    });
+                     // this enables automatic token cleanup. this is optional.
+                     options.EnableTokenCleanup = true;
+                     options.TokenCleanupInterval = 30;
+                 });
 
             services.AddCors(options =>
             {
@@ -201,7 +201,7 @@ namespace SSO.Backend
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();               
+                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             }
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
@@ -236,9 +236,9 @@ namespace SSO.Backend
                     }
                     context.SaveChanges();
                 }
-            }            
+            }
         }
 
-        
+
     }
 }

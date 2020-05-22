@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.ApiResource;
 using SSO.Services.ViewModel.ApiResource;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
-{   
+{
     public partial class ApiResourcesController
     {
         #region ApiScopeCliams
@@ -20,10 +17,10 @@ namespace SSO.Backend.Controllers.Api
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
             var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.Id == scopeId);
-            if ((apiResource == null && apiScope ==null) && (apiResource != null && apiScope == null))
+            if ((apiResource == null && apiScope == null) && (apiResource != null && apiScope == null))
             {
-                return NotFound();                
-            }            
+                return NotFound();
+            }
             var query = _context.ApiScopeClaims.AsQueryable();
             query = query.Where(x => x.ApiScopeId == apiScope.Id);
             var apiScopeClaimsViewModel = query.Select(x => new ApiScopeClaimsViewModel()
@@ -41,7 +38,7 @@ namespace SSO.Backend.Controllers.Api
         public async Task<IActionResult> PostApiProperty(int id, int scopeId, [FromBody]ApiScopeClaimRequest request)
         {
             var apiResource = await _context.ApiResources.FirstOrDefaultAsync(x => x.Id == id);
-            var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);            
+            var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
             var apiScopeClaimRequest = new ApiScopeClaim()
             {
                 Type = request.Type,
@@ -66,7 +63,7 @@ namespace SSO.Backend.Controllers.Api
             {
                 return NotFound();
             }
-            var apiScopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.Id == scopeClaimsId && x.ApiScopeId ==scopeId);
+            var apiScopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.Id == scopeClaimsId && x.ApiScopeId == scopeId);
             if (apiScopeClaim == null)
             {
                 return NotFound();
