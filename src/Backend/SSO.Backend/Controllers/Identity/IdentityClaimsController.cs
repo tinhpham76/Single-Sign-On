@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.IdentityResource;
 using SSO.Services.ViewModel.IdentityResource;
 
-namespace SSO.Backend.Controllers.IdentityResources
+namespace SSO.Backend.Controllers.Identity
 {
     public partial class IdentityResourcesController 
     {

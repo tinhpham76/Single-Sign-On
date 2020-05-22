@@ -26,6 +26,14 @@ namespace SSO.Backend.Data
         //DbSet table Identity Resource
         public DbSet<IdentityResource> IdentityResources { get; set; }
         public DbSet<IdentityClaim> IdentityClaims { get; set; }
+        public DbSet<IdentityResourceProperty> IdentityProperties { get; set; }
+        //DbSet table Api Resource
+        public DbSet<ApiResource> ApiResources { get; set; }
+        public DbSet<ApiResourceClaim> ApiClaims { get; set; }
+        public DbSet<ApiResourceProperty> ApiProperties { get; set; }
+        public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
+        public DbSet<ApiScope> ApiScopes { get; set; }
+        public DbSet<ApiSecret> ApiSecrets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
