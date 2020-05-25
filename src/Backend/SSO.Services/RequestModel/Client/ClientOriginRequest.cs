@@ -1,10 +1,7 @@
 ﻿namespace SSO.Services.RequestModel.Client
 {
-    public class ClientCorsOriginRequest
+    public class ClientOriginRequest
     {
-
         public string Origin { get; set; }
-        public string ClientId { get; set; }
-
     }
 }

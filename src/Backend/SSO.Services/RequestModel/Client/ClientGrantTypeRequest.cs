@@ -3,6 +3,5 @@
     public class ClientGrantTypeRequest
     {
         public string GrantType { get; set; }
-        public string ClientId { get; set; }
     }
 }
