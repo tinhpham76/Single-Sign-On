@@ -21,6 +21,7 @@ namespace SSO.Backend.Data
         public DbSet<ApiSecret> ApiSecrets { get; set; }
         public DbSet<ApiScope> ApiScopes { get; set; }
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
+        public DbSet<IdentityClaim> IdentityClaims { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
