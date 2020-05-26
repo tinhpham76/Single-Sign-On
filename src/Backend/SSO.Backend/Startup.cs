@@ -97,7 +97,9 @@ namespace SSO.Backend
             });
 
             services.AddControllersWithViews()
-                  .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ClientCreateRequestValidator>());
+                  .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ClientCreateRequestValidator>())
+                  .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddAuthentication()
                .AddLocalApi("Bearer", option =>

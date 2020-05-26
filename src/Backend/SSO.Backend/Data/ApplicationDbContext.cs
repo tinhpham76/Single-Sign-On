@@ -17,6 +17,10 @@ namespace SSO.Backend.Data
         public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
         public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
+        public DbSet<ApiResourceClaim> ApiClaims { get; set; }
+        public DbSet<ApiSecret> ApiSecrets { get; set; }
+        public DbSet<ApiScope> ApiScopes { get; set; }
+        public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

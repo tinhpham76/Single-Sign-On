@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace SSO.Services.ViewModel.Client
 {
@@ -6,7 +8,7 @@ namespace SSO.Services.ViewModel.Client
     {
         public bool Enabled { get; set; }
         public List<string> AllowedScopes { get; set; }
-        public List<string> RedirectUris { get; set; }
+        public List<string> RedirectUris { get; set; }        
         public List<string> AllowedGrantTypes { get; set; }
         public bool RequireConsent { get; set; }
         public bool AllowRememberConsent { get; set; }
