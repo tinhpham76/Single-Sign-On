@@ -7,6 +7,7 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Identity;
 using SSO.Services.ViewModel.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -119,6 +120,7 @@ namespace SSO.Backend.Controllers.Identity
             identityResource.ShowInDiscoveryDocument = request.ShowInDiscoveryDocument;
             identityResource.Required = request.Required;
             identityResource.Emphasize = request.Emphasize;
+            identityResource.Updated = DateTime.UtcNow;
 
             _configurationDbContext.IdentityResources.Update(identityResource);
             var result = await _configurationDbContext.SaveChangesAsync();

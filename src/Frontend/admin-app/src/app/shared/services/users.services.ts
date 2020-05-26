@@ -19,4 +19,9 @@ export class UserService extends BaseService {
         return this.http.get<User[]>(`${environment.apiUrl}/api/users`, httpOptions)
             .pipe(catchError(this.handleError));
     }
+
+    getUserRoles(userId: string) {
+        return this.http.get<string[]>(`${environment.apiUrl}/api/users/${userId}/roles`)
+            .pipe(catchError(this.handleError));
+    }
 }

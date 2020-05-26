@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SSO.Services.ViewModel
+namespace SSO.Services.ViewModel.User
 {
     public class UserViewModel
     {

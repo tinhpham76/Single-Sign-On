@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,7 +57,12 @@ namespace SSO.Backend.Controllers.Api
                     _context.ApiScopes.Add(apiScopeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If api resource scope not null, Check api resource scope name on table with request scope name
@@ -75,10 +81,14 @@ namespace SSO.Backend.Controllers.Api
                         ShowInDiscoveryDocument = request.ShowInDiscoveryDocument,
                         ApiResourceId = apiResource.Id
                     };
-                    _context.ApiScopes.Add(apiScopeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -98,7 +108,12 @@ namespace SSO.Backend.Controllers.Api
             _context.ApiScopes.Remove(apiScope);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                apiResource.Updated = DateTime.UtcNow;
+                _configurationDbContext.ApiResources.Update(apiResource);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
 
         }

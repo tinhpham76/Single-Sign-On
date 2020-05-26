@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Clients
@@ -58,8 +59,7 @@ namespace SSO.Backend.Controllers.Clients
             client.AlwaysIncludeUserClaimsInIdToken = request.AlwaysIncludeUserClaimsInIdToken;
             client.PairWiseSubjectSalt = request.PairWiseSubjectSalt;
             client.ClientClaimsPrefix = request.ClientClaimsPrefix;
-
-
+            client.Updated = DateTime.UtcNow;
 
             _configurationDbContext.Update(client);
             var result = await _configurationDbContext.SaveChangesAsync();

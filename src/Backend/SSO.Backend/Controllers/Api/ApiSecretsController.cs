@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,7 +53,12 @@ namespace SSO.Backend.Controllers.Api
                     _context.ApiSecrets.Add(apiSecretRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 else if (request.HasType == "sha512")
@@ -68,7 +74,12 @@ namespace SSO.Backend.Controllers.Api
                     _context.ApiSecrets.Add(apiSecretRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -88,7 +99,12 @@ namespace SSO.Backend.Controllers.Api
             _context.ApiSecrets.Remove(apiSecret);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                apiResource.Updated = DateTime.UtcNow;
+                _configurationDbContext.ApiResources.Update(apiResource);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
 
         }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -74,7 +75,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientPostLogoutRedirectUris.Add(clientPostClientRedirectUriRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If Client LogoutRedirectUri not null, Check Client LogoutRedirectUri on table with request LogoutRedirectUri
@@ -91,7 +97,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientPostLogoutRedirectUris.Add(clientPostClientRedirectUriRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -111,7 +122,12 @@ namespace SSO.Backend.Controllers.Clients
             _context.ClientPostLogoutRedirectUris.Remove(clientPostLogoutRedirectUri);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
         }
         #endregion

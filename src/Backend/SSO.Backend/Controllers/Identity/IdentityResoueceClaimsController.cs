@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Identity;
 using SSO.Services.ViewModel.Identity;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,7 +46,12 @@ namespace SSO.Backend.Controllers.Identity
                     _context.IdentityClaims.Add(identityClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        identityResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.IdentityResources.Update(identityResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 else if (identityClaim != null)
@@ -64,7 +70,12 @@ namespace SSO.Backend.Controllers.Identity
                         _context.IdentityClaims.Add(identityClaimRequest);
                         var result = await _context.SaveChangesAsync();
                         if (result > 0)
+                        {
+                            identityResource.Updated = DateTime.UtcNow;
+                            _configurationDbContext.IdentityResources.Update(identityResource);
+                            await _configurationDbContext.SaveChangesAsync();
                             return Ok();
+                        }
                         return BadRequest();
                     }
                 }

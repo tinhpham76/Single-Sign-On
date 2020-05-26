@@ -154,7 +154,7 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delele client
-        [HttpDelete("clientId")]
+        [HttpDelete("{clientId}")]
         public async Task<IActionResult> DeleteClient(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

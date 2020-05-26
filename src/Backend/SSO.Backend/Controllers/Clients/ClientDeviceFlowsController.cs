@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Clients
@@ -34,6 +35,7 @@ namespace SSO.Backend.Controllers.Clients
                 return NotFound();
             client.UserCodeType = request.UserCodeType;
             client.DeviceCodeLifetime = client.DeviceCodeLifetime;
+            client.Updated = DateTime.UtcNow;
             _configurationDbContext.Update(client);
             var result = await _configurationDbContext.SaveChangesAsync();
             if (result > 0)

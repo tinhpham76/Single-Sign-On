@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,7 +46,12 @@ namespace SSO.Backend.Controllers.Api
                     _context.ApiClaims.Add(apiClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If api claim not null, Check api claim type on table with request claim type
@@ -62,7 +68,12 @@ namespace SSO.Backend.Controllers.Api
                     _context.ApiClaims.Add(apiClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        apiResource.Updated = DateTime.UtcNow;
+                        _configurationDbContext.ApiResources.Update(apiResource);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -82,7 +93,12 @@ namespace SSO.Backend.Controllers.Api
             _context.ApiClaims.Remove(apiClaim);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                apiResource.Updated = DateTime.UtcNow;
+                _configurationDbContext.ApiResources.Update(apiResource);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
 
         }

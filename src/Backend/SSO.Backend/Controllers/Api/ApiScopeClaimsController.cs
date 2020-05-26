@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,6 +45,16 @@ namespace SSO.Backend.Controllers.Api
                             Type = request.Type,
                             ApiScopeId = apiScope.Id
                         };
+                        _context.ApiScopeClaims.Add(apiScopeClaimRequest);
+                        var result = await _context.SaveChangesAsync();
+                        if (result > 0)
+                        {
+                            apiResource.Updated = DateTime.UtcNow;
+                            _configurationDbContext.ApiResources.Update(apiResource);
+                            await _configurationDbContext.SaveChangesAsync();
+                            return Ok();
+                        }
+                        return BadRequest();
                     }
                     else if (apiScopeClaim != null)
                     {
@@ -58,6 +69,16 @@ namespace SSO.Backend.Controllers.Api
                                 Type = request.Type,
                                 ApiScopeId = apiScope.Id
                             };
+                            _context.ApiScopeClaims.Add(apiScopeClaimRequest);
+                            var result = await _context.SaveChangesAsync();
+                            if (result > 0)
+                            {
+                                apiResource.Updated = DateTime.UtcNow;
+                                _configurationDbContext.ApiResources.Update(apiResource);
+                                await _configurationDbContext.SaveChangesAsync();
+                                return Ok();
+                            }
+                            return BadRequest();
                         }
                     }
                 }

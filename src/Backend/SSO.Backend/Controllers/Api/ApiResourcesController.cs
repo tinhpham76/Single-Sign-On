@@ -9,6 +9,7 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -97,8 +98,6 @@ namespace SSO.Backend.Controllers.Api
                 DisplayName = request.DisplayName,
                 Description = request.Description,
                 Enabled = request.Enabled
-
-
             };
             _configurationDbContext.ApiResources.Add(apiResourceRequest.ToEntity());
             var result = await _configurationDbContext.SaveChangesAsync();
@@ -119,6 +118,7 @@ namespace SSO.Backend.Controllers.Api
             apiResource.DisplayName = request.DisplayName;
             apiResource.Description = request.Description;
             apiResource.Enabled = request.Enabled;
+            apiResource.Updated = DateTime.UtcNow;
             _configurationDbContext.ApiResources.Update(apiResource);
             var result = await _configurationDbContext.SaveChangesAsync();
             if (result > 0)

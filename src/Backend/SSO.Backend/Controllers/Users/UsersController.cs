@@ -5,12 +5,12 @@ using SSO.Backend.Data.Entities;
 using SSO.Services;
 using SSO.Services.Constants;
 using SSO.Services.RequestModel.User;
-using SSO.Services.ViewModel;
+using SSO.Services.ViewModel.User;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SSO.Backend.Controllers
+namespace SSO.Backend.Controllers.Users
 {
     public class UsersController : BaseController
     {
@@ -196,6 +196,55 @@ namespace SSO.Backend.Controllers
             return BadRequest();
 
         }
+
+        [HttpGet("{userId}/roles")]
+        public async Task<IActionResult> GetUserRoles(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(roles);
+        }
+
+        [HttpPost("{userId}/roles")]
+        public async Task<IActionResult> PostRolesToUserUser(string userId, [FromBody] RoleAssignRequest request)
+        {
+            if (request.RoleNames?.Length == 0)
+            {
+                return BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+            var result = await _userManager.AddToRolesAsync(user, request.RoleNames);
+            if (result.Succeeded)
+                return Ok();
+
+            return BadRequest();
+        }
+
+        [HttpDelete("{userId}/roles")]
+        public async Task<IActionResult> RemoveRolesFromUser(string userId, [FromQuery] RoleAssignRequest request)
+        {
+            if (request.RoleNames?.Length == 0)
+            {
+                return BadRequest();
+            }
+            if (request.RoleNames.Length == 1 && request.RoleNames[0] == Constants.SystemConstants.Roles.Admin)
+            {
+                return base.BadRequest();
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+            var result = await _userManager.RemoveFromRolesAsync(user, request.RoleNames);
+            if (result.Succeeded)
+                return Ok();
+
+            return BadRequest();
+        }
+
         #endregion
     }
 }

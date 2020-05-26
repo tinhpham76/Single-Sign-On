@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,6 +53,7 @@ namespace SSO.Backend.Controllers.Clients
             client.RequirePkce = request.RequirePkce;
             client.AllowPlainTextPkce = request.AllowPlainTextPkce;
             client.AllowAccessTokensViaBrowser = request.AllowAccessTokensViaBrowser;
+            client.Updated = DateTime.UtcNow;
 
             _configurationDbContext.Update(client);
             var result = await _configurationDbContext.SaveChangesAsync();
@@ -81,7 +83,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientScopes.Add(clientScopeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If Client Scope not null, Check Client Scope on table with request Scope
@@ -98,7 +105,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientScopes.Add(clientScopeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -118,7 +130,12 @@ namespace SSO.Backend.Controllers.Clients
             _context.ClientScopes.Remove(clientScope);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
         }
 
@@ -143,7 +160,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientRedirectUris.Add(clientRedirectUriRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If Client RedirectUris not null, Check Client RedirectUris on table with request RedirectUris
@@ -160,7 +182,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientRedirectUris.Add(clientRedirectUriRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -180,7 +207,12 @@ namespace SSO.Backend.Controllers.Clients
             _context.ClientRedirectUris.Remove(clienRedirectUri);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
         }
 
@@ -205,7 +237,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientGrantTypes.Add(clientGrantTypeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If Client GrantType not null, Check Client GrantType on table with request GrantType
@@ -222,7 +259,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientGrantTypes.Add(clientGrantTypeRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -242,7 +284,12 @@ namespace SSO.Backend.Controllers.Clients
             _context.ClientGrantTypes.Remove(clientGrantType);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
         }
         #endregion

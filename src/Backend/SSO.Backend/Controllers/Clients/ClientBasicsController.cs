@@ -73,7 +73,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientCorsOrigins.Add(clientOriginRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
                 // If Client Origin not null, Check Client Origin on table with request Origin
@@ -90,7 +95,12 @@ namespace SSO.Backend.Controllers.Clients
                     _context.ClientCorsOrigins.Add(clientOriginRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
                         return Ok();
+                    }
                     return BadRequest();
                 }
             }
@@ -110,7 +120,12 @@ namespace SSO.Backend.Controllers.Clients
             _context.ClientCorsOrigins.Remove(clientOrigin);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
                 return Ok();
+            }
             return BadRequest();
         }
 
