@@ -38,11 +38,11 @@ namespace SSO.Backend
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                    .UseSerilog()
+            Host.CreateDefaultBuilder(args)                    
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         webBuilder.UseStartup<Startup>();
-                    });
+                    }).UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                .ReadFrom.Configuration(hostingContext.Configuration));
     }
 }
