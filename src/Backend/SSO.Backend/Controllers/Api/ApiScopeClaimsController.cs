@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
 using System;
@@ -28,6 +30,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api scope claim
         [HttpPost("{apiResourceName}/apiScopes/{scopeName}/scopeClaims")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiScopeClaim(string apiResourceName, string scopeName, [FromBody]ApiScopeClaimRequest request)
         {
             //Check Api Resource

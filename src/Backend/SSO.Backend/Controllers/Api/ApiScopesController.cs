@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
 using System;
@@ -33,6 +35,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api scope
         [HttpPost("{apiResourceName}/apiScopes")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiScope(string apiResourceName, [FromBody]ApiScopeRequest request)
         {
             //Check api resource
@@ -97,6 +100,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api scope
         [HttpDelete("{apiResourceName}/apiScopes/{scopeName}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiScope(string apiResourceName, string scopeName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

@@ -5,6 +5,8 @@ using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Api;
@@ -87,6 +89,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post basic infor api resource
         [HttpPost]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiResource([FromBody]ApiResourceRequest request)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == request.Name);
@@ -109,6 +112,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Edit basic infor api resource
         [HttpPut("{apiResourceName}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutApiResourceBasic(string apiResourceName, [FromBody]ApiResourceRequest request)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -128,6 +132,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource
         [HttpDelete("{apiResourceName}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiResource(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

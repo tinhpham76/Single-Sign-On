@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
@@ -34,6 +36,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit authentication infor
         [HttpPut("{clientId}/authentications")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutGetClientAuthentication(string clientId, [FromBody]ClientAuthenticationRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -56,6 +59,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client LogoutRedirectUri for client
         [HttpPost("{clientId}/authentications/postLogoutRedirectUris")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClientPostClientRedirectUri(string clientId, [FromBody]ClientPostClientRedirectUriRequest request)
         {
             //Check Client
@@ -111,6 +115,7 @@ namespace SSO.Backend.Controllers.Clients
         }
         //Delete Client LogoutRedirectUris 
         [HttpDelete("{clientId}/authentications/postLogoutRedirectUris/{postLogoutRedirectUriId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClientPostLogoutRedirectUri(string clientId, int postLogoutRedirectUriId)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

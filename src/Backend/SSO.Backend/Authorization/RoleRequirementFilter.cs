@@ -1,11 +1,7 @@
-﻿using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SSO.Backend.Constants;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SSO.Backend.Authorization
 {
@@ -19,7 +15,7 @@ namespace SSO.Backend.Authorization
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var roleClaim = context.HttpContext.User.Claims.SingleOrDefault(x => x.Type == "role");
-            if(roleClaim != null)
+            if (roleClaim != null)
             {
                 var role = roleClaim.Value;
                 if (!role.Equals(_roleCode.ToString()))

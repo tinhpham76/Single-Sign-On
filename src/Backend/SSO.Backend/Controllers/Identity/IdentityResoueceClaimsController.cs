@@ -1,6 +1,8 @@
 ﻿using IdentityServer4.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Identity;
 using SSO.Services.ViewModel.Identity;
 using System;
@@ -30,6 +32,7 @@ namespace SSO.Backend.Controllers.Identity
 
         //Post identity claim
         [HttpPost("{identityResourceName}/identityClaims")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostIdentityClaim(string identityResourceName, [FromBody]IdentityClaimRequest request)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
@@ -86,6 +89,7 @@ namespace SSO.Backend.Controllers.Identity
 
         //Delete identity claim
         [HttpDelete("{identityResourceName}/identityClaims/{claimType}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiClaim(string identityResourceName, string claimType)
         {
             var identityResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);

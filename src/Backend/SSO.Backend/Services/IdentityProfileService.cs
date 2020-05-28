@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using SSO.Backend.Data;
 using SSO.Backend.Data.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -43,13 +42,13 @@ namespace SSO.Backend.Services
             var claims = principal.Claims.ToList();
             var roles = await _userManager.GetRolesAsync(user);
 
-            
+
             //Add more claims like this
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim("fullName", user.FirstName + " " + user.LastName));
             claims.Add(new Claim(ClaimTypes.Role, string.Join(";", roles)));
-            
+
 
             context.IssuedClaims = claims;
         }

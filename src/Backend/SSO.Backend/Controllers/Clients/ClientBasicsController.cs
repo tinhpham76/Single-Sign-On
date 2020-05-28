@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
@@ -33,6 +35,7 @@ namespace SSO.Backend.Controllers.Clients
         }
         //Edit basic infor
         [HttpPut("{clientId}/basics")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientBasicRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -54,6 +57,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client Origins for client
         [HttpPost("{clientId}/basics/origins")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClientOrigin(string clientId, [FromBody]ClientOriginRequest request)
         {
             //Check Client
@@ -109,6 +113,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client Origin 
         [HttpDelete("{clientId}/basics/origins/{originId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClientOrigin(string clientId, int originId)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

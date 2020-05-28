@@ -2,6 +2,8 @@
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
 using System;
@@ -33,6 +35,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api secret
         [HttpPost("{apiResourceName}/apiSecrets")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiSecret(string apiResourceName, [FromBody]ApiSecretRequest request)
         {
             //Check Api Resource
@@ -88,6 +91,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api claim
         [HttpDelete("{apiResourceName}/apiSecrets/{secretId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiSecret(string apiResourceName, int secretId)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
@@ -38,6 +40,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit setting infor
         [HttpPut("{clientId}/settings")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientSettingRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -64,6 +67,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client Scope for client
         [HttpPost("{clientId}/settings/scopes")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClientScopes(string clientId, [FromBody]ClientScopeRequest request)
         {
             //Check Client
@@ -119,6 +123,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client Scope 
         [HttpDelete("{clientId}/settings/scopes/{scopeId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClientScope(string clientId, int scopeId)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -141,6 +146,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client RedirectUris for client
         [HttpPost("{clientId}/settings/redirectUris")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody]ClientRedirectUriRequest request)
         {
             //Check Client
@@ -196,6 +202,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client RedirectUris 
         [HttpDelete("{clientId}/settings/redirectUris/{redirectUriId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClienRedirectUri(string clientId, int redirectUriId)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -218,6 +225,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client GrantType for client
         [HttpPost("{clientId}/settings/grantTypes")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody]ClientGrantTypeRequest request)
         {
             //Check Client
@@ -273,6 +281,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client GrantType 
         [HttpDelete("{clientId}/settings/grantTypes/{grantTypeId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClientGrantType(string clientId, int grantTypeId)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

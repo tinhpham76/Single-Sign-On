@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
@@ -49,7 +50,6 @@ namespace SSO.Backend.Controllers.Users
 
         //Get all user info
         [HttpGet]
-        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> GetUsers()
         {
             var user = User.Identity.Name;
@@ -128,6 +128,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user wiht user id
         [HttpPut("{id}")]
+
         public async Task<IActionResult> PutUser(string id, [FromBody]UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -135,6 +136,9 @@ namespace SSO.Backend.Controllers.Users
             {
                 return NotFound();
             }
+            var userLogin = User.Identity.GetSubjectId();
+            if (userLogin != user.Id)
+                return BadRequest();
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.Dob = DateTime.Parse(request.Dob);
@@ -151,9 +155,11 @@ namespace SSO.Backend.Controllers.Users
         [HttpPut("{id}/change-password")]
         public async Task<IActionResult> PutUserPassword(string id, [FromBody]UserPasswordChangeUpdateRequest request)
         {
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound($"Cannot found user with id: {id}");
+
 
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 
@@ -166,6 +172,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Delete user with user id
         [HttpDelete("{id}")]
+
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -173,6 +180,9 @@ namespace SSO.Backend.Controllers.Users
             {
                 return NotFound();
             }
+            var userLogin = User.Identity.GetSubjectId();
+            if (userLogin != user.Id)
+                return BadRequest();
             var adminUsers = await _userManager.GetUsersInRoleAsync(SystemConstants.Roles.Admin);
             var otherUsers = adminUsers.Where(x => x.Id != id).ToList();
             if (otherUsers.Count == 0)
@@ -201,6 +211,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpGet("{userId}/roles")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> GetUserRoles(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -211,6 +222,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPost("{userId}/roles")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostRolesToUserUser(string userId, [FromBody] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)
@@ -228,6 +240,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpDelete("{userId}/roles")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> RemoveRolesFromUser(string userId, [FromQuery] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)

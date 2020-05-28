@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.User;
@@ -72,6 +74,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPost]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostRole([FromBody]RoleRequest request)
         {
             var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Name == request.Name);
@@ -90,6 +93,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPut("{roleId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutRole(string roleId, [FromBody]RoleRequest request)
         {
             if (roleId != request.Id)
@@ -110,6 +114,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpDelete("{roleId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);

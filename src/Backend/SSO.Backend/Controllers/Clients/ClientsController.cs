@@ -5,6 +5,8 @@ using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Client;
@@ -73,6 +75,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post basic info client
         [HttpPost]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClient([FromBody]ClientQuickRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == request.ClientId);
@@ -155,6 +158,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delele client
         [HttpDelete("{clientId}")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteClient(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
@@ -39,6 +41,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit token infor
         [HttpPut("{clientId}/tokens")]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientTokenRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
