@@ -15,6 +15,7 @@ namespace SSO.Backend.Controllers.Api
         [HttpGet("{apiResourceName}/apiClaims")]
         public async Task<IActionResult> GetApiClaim(string apiResourceName)
         {
+           
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             var query = _context.ApiClaims.Where(x => x.ApiResourceId.Equals(apiResource.Id));
             var apiClaims = await query.Select(x => new ApiClaimsViewModel()

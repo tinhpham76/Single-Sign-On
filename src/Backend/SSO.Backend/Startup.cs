@@ -67,7 +67,8 @@ namespace SSO.Backend
                      // this enables automatic token cleanup. this is optional.
                      options.EnableTokenCleanup = true;
                      options.TokenCleanupInterval = 30;
-                 });
+                 })
+                .AddProfileService<IdentityProfileService>();
 
             services.AddCors(options =>
             {

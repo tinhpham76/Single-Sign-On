@@ -75,7 +75,7 @@ namespace SSO.Backend.Data
                 }, "!kAa36qDc");
                 if (result2.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync("admin");
+                    var user = await _userManager.FindByNameAsync("xdxg");
                     await _userManager.AddToRoleAsync(user, UserRoleName);
                 }
             }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SSO.Backend.Authorization;
+using SSO.Backend.Constants;
 using SSO.Backend.Data.Entities;
 using SSO.Services;
-using SSO.Services.Constants;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel.User;
 using System;
@@ -48,8 +49,10 @@ namespace SSO.Backend.Controllers.Users
 
         //Get all user info
         [HttpGet]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> GetUsers()
         {
+            var user = User.Identity.Name;
             var users = await _userManager.Users.Select(x => new UserViewModel()
             {
                 Id = x.Id,
