@@ -5,6 +5,7 @@ import { IdentityResourceRoutingModule } from './identity-resource-routing.modul
 
 
 
+
 @NgModule({
   declarations: [IdentityResourceComponent],
   imports: [

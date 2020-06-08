@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ClientComponent } from './client.component';
 
 const routes: Routes=[
-    {path:'', component: ClientComponent}
+    {path: '', loadChildren: ()=>import('./list-client/list-client.module').then(m=>m.ListClientModule)},
+    {path: 'add', loadChildren: ()=>import('./add-client/add-client.module').then(m=>m.AddClientModule)},
+    {path: 'edit', loadChildren: ()=>import('./edit-client/edit-client.module').then(m=>m.EditClientModule)}
 ]
 
 @NgModule({
