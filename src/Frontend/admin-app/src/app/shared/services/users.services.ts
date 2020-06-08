@@ -3,12 +3,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BaseService } from './base.service';
 import { catchError } from 'rxjs/operators';
 import { environment } from '@environments/environment';
-import { User } from '../models';
+import { User } from '../models/user.model';
+import { UtilitiesService } from './utilities.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseService {
-    constructor(private http: HttpClient) {
+    private _sharedHeaders = new HttpHeaders();
+    constructor(private http: HttpClient, private utilitiesService: UtilitiesService) {
         super();
+        this._sharedHeaders = this._sharedHeaders.set('Content-Type', 'application/json');
+
     }
     getAll() {
         const httpOptions = {
@@ -19,9 +23,8 @@ export class UserService extends BaseService {
         return this.http.get<User[]>(`${environment.apiUrl}/api/users`, httpOptions)
             .pipe(catchError(this.handleError));
     }
-
-    getUserRoles(userId: string) {
-        return this.http.get<string[]>(`${environment.apiUrl}/api/users/${userId}/roles`)
+    getDetail() {
+        return this.http.get<User>(`${environment.apiUrl}/api/users/${'55acca41-bdaf-4301-b746-8f5a73733ed7'}`, { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
 }

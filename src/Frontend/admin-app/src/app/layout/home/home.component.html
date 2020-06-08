@@ -1,0 +1,111 @@
+<div class="home-container">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-3"> WELCOME !</h1>
+                <p class="lead">This is Single Sign-On Admin Panel. Here you can manage your SSO settings..</p>
+                <hr class="my-4">
+                <div class="text-center">
+                    <a href="https://dotnet.microsoft.com" target="_blank">
+                        <img style="width: 150px; height: 150px; margin: 10px;" src="./assets/images/netcore-logo.png"
+                            alt="">
+                    </a>
+                    <a href="https://angular.io" target="_blank">
+                        <img style="width: 170px; height: 170px; margin: 10px;" src="./assets/images/angular-logo.png"
+                            alt="">
+                    </a>
+                    <a href="https://identityserver4.readthedocs.io/en/latest/" target="_blank">
+                        <img style="width: 150px; height: 150px; margin: 10px;" src="./assets/images/is4-logo.png"
+                            alt="">
+                    </a>
+                </div>
+                <p class="lead">
+                    <a class="btn btn-primary btn-lg" href="https://github.com/tinhpham76/Single-Sign-On"
+                        target="_blank" role="button">Learn
+                        more
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+     <!-- Cards -->
+     <div class="card-deck mb-3 text-center">
+        <!-- Clients -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Clients</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span title="Clients" class="font-size-1" aria-hidden="true">💻</span>
+                </h1>
+                <a [routerLink]="'/clients'" class="btn btn-lg btn-block btn-primary">Manage</a>
+            </div>
+        </div>        
+        <!-- Api Resources -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Api Resources</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span class="font-size-1" title="Api Resources" aria-hidden="true">☁️</span>
+                </h1>
+                <a [routerLink]="'/api-resources'" class="btn btn-lg btn-block btn-outline-primary">Manage</a>
+            </div>
+        </div>
+        <!-- Identity Resources -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Identity Resources</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span class="font-size-1" title="Identity Resources" aria-hidden="true">🔖</span>
+                </h1>
+                <a [routerLink]="'/identity-resources'" class="btn btn-lg btn-block btn-primary">Manage</a>
+            </div>
+        </div>
+    </div>
+    <!-- Cards -->
+    <div class="card-deck mb-3 text-center">
+        <!-- Users -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Users</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span title="Clients" class="font-size-1" aria-hidden="true">👨‍👩‍👧‍👦</span>
+                </h1>
+                <a [routerLink]="'/users'" class="btn btn-lg btn-block btn-outline-primary">Manage</a>
+            </div>
+        </div>
+        <!-- Identity Resources -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Roles</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span class="font-size-1" title="Identity Resources" aria-hidden="true">🔐</span>
+                </h1>
+                <a [routerLink]="'/roles'" class="btn btn-lg btn-block btn-primary">Manage</a>
+            </div>
+        </div>
+        <!-- Api Resources -->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Developer Apis</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span class="font-size-1" title="Api Resources" aria-hidden="true">
+                        <i class="fa fa-fw fa-gear"></i>
+                    </span>
+                </h1>
+                <a href="https://localhost:5000/swagger/index.html" class="btn btn-lg btn-block btn-outline-primary" target="_blank">Manage</a>
+            </div>
+        </div>
+    </div>
+</div>

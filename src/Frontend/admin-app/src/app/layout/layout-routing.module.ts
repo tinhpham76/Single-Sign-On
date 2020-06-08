@@ -1,0 +1,28 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { LayoutComponent } from './layout.component';
+
+const routes: Routes = [
+    {
+        path: '',
+        component: LayoutComponent,
+        children: [
+            { path: '', redirectTo: 'home', pathMatch: 'prefix' },
+            { path: 'home', loadChildren: ()=> import('./home/home.module').then(m=>m.HomeModule)},
+            { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+            { path: 'clients', loadChildren: ()=>import('./client/client.module').then(m=>m.ClientModule)},
+            { path: 'api-resources', loadChildren: ()=>import('./api-resource/api-resource.module').then(m=>m.ApiResourceModule)},
+            { path: 'identity-resources', loadChildren: ()=>import('./identity-resource/identity-resource.module').then(m=>m.IdentityResourceModule)},
+            { path: 'users', loadChildren: ()=>import('./user/user.module').then(m=>m.UserModule)},
+            { path: 'roles', loadChildren: ()=>import('./role/role.module').then(m=>m.RoleModule)}
+           
+
+        ]
+    }
+];
+
+@NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
+})
+export class LayoutRoutingModule { }

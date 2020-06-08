@@ -24,7 +24,7 @@ namespace SSO.Backend
 {
     public class Startup
     {
-        private readonly string KspSpecificOrigins = "KspSpecificOrigins";
+        private readonly string SSOSpecificOrigins = "SSOSpecificOrigins";
 
         public Startup(IConfiguration configuration)
         {
@@ -72,7 +72,7 @@ namespace SSO.Backend
 
             services.AddCors(options =>
             {
-                options.AddPolicy(KspSpecificOrigins,
+                options.AddPolicy(SSOSpecificOrigins,
                 builder =>
                 {
                     builder.WithOrigins(Configuration["AllowOrigins"])
@@ -158,7 +158,7 @@ namespace SSO.Backend
                         new List<string>{ "sso.api" }
                     }
                 });
-            });
+            });            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -182,6 +182,7 @@ namespace SSO.Backend
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors(SSOSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
             {
@@ -189,7 +190,7 @@ namespace SSO.Backend
                 endpoints.MapRazorPages();
             });
 
-            app.UseSwagger();
+            app.UseSwagger();           
 
             app.UseSwaggerUI(c =>
             {

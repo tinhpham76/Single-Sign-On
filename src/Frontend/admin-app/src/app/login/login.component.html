@@ -1,11 +1,42 @@
-<div class="login-page" [@routerTransition]>    
-    <div class="row justify-content-md-center" >
-        <div class="col-md-4">
-            <img src="/assets/images/logo.png" width="150px" class="user-avatar" />
-            <h1>Single Sign On Administration</h1>
+<div class="login-page" [@routerTransition]>
+    <div class="justify-content-md-center">
+        <img class="user-avatar" src="assets/images/logo.png" width="150px" />
+        <h1>Single Sign-On Admin</h1>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">            
             <form role="form">
-                <a class="btn rounded-btn" (click)="login()">{{ 'Log in' | translate }}</a>
+                <div class="form-content">
+                    <div class="form-group">
+                        <input [placeholder]="'Email' | translate" class="form-control input-underline input-lg"
+                            type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <input [placeholder]="'Password' | translate" class="form-control input-underline input-lg"
+                            type="password" />
+                    </div>
+                </div>
+                <a (click)="login()" class="btn rounded-btn">{{
+                    'Log in' | translate
+                }}</a>
+                &nbsp;
+                <a href="https://localhost:5000/Account/Register" class="btn rounded-btn" target="_blank">{{ 'Register' | translate }}</a>
             </form>
+        </div>
+        <div class="form-login-social col-md-4">            
+            <a (click)="loginWithFacebook()" class="btn-social btn rounded-btn">{{
+                'Login with Facebook' | translate
+            }}</a>
+            &nbsp;
+            <a (click)="loginWithGoogle()" class=" btn-social btn rounded-btn">{{
+                'Login with Google' | translate
+            }}</a>
+            &nbsp;
+            <a (click)="loginWithSSO()" class=" btn-social btn rounded-btn">{{
+                'Login with SSO' | translate
+            }}</a>
+            &nbsp;
         </div>
     </div>
 </div>

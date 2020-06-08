@@ -7,8 +7,9 @@ import { LanguageTranslationModule } from './shared/modules/language-translation
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthGuard } from './shared';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { AuthGuard } from './shared/guard/auth.guard';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
     imports: [
@@ -17,6 +18,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
         BrowserAnimationsModule,
         HttpClientModule,
         LanguageTranslationModule,
+        ToastrModule.forRoot(),
         AppRoutingModule
     ],
     declarations: [AppComponent],

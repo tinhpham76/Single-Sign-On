@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SSO.Services;
+using System.Diagnostics;
 
 namespace SSO.Backend.Controllers
 {
@@ -7,6 +9,11 @@ namespace SSO.Backend.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
