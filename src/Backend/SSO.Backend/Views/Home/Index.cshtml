@@ -2,11 +2,60 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Single Sign On</h1>
+    <div class="text-center">
+        <h1 class="display-4">Welcome to Single Sign On</h1>
 
-    <div class="m-5"></div>
+        <div class="card-deck mb-3 text-center">
+            <!-- Swagger -->
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Swagger</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">
+                        <span title="Swagger" class="font-size-1" aria-hidden="true">💻</span>
+                    </h1>
+                    <a href="/swagger" class="btn btn-lg btn-block btn-primary">Manage</a>
+                </div>
+            </div>
+            <!-- OpenId -->
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">OpenId</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">
+                        <span title="OpenId" class="font-size-1" aria-hidden="true">💻</span>
+                    </h1>
+                    <a href="/.well-known/openid-configuration" class="btn btn-lg btn-block btn-outline-primary" target="_blank">Manage</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-deck mb-3 text-center">
+            <!-- SSO Admin -->
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">SSO Admin</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">
+                        <span title="SSO Admin" class="font-size-1" aria-hidden="true">💻</span>
+                    </h1>
+                    <a href="http://localhost:4200" class="btn btn-lg btn-block btn-outline-primary" target="_blank">Manage</a>
+                </div>
+            </div>
+            <!-- User Manage -->
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">User Profile</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title">
+                        <span title="UserProfile" class="font-size-1" aria-hidden="true">💻</span>
+                    </h1>
+                    <a href="/.well-known/openid-configuration" class="btn btn-lg btn-block btn-primary" target="_blank">Manage</a>
+                </div>
+            </div>
+        </div>
 
-    <h2><a href="/swagger">Explore APIs</a></h2>
-    <h2><a href="/.well-known/openid-configuration">Openid-Configuration</a></h2>
-</div>
+    </div>

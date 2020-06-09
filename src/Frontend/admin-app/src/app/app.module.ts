@@ -13,6 +13,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ServerErrorComponent } from './server-error/server-error.component';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     imports: [
@@ -21,6 +22,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
         BrowserAnimationsModule,
         HttpClientModule,
         LanguageTranslationModule,
+        TranslateModule,
         ToastrModule.forRoot(),
         AppRoutingModule
     ],
