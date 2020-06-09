@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ApiResourceComponent } from './api-resource.component';
+import { ListApiResourceComponent } from './list-api-resource/list-api-resource.component';
+import { AddApiResourceComponent } from './add-api-resource/add-api-resource.component';
+import { EditClientComponent } from '../client/edit-client/edit-client.component';
 
 const routes: Routes=[
-    {path: '', loadChildren: ()=>import('./list-api-resource/list-api-resource.module').then(m=>m.ListApiResourceModule)},
-    {path: 'add', loadChildren: ()=>import('./add-api-resource/add-api-resource.module').then(m=>m.AddApiResourceModule)},
-    {path: 'edit', loadChildren: ()=>import('./edit-api-resource/edit-api-resource.module').then(m=>m.EditApiResourceModule)}
+    {path: '', component: ListApiResourceComponent},
+    {path: 'add',component: AddApiResourceComponent},
+    {path: 'edit',component: EditClientComponent}
 ]
 
 @NgModule({

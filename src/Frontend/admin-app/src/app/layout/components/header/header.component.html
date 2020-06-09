@@ -13,30 +13,9 @@
                 <div class="dropdown-menu-right" ngbDropdownMenu>
                     <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('en')">
                         {{ 'English' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('fr')">
-                        {{ 'French' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('ur')">
-                        {{ 'Urdu' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('es')">
-                        {{ 'Spanish' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('it')">
-                        {{ 'Italian' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('fa')">
-                        {{ 'Farsi' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('de')">
-                        {{ 'German' | translate }}
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('zh-CHS')">
-                        {{ 'Simplified Chinese' | translate }}
-                    </a>
+                    </a>                  
                     <a class="dropdown-item" href="javascript:void(0)" (click)="changeLang('vn')">
-                        {{ 'Việt Nam' | translate }}
+                        {{ 'Vietnamese' | translate }}
                     </a>
                 </div>
             </li>
@@ -51,16 +30,16 @@
                         </div>                       
                     </form>
                     <a class="dropdown-item" href="javascript:void(0)">
-                        <i class="fa fa-fw fa-user"></i> First Name
+                        <i class="fa fa-user"></i> {{ 'Full Name' | translate }}
                     </a>
                     <a class="dropdown-item" href="javascript:void(0)">
-                        <i class="fa fa-envelope"></i> Email
+                        <i class="fa fa-envelope"></i> {{ 'Email' }}
                     </a>
                     <a class="dropdown-item" href="javascript:void(0)">
-                        <i class="fa fa-fw fa-gear"></i> {{'Settings' | translate }}
+                        <i class="fa fa-gear"></i> {{ 'Settings' | translate }}
                     </a>
                     <a (click)="signout()" class="btn dropdown-item" >
-                        <i class="fa fa-fw fa-power-off"></i> {{ 'Log Out' | translate }}
+                        <i class="fa fa-power-off"></i> {{ 'Log Out' | translate }}
                     </a>
                 </div>
             </li>

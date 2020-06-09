@@ -10,23 +10,23 @@
         </a>
         <a [routerLink]="['/clients']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-desktop"></i>&nbsp;
-            <span>{{ 'Clients' | translate }}</span>
+            <span>Clients</span>
         </a>
         <a [routerLink]="['/api-resources']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-cloud"></i>&nbsp;
-            <span>{{ 'Api Resources' | translate }}</span>
+            <span>Api Resources</span>
         </a>        
         <a [routerLink]="['/identity-resources']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-key"></i>&nbsp;
-            <span>{{ 'Identity Resources' | translate }}</span>
+            <span>Identity Resources</span>
         </a>
         <a [routerLink]="['/users']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-users"></i>&nbsp;
-            <span>{{ 'Users' | translate }}</span>
+            <span>Users</span>
         </a>
         <a [routerLink]="['/roles']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-user-circle-o"></i>&nbsp;
-            <span>{{ 'Roles' | translate }}</span>
+            <span>Roles</span>
         </a>      
     </div>
     <div class="toggle-button" [ngClass]="{collapsed: collapsed}" (click)="toggleCollapsed()">
