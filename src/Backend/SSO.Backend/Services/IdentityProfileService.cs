@@ -40,14 +40,15 @@ namespace SSO.Backend.Services
 
             var principal = await _claimsFactory.CreateAsync(user);
             var claims = principal.Claims.ToList();
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);          
 
 
             //Add more claims like this
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-            claims.Add(new Claim("fullName", user.FirstName + " " + user.LastName));
+            claims.Add(new Claim("fullName", user.LastName + " " + user.FirstName));
             claims.Add(new Claim(ClaimTypes.Role, string.Join(";", roles)));
+
 
 
             context.IssuedClaims = claims;

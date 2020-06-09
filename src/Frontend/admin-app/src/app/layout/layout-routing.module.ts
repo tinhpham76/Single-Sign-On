@@ -8,8 +8,7 @@ const routes: Routes = [
         component: LayoutComponent,
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'prefix' },
-            { path: 'home', loadChildren: ()=> import('./home/home.module').then(m=>m.HomeModule)},
-            { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+            { path: 'home', loadChildren: ()=> import('./home/home.module').then(m=>m.HomeModule)},           
             { path: 'clients', loadChildren: ()=>import('./client/client.module').then(m=>m.ClientModule)},
             { path: 'api-resources', loadChildren: ()=>import('./api-resource/api-resource.module').then(m=>m.ApiResourceModule)},
             { path: 'identity-resources', loadChildren: ()=>import('./identity-resource/identity-resource.module').then(m=>m.IdentityResourceModule)},

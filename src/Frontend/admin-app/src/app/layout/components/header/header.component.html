@@ -26,14 +26,17 @@
                 <div class="dropdown-menu-right" ngbDropdownMenu>
                     <form class="px-4 py-3">
                         <div class="text-center">
-                            <img src="./assets/images/dummy.png" alt="">
+                            <img style="width: 100px; height: 100px;" src="./assets/images/user-img.svg" alt="">
                         </div>                       
                     </form>
                     <a class="dropdown-item" href="javascript:void(0)">
-                        <i class="fa fa-user"></i> {{ 'Full Name' | translate }}
+                        <i class="fa fa-user"></i> {{ fullName }}
                     </a>
                     <a class="dropdown-item" href="javascript:void(0)">
-                        <i class="fa fa-envelope"></i> {{ 'Email' }}
+                        <i class="fa fa-envelope"></i> {{ email }}
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)">
+                        <i class="fa fa-key"></i> {{role}}
                     </a>
                     <a class="dropdown-item" href="javascript:void(0)">
                         <i class="fa fa-gear"></i> {{ 'Settings' | translate }}

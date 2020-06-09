@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '@app/shared/services/auth.service';
+import { UserService } from '@app/shared/services/users.services';
 
 @Component({
     selector: 'app-header',
@@ -11,13 +12,16 @@ import { AuthService } from '@app/shared/services/auth.service';
 })
 export class HeaderComponent implements OnInit {
     public pushRightClass: string;
-
+    fullName: string;
     userName: string;
     isAuthenticated: boolean;
     subscription: Subscription;
+    email: string;
+    role: string;
 
     constructor(private translate: TranslateService, public router: Router,
-        private authService: AuthService) {
+        private authService: AuthService, private userService: UserService) {
+        this.loadProfile();
 
         this.subscription = this.authService.authNavStatus$.subscribe(status => this.isAuthenticated = status);
         this.userName = this.authService.name;
@@ -58,5 +62,11 @@ export class HeaderComponent implements OnInit {
 
     changeLang(language: string) {
         this.translate.use(language);
+    }
+    loadProfile() {
+        const profile = this.authService.profile;
+        this.fullName = profile.fullName;
+        this.email = profile.email;
+        this.role = profile.role;        
     }
 }

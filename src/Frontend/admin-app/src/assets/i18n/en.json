@@ -6,8 +6,7 @@
     "Email": "Email",
     "Settings": "Setting",
     "Log Out": "Log Out",
-    "Home": "Home",
-    "Dashboard": "Dashboard",    
+    "Home": "Home",      
     "WELCOME": "WELLCOME",
     "This is Single Sign-On Admin Panel. Here you can manage your SSO settings..": "This is Single Sign-On Admin Panel. Here you can manage your SSO settings..",
     "Learn more": "Learn more",
@@ -16,5 +15,9 @@
     "Log in": "Log in",
     "Register": "Register",
     "Add": "Add",
-    "Go back": "Go back"
+    "Go back": "Go back",
+    "Not this time, access forbidden": "Not this time, access forbidden",
+    "Home Page":"Home Page",
+    "Please, login with Admin Account! You will be redirected to the":"Please, login with Admin Account! You will be redirected to the",
+    "SSO homepage": "SSO homepage"
 }

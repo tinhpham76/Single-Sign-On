@@ -3,11 +3,7 @@
         <a routerLink="/home" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-home"></i>&nbsp;
             <span>{{ 'Home' | translate }}</span>
-        </a>
-        <a [routerLink]="['/dashboard']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-            <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
-            <span>{{ 'Dashboard' | translate }}</span>
-        </a>
+        </a>        
         <a [routerLink]="['/clients']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-desktop"></i>&nbsp;
             <span>Clients</span>

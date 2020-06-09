@@ -23,8 +23,8 @@ export class UserService extends BaseService {
         return this.http.get<User[]>(`${environment.apiUrl}/api/users`, httpOptions)
             .pipe(catchError(this.handleError));
     }
-    getDetail() {
-        return this.http.get<User>(`${environment.apiUrl}/api/users/${'55acca41-bdaf-4301-b746-8f5a73733ed7'}`, { headers: this._sharedHeaders })
+    getDetail(id) {
+        return this.http.get<User>(`${environment.apiUrl}/api/users/${id}`, { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
 }

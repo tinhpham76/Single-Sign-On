@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-access-denied',
@@ -7,9 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccessDeniedComponent implements OnInit {
 
-  constructor() { }
+  constructor(private translate: TranslateService) { }
 
   ngOnInit() {
   }
-
 }

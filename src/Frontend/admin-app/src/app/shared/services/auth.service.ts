@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { UserManager, UserManagerSettings, User, Profile } from 'oidc-client';
 import { BehaviorSubject } from 'rxjs';
 import { BaseService } from './base.service';
+import { UserService } from './users.services';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService extends BaseService {
+export class AuthService extends BaseService {  
 
   // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
@@ -30,6 +31,10 @@ export class AuthService extends BaseService {
     return this.manager.signinRedirect();
   }
 
+  get profile(): Profile {
+    return this.user != null ? this.user.profile : null;
+  }
+
   async completeAuthentication() {
     this.user = await this.manager.signinRedirectCallback();
     this._authNavStatusSource.next(this.isAuthenticated());
@@ -37,7 +42,7 @@ export class AuthService extends BaseService {
 
   isAuthenticated(): boolean {
     return this.user != null && !this.user.expired;
-  }
+  }  
 
   get authorizationHeaderValue(): string {
     if (this.user) {
