@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSO.Backend", "SSO.Backend\SSO.Backend.csproj", "{40FFC00F-1DB1-415F-8666-A9B50D7D77EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSO.Services", "SSO.Services\SSO.Services.csproj", "{0A7BA523-76A1-44F1-8AAF-800D1DA083BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSO.Services", "SSO.Services\SSO.Services.csproj", "{0A7BA523-76A1-44F1-8AAF-800D1DA083BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F05CCA0F-36AE-49D0-9B52-1FCD6583FFA2}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\README.md = ..\..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
