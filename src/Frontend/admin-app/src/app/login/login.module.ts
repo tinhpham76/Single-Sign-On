@@ -6,11 +6,21 @@ import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
+
 @NgModule({
     imports: [
         CommonModule,
         TranslateModule,
-        LoginRoutingModule],
+        NzLayoutModule,
+        NzInputModule,
+        NzAlertModule,
+        NzNotificationModule,
+        LoginRoutingModule,
+    ],
     declarations: [LoginComponent],
     providers:[NgxSpinnerService]
 })

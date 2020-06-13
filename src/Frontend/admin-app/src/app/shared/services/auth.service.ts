@@ -8,7 +8,7 @@ import { UserService } from './users.services';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService extends BaseService {  
+export class AuthService extends BaseService {
 
   // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
@@ -42,7 +42,7 @@ export class AuthService extends BaseService {
 
   isAuthenticated(): boolean {
     return this.user != null && !this.user.expired;
-  }  
+  }
 
   get authorizationHeaderValue(): string {
     if (this.user) {

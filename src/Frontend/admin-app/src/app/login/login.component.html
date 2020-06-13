@@ -1,42 +1,65 @@
 <div class="login-page" [@routerTransition]>
-    <div class="justify-content-md-center">
-        <img class="user-avatar" src="assets/images/logo.png" width="150px" />
-        <h1>Single Sign-On Admin</h1>
-    </div>
-    <div class="row justify-content-md-center">
-        <div class="col-md-4">            
-            <form role="form">
-                <div class="form-content">
-                    <div class="form-group">
-                        <input [placeholder]="'Email' | translate" class="form-control input-underline input-lg"
-                            type="text" />
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <div class="login100-form validate-form">
+                    <span class="login100-form-title p-b-43">
+                        Login to continue
+                    </span>
+                    <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" type="text" name="email">
+                        <span class="focus-input100"></span>
+                        <span class="label-input100">Email</span>
                     </div>
+                    <div class="wrap-input100 validate-input" data-validate="Password is required">
+                        <input class="input100" type="password" name="pass">
+                        <span class="focus-input100"></span>
+                        <span class="label-input100">Password</span>
+                    </div>
+                    <div class="flex-sb-m w-full p-t-3 p-b-32">
+                        <div class="contact100-form-checkbox">
+                            <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                            <label class="label-checkbox100" for="ckb1">
+                                Remember me
+                            </label>
+                        </div>
+                        <div>
+                            <a href="#" class="txt1">
+                                Forgot Password?
+                            </a>
+                        </div>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <button nz-button (click)="createNotification('error', 'Admin', 'Please, login with IS4!')"
+                            class="login100-form-btn">
+                            Login
+                        </button>
+                    </div>
+                    <div class="text-center p-t-46 p-b-20">
+                        <span class="txt2">
+                            or sign up using
+                        </span>
+                    </div>
+                    <div class="login100-form-social flex-c-m">
+                        <a (click)="loginWithIS4()" class="login100-form-social-item flex-c-m bg4 m-r-5">
+                            <img style="color: #fff; height: 45px; width: 45px;" src="./assets/images/is4-logo.png"
+                                alt="">
+                        </a>
+                        <a (click)="createNotification('error', 'Facebook', 'Unregistered or unsupported applications')"
+                            class="login100-form-social-item flex-c-m bg1 m-r-5">
+                            <i class="fa fa-facebook-f" aria-hidden="true"></i>
+                        </a>
 
-                    <div class="form-group">
-                        <input [placeholder]="'Password' | translate" class="form-control input-underline input-lg"
-                            type="password" />
+                        <a (click)="createNotification('error', 'Twitter', 'Unregistered or unsupported applications')"
+                            class="login100-form-social-item flex-c-m bg2 m-r-5">
+                            <i class="fa fa-twitter" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
-                <a (click)="login()" class="btn rounded-btn">{{
-                    'Log in' | translate
-                }}</a>
-                &nbsp;
-                <a href="https://localhost:5000/Account/Register" class="btn rounded-btn" target="_blank">{{ 'Register' | translate }}</a>
-            </form>
-        </div>
-        <div class="form-login-social col-md-4">            
-            <a (click)="loginWithFacebook()" class="btn-social btn rounded-btn">{{
-                'Login with Facebook' | translate
-            }}</a>
-            &nbsp;
-            <a (click)="loginWithGoogle()" class=" btn-social btn rounded-btn">{{
-                'Login with Google' | translate
-            }}</a>
-            &nbsp;
-            <a (click)="loginWithSSO()" class=" btn-social btn rounded-btn">{{
-                'Login with SSO' | translate
-            }}</a>
-            &nbsp;
+
+                <div class="login100-more" style="background-image: url('./assets/images/bg-01.jpg');">
+                </div>
+            </div>
         </div>
     </div>
 </div>

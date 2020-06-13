@@ -1,5 +1,100 @@
-<app-header></app-header>
-<app-sidebar (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
-<section class="main-container" [ngClass]="{collapsed: collapedSideBar}">
-    <router-outlet></router-outlet>
-</section>
+<nz-layout>
+  <!--Sider-->
+  <nz-sider nzCollapsible nzWidth="200px">
+    <div class="item">
+      <ul nz-menu nzTheme="dark" [nzMode]="'inline'">
+        <li nz-menu-item>
+          <a routerLink="">
+            <i nz-icon nzType="home"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink='/clients'>
+            <i nz-icon nzType="desktop"></i>
+            <span>Clients</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink='/api-resources'>
+            <i nz-icon nzType="cloud"></i>
+            <span>Api Resources</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink='/identity-resources'>
+            <i nz-icon nzType="key"></i>
+            <span>Identity Resources</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink='/users'>
+            <i nz-icon nzType="contacts"></i>
+            <span>Users</span>
+          </a>
+        </li>
+        <li nz-menu-item>
+          <a routerLink='/roles'>
+            <i nz-icon nzType="control"></i>
+            <span>Roles</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nz-sider>
+  <!--header-->
+  <nz-layout>
+    <nz-header>
+      <nav class="navbar navbar-expand-lg">
+        <a href="">
+          <img src="./assets/images/is4-logo.png" alt="">
+        </a>
+        <div class="collapse navbar-collapse" style="margin-inline-end: 30px;">
+          <ul nz-menu nzMode="horizontal" class="navbar-nav ml-auto">
+            <li nz-submenu nzTitle="Language" nzIcon="translation" style="text-align: center; width: auto;">
+              <ul>
+                <a href="">
+                  <li nz-menu-item>Language</li>
+                </a>
+                <a href="">
+                  <li nz-menu-item>Language</li>
+                </a>
+                <a href="">
+                  <li nz-menu-item>Language</li>
+                </a>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="{{fullName}}" nzIcon="user"
+              style="min-width: 250px; width: auto; text-align: center;">
+              <ul>
+                <span>
+                  <li nz-menu-group nzTitle="{{userName}}"></li>
+                </span>
+                <span>
+                  <li nz-menu-group nzTitle="{{email}}"></li>
+                </span>
+                <ul>
+                  <a href="">
+                    <li nz-menu-item>Settings</li>
+                  </a>
+                  <a href="javascript:void(0)" (click)="signout()">
+                    <li nz-menu-item>Logout</li>
+                  </a>
+                </ul>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </nz-header>
+    <nz-content>
+      <nz-breadcrumb>
+        <nz-breadcrumb-item></nz-breadcrumb-item>
+      </nz-breadcrumb>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <nz-footer>Ant & Bootstrap Design ©2020 Implement By Angular</nz-footer>
+  </nz-layout>
+</nz-layout>

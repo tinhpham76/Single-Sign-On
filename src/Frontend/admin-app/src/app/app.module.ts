@@ -15,6 +15,13 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
+registerLocaleData(en);
 @NgModule({
     imports: [
         CommonModule,
@@ -23,6 +30,7 @@ import { TranslateModule } from '@ngx-translate/core';
         HttpClientModule,
         LanguageTranslationModule,
         TranslateModule,
+        NzIconModule,
         ToastrModule.forRoot(),
         AppRoutingModule
     ],
@@ -32,7 +40,9 @@ import { TranslateModule } from '@ngx-translate/core';
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
             multi: true
-        }],
+        },
+        { provide: NZ_I18N, useValue: en_US }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

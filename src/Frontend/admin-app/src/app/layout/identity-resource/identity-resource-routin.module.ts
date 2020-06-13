@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RoleComponent } from './role.component';
+import { IdentityResourceComponent } from './identity-resource.component';
 
 const routes: Routes = [
-    { path: '', component: RoleComponent }
-]
+    { path: '', component: IdentityResourceComponent }
+];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
-export class RoleRoutingModule { }
+export class IdentityResourceRoutingModule { }

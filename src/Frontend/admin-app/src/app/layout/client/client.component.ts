@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-client',
@@ -8,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ClientComponent implements OnInit {
 
-  constructor(private translate: TranslateService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
