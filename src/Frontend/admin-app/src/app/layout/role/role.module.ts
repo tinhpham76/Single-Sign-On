@@ -27,6 +27,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     NzSpinModule,
     NzNotificationModule,
     NzButtonModule,
+    NzModalModule,
     NzIconModule,
     FormsModule,
     ReactiveFormsModule,

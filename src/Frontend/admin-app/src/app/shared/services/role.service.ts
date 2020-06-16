@@ -19,7 +19,7 @@ export class RolesServices extends BaseService {
     }
     update(id: string, entity: Role) {
         return this.http.put(`${environment.apiUrl}/api/roles/${id}`, JSON.stringify(entity), { headers: this._sharedHeaders })
-            .pipe(catchError(this.handleError));
+            ;
     }
     getDetail(id: string) {
         return this.http.get(`${environment.apiUrl}/api/roles/${id}`, { headers: this._sharedHeaders })

@@ -21,6 +21,8 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { NzResultModule } from 'ng-zorro-antd/result';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 registerLocaleData(en);
 @NgModule({
@@ -33,6 +35,8 @@ registerLocaleData(en);
         LanguageTranslationModule,
         TranslateModule,
         NzIconModule,
+        NzResultModule,
+        NzButtonModule,
         AppRoutingModule
     ],
     declarations: [AppComponent, ServerErrorComponent, AccessDeniedComponent, NotFoundComponent],

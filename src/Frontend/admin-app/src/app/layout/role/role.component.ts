@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy, ErrorHandler } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RolesServices } from '@app/shared/services/role.service';
-import { Subscription, EMPTY, throwError } from 'rxjs';
-import { Pagination } from '@app/shared/models/pagination.model';
+import { throwError } from 'rxjs';
 import { Role } from '@app/shared/models/role.model';
-import { map, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-role',
@@ -23,7 +22,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   items: any[];
   totalRecords: number;
 
-  // button cofirmModal
+  // button confirmModal
   confirmModal?: NzModalRef;
 
   // load role detail
@@ -32,30 +31,37 @@ export class RoleComponent implements OnInit, OnDestroy {
   normalizedName: string;
 
   // show edit role
-  visibleEditRole = false;
+  showEditRole = false;
+
+  // show Add role
   visibleAddRole = false;
 
   // Form
-  validateForm!: FormGroup;
+  formEditRole!: FormGroup;
+  formAddRole!: FormGroup;
 
   // Spin
-  isSpinningRole = true;
-  isSpinningEditRole = true;
-  isSpinningAddRole = true;
+  isSpinning = true;
+
 
   constructor(private rolesService: RolesServices,
     private notification: NzNotificationService,
     private modal: NzModalService,
     private fb: FormBuilder) { }
 
+  // Load dữ liệu và khai báo form
   ngOnInit(): void {
-    this.validateForm = this.fb.group({
+    // Khởi tạo form add
+    this.formAddRole = this.fb.group({
+      id: [null, [Validators.required]],
+      name: [null, [Validators.required]]
+    });
+    // Khởi tạo form edit
+    this.formEditRole = this.fb.group({
       id: [null, [Validators.required]],
       name: [null, [Validators.required]]
     });
     this.loadRoleData(this.filter, this.pageIndex, this.pageSize);
-  }
-  ngOnDestroy(): void {
   }
 
   // Load Role Data
@@ -65,12 +71,79 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
         setTimeout(() => {
-          this.isSpinningRole = false;
-        }, 1000);
+          this.isSpinning = false;
+        }, 500);
       }, error => {
         setTimeout(() => {
-          this.isSpinningRole = false;
-        }, 1000);
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Thêm mới role
+
+  openAddRole(): void {
+    this.visibleAddRole = true;
+  }
+
+  closeAddRole(): void {
+    this.visibleAddRole = false;
+  }
+  createRole(): void {
+    const id = this.formAddRole.get('id').value;
+    const data = this.formAddRole.getRawValue();
+    this.rolesService.add(data)
+      .pipe(catchError(err => {
+        this.createNotification('error', 'SSO Admin', 'ERROR', 'bottomRight');
+        return throwError('Error');
+      }))
+      .subscribe(() => {
+        this.createNotification('success', 'SSO Admin', 'Add success ' + id + '!', 'bottomRight');
+        setTimeout(() => {
+          this.closeAddRole();
+          this.ngOnInit();
+        }, 500);
+      },
+        error => {
+          setTimeout(() => {
+          }, 500);
+        });
+  }
+
+  // Update Role
+
+  showModal(roleId: string): void {
+    this.showEditRole = true;
+    this.rolesService.getDetail(roleId)
+      .subscribe((res: Role) => {
+        this.formEditRole.setValue({
+          id: res.id,
+          name: res.name
+        });
+      });
+  }
+
+  handleCancel(): void {
+    this.showEditRole = false;
+  }
+
+  saveChanges() {
+    const id = this.formEditRole.get('id').value;
+    this.rolesService.update(id, this.formEditRole.getRawValue())
+      .pipe(catchError(err => {
+        this.createNotification('error', 'SSO Admin', 'ERROR', 'bottomRight');
+        return throwError('Error');
+      }))
+      .subscribe(() => {
+        this.createNotification('success', 'SSO Admin', 'Update success ' + id + '!', 'bottomRight');
+        this.ngOnInit();
+        setTimeout(() => {
+          this.showEditRole = false;
+        }, 500);
+      }, error => {
+        setTimeout(() => {
+          this.showEditRole = false;
+        }, 500);
       });
   }
 
@@ -86,7 +159,8 @@ export class RoleComponent implements OnInit, OnDestroy {
   showConfirm(roleId: string): void {
     this.confirmModal = this.modal.confirm({
       nzTitle: 'Do you Want to delete ' + roleId + ' role ?',
-      nzContent: 'When clicked the OK button, this dialog will be closed after 1 second',
+      nzOkText: 'Yes',
+      nzOkType: 'danger',
       nzOnOk: () =>
         new Promise((resolve, reject) => {
           this.delete(roleId);
@@ -95,62 +169,19 @@ export class RoleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Hiển thị thêm dữ liệu khác
+
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex } = params;
     this.loadRoleData(this.filter, pageIndex, pageSize);
   }
 
+  // Tạo thông báo
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
 
-  openEditRole(roleId: string): void {
-    this.visibleEditRole = true;
-    this.rolesService.getDetail(roleId)
-      .subscribe((res: Role) => {
-        this.validateForm.setValue({
-          id: res.id,
-          name: res.name
-        });
-        setTimeout(() => {
-          this.isSpinningEditRole = false;
-        }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.isSpinningEditRole = false;
-        }, 500);
-      });
-  }
-  openAddRole(): void {
-    this.visibleEditRole = true;
-    this.isSpinningAddRole = true;
-  }
+  //
 
-  closeEditRole(): void {
-    this.visibleEditRole = false;
-    this.isSpinningEditRole = true;
-  }
-  closeAddRole(): void {
-    this.visibleAddRole = false;
-    this.isSpinningAddRole = true;
-  }
-
-
-  saveChanges(): void {
-    const id = this.validateForm.get('id').value;
-    const data = this.validateForm.getRawValue();
-    this.rolesService.update(id, data)
-      .subscribe(() => {
-        this.createNotification('success', 'SSO Admin', 'Update success ' + id + '!', 'bottomRight');
-        setTimeout(() => {
-          this.closeEditRole();
-          this.ngOnInit();
-        }, 500);
-      },
-      error => {
-        setTimeout(() => {
-          this.isSpinningEditRole = false;
-        }, 500);
-      });
-  }
+  ngOnDestroy(): void { }
 }
