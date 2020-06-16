@@ -43,6 +43,7 @@ namespace SSO.Backend.Controllers.Users
                 return NotFound();
             var roleViewModel = new RoleViewModel()
             {
+                Id = role.Id,
                 Name = role.Name,
                 NormalizedName = role.NormalizedName
             };
@@ -62,6 +63,7 @@ namespace SSO.Backend.Controllers.Users
                 .Take(pageSize)
                 .Select(x => new RolesQuickView()
                 {
+                    Id = x.Id, 
                     Name = x.Name,
                     NormalizedName = x.NormalizedName
                 }).ToListAsync();
@@ -115,9 +117,9 @@ namespace SSO.Backend.Controllers.Users
 
         [HttpDelete("{roleId}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteRole(string id)
+        public async Task<IActionResult> DeleteRole(string roleId)
         {
-            var role = await _roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null)
                 return NotFound();
 

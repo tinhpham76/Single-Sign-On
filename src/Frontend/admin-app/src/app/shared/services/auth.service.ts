@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User, Profile } from 'oidc-client';
 import { BehaviorSubject } from 'rxjs';
 import { BaseService } from './base.service';
-import { UserService } from './users.services';
 
 
 @Injectable({

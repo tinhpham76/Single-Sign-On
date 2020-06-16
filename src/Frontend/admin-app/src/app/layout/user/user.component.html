@@ -1,1 +1,21 @@
-<p>user works!</p>
+<p>users list!</p>
+<ul>
+    <li *ngFor="let user of users | async">{{user.userName}}</li>
+</ul>
+
+
+<nz-table #basicTable [nzData]="users">
+    <thead>
+      <tr>
+        <th>Name</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of basicTable.data">
+        <td>{{ user.userName }}</td>
+       
+        
+      </tr>
+    </tbody>
+  </nz-table>

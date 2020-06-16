@@ -1,1 +1,90 @@
-<p>role works!</p>
+<!--Role Table-->
+<button (click)= 'openAddRole()'>Âdd</button>
+<nz-spin [nzSpinning]="isSpinningRole">
+  <nz-table #roleTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
+    [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Normalized Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let role of roleTable.data">
+        <td>{{ role.id }}</td>
+        <td>{{ role.name }}</td>
+        <td>{{ role.normalizedName }}</td>
+        <td>
+          <div class="table-acction">
+            <a style="margin: 5px;" (click)="openEditRole(role.id)">
+              <i nz-icon nzType="edit"></i>
+            </a>
+            <a style="margin: 5px;" (click)='showConfirm(role.id)'>
+              <i nz-icon nzType="delete"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-spin>
+<!--Edit Role-->
+<nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false" [nzWidth]="360" [nzVisible]="visibleEditRole" nzTitle="Edit Role" (nzOnClose)="closeEditRole()">
+  <nz-spin [nzSpinning]="isSpinningEditRole">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="validateForm" (ngSubmit)="saveChanges()">
+      <nz-form-item>
+        <nz-form-label>Id</nz-form-label>
+        <nz-form-control>
+          <nz-input-group>
+            <input nz-input formControlName="id" readonly />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid!">
+          <nz-input-group>
+            <input formControlName="name" nz-input />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [disabled]="!validateForm.valid">Save changes</button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</nz-drawer>
+<!--Add Role-->
+<nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false" [nzWidth]="360" [nzVisible]="visibleAddRole" nzTitle="Add Role" (nzOnClose)="closeAddRole()">
+  <nz-spin [nzSpinning]="isSpinningAddRole">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="validateForm" (ngSubmit)="saveChanges()">
+      <nz-form-item>
+        <nz-form-label>Id</nz-form-label>
+        <nz-form-control>
+          <nz-input-group>
+            <input nz-input formControlName="id" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid!">
+          <nz-input-group>
+            <input formControlName="name" nz-input />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [disabled]="!validateForm.valid">Save changes</button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</nz-drawer>
