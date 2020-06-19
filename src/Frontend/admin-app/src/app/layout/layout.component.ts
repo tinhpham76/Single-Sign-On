@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@app/shared/services/auth.service';
 import { Subscription } from 'rxjs';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { MessageConstants } from '@app/shared/constants/messages.constant';
 
 @Component({
     selector: 'app-layout',
@@ -27,12 +28,16 @@ export class LayoutComponent implements OnInit {
         this.createNotification(this.authServices.name);
     }
 
-    ngOnInit() {}
-    async signout() {
-        await this.authServices.signout();
+    ngOnInit() { }
+    async signOut() {
+        await this.authServices.signOut();
     }
     createNotification(content: string): void {
-        this.notification.create( 'success', 'Single Sign-On Admin', 'Hello ' + content);
+        this.notification.create(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_WELCOME + content
+        );
     }
-   
+
 }

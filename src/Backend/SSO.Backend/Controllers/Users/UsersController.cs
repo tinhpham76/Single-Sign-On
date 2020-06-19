@@ -26,6 +26,7 @@ namespace SSO.Backend.Controllers.Users
         }
         //Post new user
         [HttpPost]
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostUser([FromBody]UserCreateRequest request)
         {
             var user = new User()
@@ -81,14 +82,13 @@ namespace SSO.Backend.Controllers.Users
                 || x.LastName.Contains(filter));
             }
             var totalReconds = await query.CountAsync();
-            var items = await query.Skip((pageIndex - 1 * pageSize))
+            var items = await query.Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .Select(x => new UserViewModel()
                 {
                     Id = x.Id,
                     UserName = x.UserName,
-                    FirstName = x.FirstName,
-                    LastName = x.FirstName,
+                    FullName = x.LastName + ' ' + x.FirstName,
                     Email = x.Email,
                     PhoneNumber = x.PhoneNumber,
                     Dob = x.Dob,
@@ -128,7 +128,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user wiht user id
         [HttpPut("{id}")]
-
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PutUser(string id, [FromBody]UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -136,17 +136,37 @@ namespace SSO.Backend.Controllers.Users
             {
                 return NotFound();
             }
-            var userLogin = User.Identity.GetSubjectId();
-            if (userLogin != user.Id)
-                return BadRequest();
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
+            user.Email = request.Email;
             user.Dob = DateTime.Parse(request.Dob);
+            user.PhoneNumber = request.PhoneNumber;
             user.LastModifiedDate = DateTime.Now;
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
                 return Ok();
+            }
+            return BadRequest();
+        }
+
+
+        //Put reset user password with user id
+        [HttpPut("{id}/reset-password")]
+        [RoleRequirement(RoleCode.Admin)]
+        public async Task<IActionResult> PutResetPassword(string id)
+        {
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound($"Cannot found user with id: {id}");
+            var newPassword = _userManager.PasswordHasher.HashPassword(user, "User@123");
+            user.PasswordHash = newPassword;
+            var result = await _userManager.UpdateAsync(user);          
+
+            if (result.Succeeded)
+            {
+                return NoContent();
             }
             return BadRequest();
         }
@@ -172,7 +192,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Delete user with user id
         [HttpDelete("{id}")]
-
+        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -180,9 +200,6 @@ namespace SSO.Backend.Controllers.Users
             {
                 return NotFound();
             }
-            var userLogin = User.Identity.GetSubjectId();
-            if (userLogin != user.Id)
-                return BadRequest();
             var adminUsers = await _userManager.GetUsersInRoleAsync(SystemConstants.Roles.Admin);
             var otherUsers = adminUsers.Where(x => x.Id != id).ToList();
             if (otherUsers.Count == 0)
@@ -223,7 +240,7 @@ namespace SSO.Backend.Controllers.Users
 
         [HttpPost("{userId}/roles")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostRolesToUserUser(string userId, [FromBody] RoleAssignRequest request)
+        public async Task<IActionResult> PostRolesToUser(string userId, [FromBody] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)
             {
@@ -232,6 +249,7 @@ namespace SSO.Backend.Controllers.Users
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return NotFound();
+            var roles = await _userManager.GetRolesAsync(user);
             var result = await _userManager.AddToRolesAsync(user, request.RoleNames);
             if (result.Succeeded)
                 return Ok();

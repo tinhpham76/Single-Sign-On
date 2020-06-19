@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -40,7 +40,7 @@ registerLocaleData(en);
         AppRoutingModule
     ],
     declarations: [AppComponent, ServerErrorComponent, AccessDeniedComponent, NotFoundComponent],
-    providers: [AuthGuard,
+    providers: [AuthGuard, DatePipe,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,

@@ -64,20 +64,20 @@
                 </a>
               </ul>
             </li>
-            <li nz-submenu nzTitle="{{fullName}}" nzIcon="user"
+            <li nz-submenu nzTitle={{fullName}} nzIcon="user"
               style="min-width: 250px; width: auto; text-align: center;">
               <ul>
                 <span>
-                  <li nz-menu-group nzTitle="{{userName}}"></li>
+                  <li nz-menu-group nzTitle={{userName}}></li>
                 </span>
                 <span>
-                  <li nz-menu-group nzTitle="{{email}}"></li>
+                  <li nz-menu-group nzTitle={{email}}></li>
                 </span>
                 <ul>
                   <a href="">
                     <li nz-menu-item>Settings</li>
                   </a>
-                  <a href="javascript:void(0)" (click)="signout()">
+                  <a href="javascript:void(0)" (click)="signOut()">
                     <li nz-menu-item>Logout</li>
                   </a>
                 </ul>
@@ -92,7 +92,7 @@
         <nz-breadcrumb-item></nz-breadcrumb-item>
       </nz-breadcrumb>
       <div class="inner-content">
-        <router-outlet></router-outlet>
+       <router-outlet></router-outlet>
       </div>
     </nz-content>
     <nz-footer>Ant & Bootstrap Design ©2020 Implement By Angular</nz-footer>

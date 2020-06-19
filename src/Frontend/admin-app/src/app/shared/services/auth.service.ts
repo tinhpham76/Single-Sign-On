@@ -54,7 +54,7 @@ export class AuthService extends BaseService {
     return this.user != null ? this.user.profile.name : '';
   }
 
-  async signout() {
+  async signOut() {
     await this.manager.signoutRedirect();
   }
 }

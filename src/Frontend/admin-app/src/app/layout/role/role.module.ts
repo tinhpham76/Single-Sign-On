@@ -17,6 +17,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @NgModule({
   declarations: [RoleComponent],
@@ -27,6 +28,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     NzSpinModule,
     NzNotificationModule,
     NzButtonModule,
+    NzToolTipModule,
     NzModalModule,
     NzIconModule,
     FormsModule,

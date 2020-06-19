@@ -7,6 +7,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MessageConstants } from '@app/shared/constants/messages.constant';
 
 @Component({
   selector: 'app-role',
@@ -43,8 +44,8 @@ export class RoleComponent implements OnInit, OnDestroy {
   // Spin
   isSpinning = true;
 
-
-  constructor(private rolesService: RolesServices,
+  constructor(
+    private rolesService: RolesServices,
     private notification: NzNotificationService,
     private modal: NzModalService,
     private fb: FormBuilder) { }
@@ -64,9 +65,18 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.loadRoleData(this.filter, this.pageIndex, this.pageSize);
   }
 
-  // Load Role Data
+  // Load Role
   loadRoleData(filter: string, pageIndex: number, pageSize: number): void {
     this.rolesService.getAllPaging(filter, pageIndex, pageSize)
+    .pipe(catchError(err => {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ERROR,
+        'bottomRight'
+      );
+      return throwError('Error');
+    }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
@@ -89,16 +99,26 @@ export class RoleComponent implements OnInit, OnDestroy {
   closeAddRole(): void {
     this.visibleAddRole = false;
   }
+
   createRole(): void {
     const id = this.formAddRole.get('id').value;
     const data = this.formAddRole.getRawValue();
     this.rolesService.add(data)
       .pipe(catchError(err => {
-        this.createNotification('error', 'SSO Admin', 'ERROR', 'bottomRight');
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
         return throwError('Error');
       }))
       .subscribe(() => {
-        this.createNotification('success', 'SSO Admin', 'Add success ' + id + '!', 'bottomRight');
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ADD + id + '!',
+          'bottomRight');
         setTimeout(() => {
           this.closeAddRole();
           this.ngOnInit();
@@ -115,6 +135,15 @@ export class RoleComponent implements OnInit, OnDestroy {
   showModal(roleId: string): void {
     this.showEditRole = true;
     this.rolesService.getDetail(roleId)
+    .pipe(catchError(err => {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ERROR,
+        'bottomRight'
+      );
+      return throwError('Error');
+    }))
       .subscribe((res: Role) => {
         this.formEditRole.setValue({
           id: res.id,
@@ -131,11 +160,20 @@ export class RoleComponent implements OnInit, OnDestroy {
     const id = this.formEditRole.get('id').value;
     this.rolesService.update(id, this.formEditRole.getRawValue())
       .pipe(catchError(err => {
-        this.createNotification('error', 'SSO Admin', 'ERROR', 'bottomRight');
+        this.createNotification(
+          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
         return throwError('Error');
       }))
       .subscribe(() => {
-        this.createNotification('success', 'SSO Admin', 'Update success ' + id + '!', 'bottomRight');
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_UPDATE + id + '!',
+          'bottomRight');
         this.ngOnInit();
         setTimeout(() => {
           this.showEditRole = false;
@@ -148,10 +186,23 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   // Delete Role
-  delete(id) {
-    this.rolesService.delete(id)
+
+  delete(roleId) {
+    this.rolesService.delete(roleId)
+      .pipe(catchError(err => {
+        this.createNotification(
+          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
+        return throwError('Error');
+      }))
       .subscribe(res => {
-        this.createNotification('success', 'SSO Admin', 'Delete success ' + id + ' !', 'bottomRight');
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE + roleId + ' !', 'bottomRight');
         this.ngOnInit();
       });
   }
@@ -177,6 +228,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   // Tạo thông báo
+
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }

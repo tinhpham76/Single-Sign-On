@@ -22,7 +22,7 @@ export class RolesServices extends BaseService {
             ;
     }
     getDetail(id: string) {
-        return this.http.get(`${environment.apiUrl}/api/roles/${id}`, { headers: this._sharedHeaders })
+        return this.http.get<Role>(`${environment.apiUrl}/api/roles/${id}`, { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
     getAllPaging(filter, pageIndex, pageSize) {
