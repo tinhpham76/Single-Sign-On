@@ -126,24 +126,3 @@
     </nz-form-item>
   </form>
 </nz-drawer>
-
-
-<!--Edit User Role-->
-<nz-modal [(nzVisible)]="showEditUserRole" nzTitle="🔑 Edit Role" nzWidth="360" (nzOnCancel)="handleCancel()" nzOkText="Save Changes" (nzOnOk)="saveChangesUserRole()()">
-  <form nz-form [nzLayout]="'vertical'" [formGroup]="formEditUserRole" (ngSubmit)="saveChanges()">
-    <nz-form-item>
-      <nz-form-control>
-        <nz-input-group nzAddOnBefore="Id">
-          <input style="background-color: #ececec;" nz-input formControlName="id" readonly />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control nzErrorTip="The input is not valid!">
-        <nz-input-group nzAddOnBefore="Name">
-          <input formControlName="name" nz-input />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-  </form>
-</nz-modal>

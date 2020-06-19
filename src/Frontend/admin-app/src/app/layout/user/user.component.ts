@@ -11,6 +11,7 @@ import { User } from '@app/shared/models/user.model';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { Role } from '@app/shared/models/role.model';
+import { RolesServices } from '@app/shared/services/role.service';
 
 @Component({
   selector: 'app-user',
@@ -37,17 +38,16 @@ export class UserComponent implements OnInit {
   // Drawer Edit user
   visibleEditUser = false;
   formEditUser!: FormGroup;
-  formEditUserRole!: FormGroup;
 
   // Edit user role
   showEditUserRole = false;
-
 
   constructor(private userServices: UserServices,
     private notification: NzNotificationService,
     private modal: NzModalService,
     private fb: FormBuilder,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private roleServices: RolesServices) { }
 
   ngOnInit(): void {
     this.formEditUser = this.fb.group({
@@ -261,6 +261,5 @@ export class UserComponent implements OnInit {
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
-
 
 }

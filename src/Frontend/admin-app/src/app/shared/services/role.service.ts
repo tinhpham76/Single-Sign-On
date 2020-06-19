@@ -3,7 +3,7 @@ import { BaseService } from './base.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Role } from '../models/role.model';
 import { environment } from '@environments/environment';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Pagination } from '../models/pagination.model';
 
 @Injectable({ providedIn: 'root' })
@@ -32,5 +32,11 @@ export class RolesServices extends BaseService {
     delete(id) {
         return this.http.delete(`${environment.apiUrl}/api/roles/${id}`, { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
+    }
+    getAll() {
+        return this.http.get<Role[]>(`${environment.apiUrl}/api/roles`, { headers: this._sharedHeaders })
+            .pipe(map((response: Role[]) => {
+                return response;
+            }), catchError(this.handleError));
     }
 }
