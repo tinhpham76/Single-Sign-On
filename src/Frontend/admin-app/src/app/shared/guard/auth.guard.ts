@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
 
   loadRole() {
     const profile = this.authService.profile;
-    if (profile.role == 'Admin') { return true; }
+    if (profile.role === 'Admin') { return true; }
     localStorage.clear();
     sessionStorage.clear();
   }

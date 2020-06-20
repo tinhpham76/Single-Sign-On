@@ -8,9 +8,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { User } from '@app/shared/models/user.model';
-import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { Role } from '@app/shared/models/role.model';
 import { RolesServices } from '@app/shared/services/role.service';
 
 @Component({
@@ -40,14 +38,14 @@ export class UserComponent implements OnInit {
   formEditUser!: FormGroup;
 
   // Edit user role
-  showEditUserRole = false;
+  roles = [];
+  userId: string;
 
   constructor(private userServices: UserServices,
     private notification: NzNotificationService,
     private modal: NzModalService,
     private fb: FormBuilder,
-    private datePipe: DatePipe,
-    private roleServices: RolesServices) { }
+    private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.formEditUser = this.fb.group({
@@ -68,6 +66,7 @@ export class UserComponent implements OnInit {
   loadUserData(filter: string, pageIndex: number, pageSize: number): void {
     this.userServices.getAllPaging(this.filter, pageIndex, pageSize)
       .pipe(catchError(err => {
+        this.isSpinning = true;
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
@@ -99,6 +98,7 @@ export class UserComponent implements OnInit {
 
   openEditUser(userId: string): void {
     this.visibleEditUser = true;
+    this.userId = userId;
     this.userServices.getDetail(userId)
       .pipe(catchError(err => {
         this.createNotification(
@@ -121,6 +121,7 @@ export class UserComponent implements OnInit {
           phoneNumber: res.phoneNumber,
           dob: dob
         });
+        this.getUserRoles(userId);
       });
   }
 
@@ -223,9 +224,9 @@ export class UserComponent implements OnInit {
     });
   }
 
-  showResetConfirm( userId: string): void {
+  showResetConfirm(userId: string, fullName: string): void {
     this.confirmDeleteModal = this.modal.confirm({
-      nzTitle: 'Do you Want to reset password ' + userId + ' ?',
+      nzTitle: 'Do you Want to reset password for user: ' + fullName + ' ?',
       nzOkText: 'Yes',
       nzOkType: 'danger',
       nzOnOk: () =>
@@ -238,22 +239,22 @@ export class UserComponent implements OnInit {
 
   restPassword(userId: string): void {
     this.userServices.resetUserPassword(userId)
-    .pipe(catchError(err => {
-      this.createNotification(
-        MessageConstants.NOTIFICATION_ERROR,
-        MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ERROR,
-        'bottomRight'
-      );
-      return throwError('Error');
-    }))
-    .subscribe(res => {
-      this.createNotification(
-        MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-        MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_REST_PW + userId + '!', 'bottomRight');
-      this.ngOnInit();
-    });
+      .pipe(catchError(err => {
+        this.createNotification(
+          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
+        return throwError('Error');
+      }))
+      .subscribe(res => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_REST_PW + userId + '!', 'bottomRight');
+        this.ngOnInit();
+      });
   }
 
   // Notification
@@ -262,4 +263,70 @@ export class UserComponent implements OnInit {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
 
+  // user role
+  getUserRoles(userId: string) {
+    this.userServices.getUserRoles(userId)
+      .pipe(catchError(err => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
+        return throwError('Error');
+      }))
+      .subscribe((res: any[]) => {
+        this.roles = res;
+      });
+  }
+
+  event(value: string, roleNames: string): void {
+    if (value === null || value === undefined || value === ' ' || value.length === 0) {
+      this.userServices.removeRolesFromUser(this.userId, [roleNames])
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error');
+        }))
+        .subscribe(() => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_DELETE + this.userId + ' role!', 'bottomRight');
+          this.ngOnInit();
+        });
+    } else if (roleNames === 'Admin') {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_WARNING,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ROLE_AD + ' !', 'bottomRight');
+    } else {
+      const selectedNames = [roleNames];
+      const assignRolesToUser = {
+        roleNames: selectedNames
+      };
+      this.userServices.assignRolesToUser(this.userId, assignRolesToUser)
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error');
+        }))
+        .subscribe(() => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ADD + this.userId + ' roles!', 'bottomRight');
+          this.ngOnInit();
+        });
+    }
+
+  }
 }

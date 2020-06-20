@@ -9,6 +9,7 @@ using SSO.Services;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel.User;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace SSO.Backend.Controllers.Users
         //Post new user
         [HttpPost]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostUser([FromBody]UserCreateRequest request)
+        public async Task<IActionResult> PostUser([FromBody] UserCreateRequest request)
         {
             var user = new User()
             {
@@ -129,7 +130,7 @@ namespace SSO.Backend.Controllers.Users
         //Put user wiht user id
         [HttpPut("{id}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutUser(string id, [FromBody]UserCreateRequest request)
+        public async Task<IActionResult> PutUser(string id, [FromBody] UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -162,7 +163,7 @@ namespace SSO.Backend.Controllers.Users
                 return NotFound($"Cannot found user with id: {id}");
             var newPassword = _userManager.PasswordHasher.HashPassword(user, "User@123");
             user.PasswordHash = newPassword;
-            var result = await _userManager.UpdateAsync(user);          
+            var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {
@@ -173,7 +174,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user password with user id
         [HttpPut("{id}/change-password")]
-        public async Task<IActionResult> PutUserPassword(string id, [FromBody]UserPasswordChangeUpdateRequest request)
+        public async Task<IActionResult> PutUserPassword(string id, [FromBody] UserPasswordChangeUpdateRequest request)
         {
 
             var user = await _userManager.FindByIdAsync(id);
@@ -231,30 +232,49 @@ namespace SSO.Backend.Controllers.Users
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> GetUserRoles(string userId)
         {
+
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return NotFound();
-            var roles = await _userManager.GetRolesAsync(user);
-            return Ok(roles);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if (userRoles.Count == 0)
+            {
+                var dataRole = await _roleManager.Roles.Select(x => new UserRoleViewModel()
+                {
+                    Label = x.Id,
+                    Value = x.Id,
+                    Checked = userRoles.Contains(x.Id) ? true : false,
+                    Disabled = false,
+                    Name = x.Name
+                }).ToListAsync();
+                return Ok(dataRole);
+            }
+            var dataRoles = await _roleManager.Roles.Select(x => new UserRoleViewModel()
+            {
+                Label = x.Id,
+                Value = x.Id,
+                Checked = userRoles.Contains(x.Id) ? true : false,
+                Disabled = userRoles.Contains(x.Id) ? false : true,
+                Name = x.Name
+            }).ToListAsync();
+            return Ok(dataRoles);
         }
 
         [HttpPost("{userId}/roles")]
-        [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostRolesToUser(string userId, [FromBody] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)
             {
-                return BadRequest();
+                return BadRequest("Role names cannot empty");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return NotFound();
-            var roles = await _userManager.GetRolesAsync(user);
+                return NotFound($"Cannot found user with id: {userId}");
             var result = await _userManager.AddToRolesAsync(user, request.RoleNames);
             if (result.Succeeded)
                 return Ok();
 
-            return BadRequest();
+            return BadRequest(result);
         }
 
         [HttpDelete("{userId}/roles")]

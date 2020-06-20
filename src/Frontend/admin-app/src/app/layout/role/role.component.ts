@@ -68,15 +68,16 @@ export class RoleComponent implements OnInit, OnDestroy {
   // Load Role
   loadRoleData(filter: string, pageIndex: number, pageSize: number): void {
     this.rolesService.getAllPaging(filter, pageIndex, pageSize)
-    .pipe(catchError(err => {
-      this.createNotification(
-        MessageConstants.TYPE_NOTIFICATION_ERROR,
-        MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ERROR,
-        'bottomRight'
-      );
-      return throwError('Error');
-    }))
+      .pipe(catchError(err => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ERROR,
+          'bottomRight'
+        );
+        this.isSpinning = true;
+        return throwError('Error');
+      }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
@@ -102,8 +103,49 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   createRole(): void {
     const id = this.formAddRole.get('id').value;
+    const name = this.formAddRole.get('name').value;
     const data = this.formAddRole.getRawValue();
-    this.rolesService.add(data)
+    if (id === name) {
+      this.rolesService.add(data)
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error');
+        }))
+        .subscribe(() => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ADD + id + '!',
+            'bottomRight');
+          setTimeout(() => {
+            this.closeAddRole();
+            this.ngOnInit();
+          }, 500);
+        },
+          error => {
+            setTimeout(() => {
+            }, 500);
+          });
+    } else {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        'Role id and Role name values ​​must be equal!',
+        'bottomRight');
+    }
+
+  }
+
+  // Update Role
+
+  showModal(roleId: string): void {
+    this.showEditRole = true;
+    this.rolesService.getDetail(roleId)
       .pipe(catchError(err => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
@@ -113,37 +155,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         );
         return throwError('Error');
       }))
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ADD + id + '!',
-          'bottomRight');
-        setTimeout(() => {
-          this.closeAddRole();
-          this.ngOnInit();
-        }, 500);
-      },
-        error => {
-          setTimeout(() => {
-          }, 500);
-        });
-  }
-
-  // Update Role
-
-  showModal(roleId: string): void {
-    this.showEditRole = true;
-    this.rolesService.getDetail(roleId)
-    .pipe(catchError(err => {
-      this.createNotification(
-        MessageConstants.TYPE_NOTIFICATION_ERROR,
-        MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ERROR,
-        'bottomRight'
-      );
-      return throwError('Error');
-    }))
       .subscribe((res: Role) => {
         this.formEditRole.setValue({
           id: res.id,
@@ -158,31 +169,40 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   saveChanges() {
     const id = this.formEditRole.get('id').value;
-    this.rolesService.update(id, this.formEditRole.getRawValue())
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_UPDATE + id + '!',
-          'bottomRight');
-        this.ngOnInit();
-        setTimeout(() => {
-          this.showEditRole = false;
-        }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.showEditRole = false;
-        }, 500);
-      });
+    const name = this.formEditRole.get('name').value;
+    if (id === name) {
+      this.rolesService.update(id, this.formEditRole.getRawValue())
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error');
+        }))
+        .subscribe(() => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_UPDATE + id + '!',
+            'bottomRight');
+          this.ngOnInit();
+          setTimeout(() => {
+            this.showEditRole = false;
+          }, 500);
+        }, error => {
+          setTimeout(() => {
+            this.showEditRole = false;
+          }, 500);
+        });
+    } else {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        'Role id and Role name values ​​must be equal!',
+        'bottomRight');
+    }
   }
 
   // Delete Role

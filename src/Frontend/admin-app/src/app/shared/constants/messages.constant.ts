@@ -12,4 +12,5 @@ export class MessageConstants {
     public static NOTIFICATION_DELETE = 'Delete success ';
     public static NOTIFICATION_REST_PW = 'Reset password success ';
     public static NOTIFICATION_ERROR = 'An error has occurred! Please try again later... ';
+    public static NOTIFICATION_ROLE_AD = 'You can not add role user role: Admin...';
 }

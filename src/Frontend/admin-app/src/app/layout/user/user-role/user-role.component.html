@@ -1,0 +1,55 @@
+<div class="content-heading">
+  <div>
+    👨‍👩‍👧‍👦 Manager user's role
+    <br>
+    <small><b> A user is a person or robot that can access resources and clients..</b></small>
+  </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/users'><i nz-icon
+    nzType="rollback"></i>Go back</button>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/roles'><i nz-icon
+    nzType="double-right"></i>Manager Roles</button>
+<!--Content-->
+<nz-spin [nzSpinning]="isSpinning">
+
+  <div>
+    <!--User Detail-->
+    <nz-descriptions nzTitle="User {{userName}} manager role ">
+      <nz-descriptions-item nzTitle="User id">{{userId}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="User name">{{userName}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">{{email}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+  <div>
+    <!--User role-->
+    <div class="user-role">
+      <div>
+        <Label>User's role:</Label>
+      </div>
+      <nz-table #userTable [nzData]="roles" [nzFrontPagination]="false">
+        <thead>
+          <tr>
+            <th>User Role</th>
+            <th>Role Id</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of userTable.data">
+            <td>
+              <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="event($event, role.value)">
+                <div nz-row>
+                  <div nz-col nzSpan="8"><label nz-checkbox nzDisabled={{role.disabled}} nzValue={{role.value}}
+                      ngModel={{role.checked}}></label>
+                  </div>
+                </div>
+              </nz-checkbox-wrapper>
+            </td>
+            <td>{{role.label}}</td>
+            <td>{{role.name}}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</nz-spin>

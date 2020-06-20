@@ -2,10 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserComponent } from './user.component';
 import { AddUserComponent } from './add-user/add-user.component';
+import { UserRoleComponent } from './user-role/user-role.component';
 
 const routes: Routes = [
     { path: '', component: UserComponent },
-    { path: 'add', component: AddUserComponent }
+    { path: 'add', component: AddUserComponent },
+    { path: 'user-role/:userId', component: UserRoleComponent}
 ];
 
 @NgModule({

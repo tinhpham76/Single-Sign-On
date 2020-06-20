@@ -7,6 +7,7 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel.User;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,10 +28,9 @@ namespace SSO.Backend.Controllers.Users
         public async Task<IActionResult> GetRoles()
         {
             var roles = _roleManager.Roles;
-            var rolesQuickView = await roles.Select(x => new RolesQuickView()
+            var rolesQuickView = await roles.Select(x => new List<string>()
             {
-                Name = x.Name,
-                NormalizedName = x.NormalizedName
+                x.Id
             }).ToListAsync();
             return Ok(rolesQuickView);
         }
