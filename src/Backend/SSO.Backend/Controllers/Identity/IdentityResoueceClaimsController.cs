@@ -6,6 +6,7 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Identity;
 using SSO.Services.ViewModel.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,9 +23,10 @@ namespace SSO.Backend.Controllers.Identity
             if (identityResource == null)
                 return NotFound();
             var query = _context.IdentityClaims.Where(x => x.IdentityResourceId.Equals(identityResource.Id));
-            var identityClaims = await query.Select(x => new IdentityClaimsViewModel()
+            var identityClaims = await query.Select(x => new List<string>()
             {
-                Type = x.Type
+                 x.Type 
+                
             }).ToListAsync();
 
             return Ok(identityClaims);
@@ -92,7 +94,7 @@ namespace SSO.Backend.Controllers.Identity
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiClaim(string identityResourceName, string claimType)
         {
-            var identityResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
+            var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource == null)
                 return NotFound();
             var identityClaim = await _context.IdentityClaims.FirstOrDefaultAsync(x => x.IdentityResourceId == identityResource.Id && x.Type == claimType);

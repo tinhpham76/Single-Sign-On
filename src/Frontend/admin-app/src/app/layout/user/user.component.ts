@@ -121,7 +121,6 @@ export class UserComponent implements OnInit {
           phoneNumber: res.phoneNumber,
           dob: dob
         });
-        this.getUserRoles(userId);
       });
   }
 
@@ -209,7 +208,6 @@ export class UserComponent implements OnInit {
       });
   }
 
-  // Reset password
 
   showDeleteConfirm(userName: string, userId: string): void {
     this.confirmDeleteModal = this.modal.confirm({
@@ -223,7 +221,7 @@ export class UserComponent implements OnInit {
         })
     });
   }
-
+// Reset password
   showResetConfirm(userId: string, fullName: string): void {
     this.confirmDeleteModal = this.modal.confirm({
       nzTitle: 'Do you Want to reset password for user: ' + fullName + ' ?',
@@ -261,72 +259,5 @@ export class UserComponent implements OnInit {
 
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
-  }
-
-  // user role
-  getUserRoles(userId: string) {
-    this.userServices.getUserRoles(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
-      .subscribe((res: any[]) => {
-        this.roles = res;
-      });
-  }
-
-  event(value: string, roleNames: string): void {
-    if (value === null || value === undefined || value === ' ' || value.length === 0) {
-      this.userServices.removeRolesFromUser(this.userId, [roleNames])
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error');
-        }))
-        .subscribe(() => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_DELETE + this.userId + ' role!', 'bottomRight');
-          this.ngOnInit();
-        });
-    } else if (roleNames === 'Admin') {
-      this.createNotification(
-        MessageConstants.TYPE_NOTIFICATION_WARNING,
-        MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ROLE_AD + ' !', 'bottomRight');
-    } else {
-      const selectedNames = [roleNames];
-      const assignRolesToUser = {
-        roleNames: selectedNames
-      };
-      this.userServices.assignRolesToUser(this.userId, assignRolesToUser)
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error');
-        }))
-        .subscribe(() => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ADD + this.userId + ' roles!', 'bottomRight');
-          this.ngOnInit();
-        });
-    }
-
   }
 }

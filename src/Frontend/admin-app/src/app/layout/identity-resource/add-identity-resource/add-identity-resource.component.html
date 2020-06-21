@@ -1,0 +1,63 @@
+<div class="content-heading">
+    <div>
+        🔖 Add new Identity Resource
+        <br>
+        <small><b> Identity resources are data like user ID, name, or email address of a user. An identity resource has
+                a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the
+                identity token for the user..</b></small>
+    </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/identity-resources'><i nz-icon
+        nzType="rollback"></i>Go back</button>
+<!--Add user-->
+<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="name">Name</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+            <input nz-input formControlName="name" id="name" />
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="displayName">Display Name</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+            <input nz-input formControlName="displayName" id="displayName" />
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="description" id="description" />
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="enabled">Enabled</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-switch formControlName="enabled" id="enabled"></nz-switch>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="showInDiscoveryDocument">Show In Discovery Document
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-switch formControlName="showInDiscoveryDocument" id="showInDiscoveryDocument"></nz-switch>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="required">Required</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-switch formControlName="required" id="required"></nz-switch>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="emphasize">Emphasize</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-switch formControlName="emphasize" id="emphasize"></nz-switch>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item nz-row class="register-area">
+        <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new identity resource</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

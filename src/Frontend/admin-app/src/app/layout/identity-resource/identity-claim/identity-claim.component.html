@@ -1,0 +1,34 @@
+<div class="content-heading">
+    <div>
+        🔖 Identity Resources
+        <br>
+        <small><b> Identity resources are data like user ID, name, or email address of a user. An identity resource has
+                a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the
+                identity token for the user..</b></small>
+    </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/identity-resources'><i nz-icon
+        nzType="rollback"></i>Go back</button>
+<!--Edit identity-->
+<nz-spin [nzSpinning]="isSpinning">
+    <div class="identity-resource-claim">
+        <b><a href="javascript: void(0)"> {{name}} </a> claims:</b>
+        <div nz-col>
+            <nz-tag [nzColor]="'red'" style="margin: 5px;" nz-row *ngFor="let tag of identityClaimTags"
+                [nzMode]="'closeable'" nzMode="checkable" (nzOnClose)="deleteIdentityResourceClaim(tag)">
+                {{ tag }}</nz-tag>
+        </div>
+    </div>
+    <hr>
+    <div class="add-identity-resource-claim">
+        <b>Add new claim:</b>
+        <div nz-col>
+            <a>
+                <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaim" nzMode="checkable"
+                    [nzColor]="'#108ee9'" (nzCheckedChange)="addIdentityResourceClaim(tag)"> +
+                    {{ tag }}
+                </nz-tag>
+            </a>
+        </div>
+    </div>
+</nz-spin>

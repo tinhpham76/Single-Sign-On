@@ -21,11 +21,14 @@ namespace SSO.Backend.Controllers.Identity
         #region Identity Resource
         private readonly ConfigurationDbContext _configurationDbContext;
         private readonly ApplicationDbContext _context;
+  
         public IdentityResourcesController(ConfigurationDbContext configurationDbContext,
-            ApplicationDbContext context)
+            ApplicationDbContext context
+            )
         {
             _configurationDbContext = configurationDbContext;
             _context = context;
+            
         }
         //Get Basic infor identity resources
         [HttpGet]
@@ -43,7 +46,7 @@ namespace SSO.Backend.Controllers.Identity
         [HttpGet("filter")]
         public async Task<IActionResult> GetIdentityResourcesPaging(string filter, int pageIndex, int pageSize)
         {
-            var query = _configurationDbContext.ApiResources.AsQueryable();
+            var query = _configurationDbContext.IdentityResources.AsQueryable();
             if (!string.IsNullOrEmpty(filter))
             {
                 query = query.Where(x => x.Name.Contains(filter));
