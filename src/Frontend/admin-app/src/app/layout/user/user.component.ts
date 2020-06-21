@@ -20,26 +20,27 @@ import { RolesServices } from '@app/shared/services/role.service';
 export class UserComponent implements OnInit {
 
   // Load user data
-  filter = '';
-  pageIndex = 1;
-  pageSize = 5;
-  items: any[];
-  totalRecords: number;
+  public filter = '';
+  public pageIndex = 1;
+  public pageSize = 5;
+  public items: any[];
+  public totalRecords: number;
 
   // Spin
-  isSpinning = true;
+  public isSpinning: boolean;
+  public isSpinningEditUser: boolean;
 
   // Confirm delete user
-  confirmDeleteModal?: NzModalRef;
-  confirmResetModal?: NzModalRef;
+  public confirmDeleteModal?: NzModalRef;
+  public confirmResetModal?: NzModalRef;
 
   // Drawer Edit user
-  visibleEditUser = false;
-  formEditUser!: FormGroup;
+  public visibleEditUser = false;
+  public formEditUser!: FormGroup;
 
   // Edit user role
-  roles = [];
-  userId: string;
+  public roles = [];
+  public userId: string;
 
   constructor(private userServices: UserServices,
     private notification: NzNotificationService,
@@ -58,12 +59,12 @@ export class UserComponent implements OnInit {
       phoneNumber: [null, [Validators.required]],
       dob: [null, [Validators.required]]
     });
-    this.loadUserData(this.filter, this.pageIndex, this.pageSize);
+    this.loadUserData(this.pageIndex, this.pageSize);
   }
 
   // Load user data
-
-  loadUserData(filter: string, pageIndex: number, pageSize: number): void {
+  loadUserData(pageIndex: number, pageSize: number): void {
+    this.isSpinning = true;
     this.userServices.getAllPaging(this.filter, pageIndex, pageSize)
       .pipe(catchError(err => {
         this.isSpinning = true;
@@ -73,7 +74,7 @@ export class UserComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(res => {
         this.items = res.items;
@@ -90,13 +91,13 @@ export class UserComponent implements OnInit {
 
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex } = params;
-    this.loadUserData(this.filter, pageIndex, pageSize);
+    this.loadUserData(pageIndex, pageSize);
   }
 
 
   // Get Detail & Edit User
-
   openEditUser(userId: string): void {
+    this.isSpinningEditUser = true;
     this.visibleEditUser = true;
     this.userId = userId;
     this.userServices.getDetail(userId)
@@ -107,7 +108,7 @@ export class UserComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe((res: User) => {
         const dob = this.datePipe.transform(res.dob, 'yyy/MM/dd');
@@ -121,6 +122,9 @@ export class UserComponent implements OnInit {
           phoneNumber: res.phoneNumber,
           dob: dob
         });
+        setTimeout(() => {
+          this.isSpinningEditUser = false;
+        }, 500);
       });
   }
 
@@ -128,36 +132,8 @@ export class UserComponent implements OnInit {
     this.visibleEditUser = false;
   }
 
-  editUser(): void {
-    const id = this.formEditUser.get('id').value;
-    this.userServices.update(id, this.formEditUser.getRawValue())
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_UPDATE + id + '!',
-          'bottomRight');
-        this.ngOnInit();
-        setTimeout(() => {
-          this.visibleEditUser = false;
-        }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.visibleEditUser = false;
-        }, 500);
-      });
-  }
-
   saveChanges() {
+    this.isSpinningEditUser = true;
     const userId = this.formEditUser.get('id').value;
     this.userServices.update(userId, this.formEditUser.getRawValue())
       .pipe(catchError(err => {
@@ -167,7 +143,7 @@ export class UserComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(() => {
         this.createNotification(
@@ -178,17 +154,14 @@ export class UserComponent implements OnInit {
         this.ngOnInit();
         setTimeout(() => {
           this.visibleEditUser = false;
-        }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.visibleEditUser = false;
+          this.isSpinningEditUser = false;
         }, 500);
       });
   }
 
   // Delete User
-
   delete(userName: string, userId: string) {
+    this.isSpinning = true;
     this.userServices.delete(userId)
       .pipe(catchError(err => {
         this.createNotification(
@@ -197,7 +170,7 @@ export class UserComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(res => {
         this.createNotification(
@@ -207,7 +180,6 @@ export class UserComponent implements OnInit {
         this.ngOnInit();
       });
   }
-
 
   showDeleteConfirm(userName: string, userId: string): void {
     this.confirmDeleteModal = this.modal.confirm({
@@ -221,7 +193,8 @@ export class UserComponent implements OnInit {
         })
     });
   }
-// Reset password
+
+  // Reset password
   showResetConfirm(userId: string, fullName: string): void {
     this.confirmDeleteModal = this.modal.confirm({
       nzTitle: 'Do you Want to reset password for user: ' + fullName + ' ?',
@@ -236,6 +209,7 @@ export class UserComponent implements OnInit {
   }
 
   restPassword(userId: string): void {
+    this.isSpinning = true;
     this.userServices.resetUserPassword(userId)
       .pipe(catchError(err => {
         this.createNotification(
@@ -256,7 +230,6 @@ export class UserComponent implements OnInit {
   }
 
   // Notification
-
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }

@@ -25,8 +25,8 @@ export class IdentityResourceComponent implements OnInit {
   public name: string;
 
   // Spin
-  public isSpinning = true;
-  public isSpinningDrawer = true;
+  public isSpinning: boolean;
+  public isSpinningDrawer: boolean;
 
   // Init form
   validateForm!: FormGroup;
@@ -72,15 +72,11 @@ export class IdentityResourceComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, error => {
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -94,7 +90,7 @@ export class IdentityResourceComponent implements OnInit {
     this.identityResourceServices.getDetail(name)
       .pipe(catchError(err => {
         this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
@@ -119,27 +115,36 @@ export class IdentityResourceComponent implements OnInit {
 
   // Delete identity resource
   delete(name: string) {
-    this.isSpinning = true;
-    this.identityResourceServices.delete(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
-      .subscribe(res => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
-        this.ngOnInit();
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
+    if (name === 'openid' || name === 'profile') {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ERROR,
+        'bottomRight'
+      );
+    } else {
+      this.isSpinning = true;
+      this.identityResourceServices.delete(name)
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error', err);
+        }))
+        .subscribe(res => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
+          this.ngOnInit();
+          setTimeout(() => {
+            this.isSpinning = false;
+          }, 500);
+        });
+    }
   }
 
   showDeleteConfirm(name: string): void {
@@ -165,7 +170,7 @@ export class IdentityResourceComponent implements OnInit {
     this.identityResourceServices.update(name, this.validateForm.getRawValue())
       .pipe(catchError(err => {
         this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'

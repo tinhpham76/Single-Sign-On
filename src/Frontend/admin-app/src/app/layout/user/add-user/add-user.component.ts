@@ -5,7 +5,7 @@ import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/no
 import { UserServices } from '@app/shared/services/users.services';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
 import { throwError } from 'rxjs';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-user',
@@ -14,7 +14,10 @@ import { RouterLink, Router } from '@angular/router';
 })
 export class AddUserComponent implements OnInit {
 
-  validateForm!: FormGroup;
+  // Spin
+  public isSpinning: boolean ;
+  // Init form
+  public validateForm!: FormGroup;
 
   constructor(private fb: FormBuilder,
     private userServices: UserServices,
@@ -34,6 +37,8 @@ export class AddUserComponent implements OnInit {
       phoneNumber: [null, [Validators.required]]
     });
   }
+
+  // Validator
   confirmationValidator = (control: FormControl): { [s: string]: boolean } => {
     if (!control.value) {
       return { required: true };
@@ -48,7 +53,9 @@ export class AddUserComponent implements OnInit {
     Promise.resolve().then(() => this.validateForm.controls.checkPassword.updateValueAndValidity());
   }
 
+  // Create new user
   submitForm(): void {
+    this.isSpinning = true;
     const data = this.validateForm.getRawValue();
     this.userServices.add(data)
       .pipe(catchError(err => {
@@ -68,13 +75,12 @@ export class AddUserComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.router.navigate(['/users']);
+          this.isSpinning = false;
         }, 500);
-      },
-        error => {
-          setTimeout(() => {
-          }, 500);
-        });
+      });
   }
+
+  // Notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }

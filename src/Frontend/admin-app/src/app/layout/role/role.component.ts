@@ -9,40 +9,41 @@ import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
 
+
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.scss']
 })
-export class RoleComponent implements OnInit, OnDestroy {
+export class RoleComponent implements OnInit {
 
   // load role data
-  filter = '';
-  pageIndex = 1;
-  pageSize = 5;
-  items: any[];
-  totalRecords: number;
+  public filter = '';
+  public pageIndex = 1;
+  public pageSize = 5;
+  public items: any[];
+  public totalRecords: number;
 
   // button confirmModal
-  confirmModal?: NzModalRef;
+  public confirmModal?: NzModalRef;
 
   // load role detail
-  id: string;
-  name: string;
-  normalizedName: string;
+  public id: string;
+  public name: string;
+  public normalizedName: string;
 
   // show edit role
-  showEditRole = false;
+  public showEditRole = false;
 
   // show Add role
-  visibleAddRole = false;
+  public visibleAddRole = false;
 
   // Form
-  formEditRole!: FormGroup;
-  formAddRole!: FormGroup;
+  public formEditRole!: FormGroup;
+  public formAddRole!: FormGroup;
 
   // Spin
-  isSpinning = true;
+  public isSpinning: boolean;
 
   constructor(
     private rolesService: RolesServices,
@@ -67,6 +68,7 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   // Load Role
   loadRoleData(filter: string, pageIndex: number, pageSize: number): void {
+    this.isSpinning = true;
     this.rolesService.getAllPaging(filter, pageIndex, pageSize)
       .pipe(catchError(err => {
         this.createNotification(
@@ -75,8 +77,7 @@ export class RoleComponent implements OnInit, OnDestroy {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        this.isSpinning = true;
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(res => {
         this.items = res.items;
@@ -84,15 +85,10 @@ export class RoleComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
       });
   }
 
   // Thêm mới role
-
   openAddRole(): void {
     this.visibleAddRole = true;
   }
@@ -114,7 +110,7 @@ export class RoleComponent implements OnInit, OnDestroy {
             MessageConstants.NOTIFICATION_ERROR,
             'bottomRight'
           );
-          return throwError('Error');
+          return throwError('Error', err);
         }))
         .subscribe(() => {
           this.createNotification(
@@ -126,11 +122,7 @@ export class RoleComponent implements OnInit, OnDestroy {
             this.closeAddRole();
             this.ngOnInit();
           }, 500);
-        },
-          error => {
-            setTimeout(() => {
-            }, 500);
-          });
+        });
     } else {
       this.createNotification(
         MessageConstants.TYPE_NOTIFICATION_ERROR,
@@ -138,11 +130,9 @@ export class RoleComponent implements OnInit, OnDestroy {
         'Role id and Role name values ​​must be equal!',
         'bottomRight');
     }
-
   }
 
   // Update Role
-
   showModal(roleId: string): void {
     this.showEditRole = true;
     this.rolesService.getDetail(roleId)
@@ -174,12 +164,12 @@ export class RoleComponent implements OnInit, OnDestroy {
       this.rolesService.update(id, this.formEditRole.getRawValue())
         .pipe(catchError(err => {
           this.createNotification(
-            MessageConstants.NOTIFICATION_ERROR,
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
             MessageConstants.TITLE_NOTIFICATION_SSO,
             MessageConstants.NOTIFICATION_ERROR,
             'bottomRight'
           );
-          return throwError('Error');
+          return throwError('Error', err);
         }))
         .subscribe(() => {
           this.createNotification(
@@ -206,25 +196,34 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   // Delete Role
+  delete(roleId: string) {
+    if (roleId === 'Admin') {
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_ERROR,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ERROR,
+        'bottomRight'
+      );
+    } else {
+      this.isSpinning = true;
+      this.rolesService.delete(roleId)
+        .pipe(catchError(err => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            MessageConstants.NOTIFICATION_ERROR,
+            'bottomRight'
+          );
+          return throwError('Error', err);
+        }))
+        .subscribe(res => {
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.ngOnInit();
+          }, 500);
+        });
+    }
 
-  delete(roleId) {
-    this.rolesService.delete(roleId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
-      .subscribe(res => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_DELETE + roleId + ' !', 'bottomRight');
-        this.ngOnInit();
-      });
   }
 
   showConfirm(roleId: string): void {
@@ -241,19 +240,14 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   // Hiển thị thêm dữ liệu khác
-
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex } = params;
     this.loadRoleData(this.filter, pageIndex, pageSize);
   }
 
   // Tạo thông báo
-
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
 
-  //
-
-  ngOnDestroy(): void { }
 }

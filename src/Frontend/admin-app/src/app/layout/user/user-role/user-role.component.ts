@@ -16,11 +16,16 @@ import { User } from '@app/shared/models/user.model';
 })
 export class UserRoleComponent implements OnInit {
 
-  roles = [];
-  userId: string;
-  isSpinning = true;
-  userName: string;
-  email: string;
+  // load roles
+  public roles = [];
+
+  // load data
+  public userId: string;
+  public userName: string;
+  public email: string;
+
+  // Spin
+  public isSpinning: boolean;
 
   constructor(private route: ActivatedRoute,
     private userServices: UserServices,
@@ -35,7 +40,9 @@ export class UserRoleComponent implements OnInit {
     this.loadUserDetail(this.userId);
   }
 
-  loadUserDetail(userId: string){
+  // Load user detail
+  loadUserDetail(userId: string) {
+    this.isSpinning = true;
     this.userServices.getDetail(userId)
       .pipe(catchError(err => {
         this.createNotification(
@@ -44,15 +51,18 @@ export class UserRoleComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe((res: User) => {
         this.userName = res.userName;
         this.email = res.email;
+        this.isSpinning = false;
       });
   }
 
+  // Load user role
   getUserRoles(userId: string) {
+    this.isSpinning = true;
     this.userServices.getUserRoles(userId)
       .pipe(catchError(err => {
         this.createNotification(
@@ -62,10 +72,10 @@ export class UserRoleComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinning = false;
           this.ngOnInit();
+          this.isSpinning = false;
         }, 1000);
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe((res: any[]) => {
         this.roles = res;
@@ -75,11 +85,14 @@ export class UserRoleComponent implements OnInit {
       });
   }
 
+  // Notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
 
+  // Event
   event(value: string, roleNames: string): void {
+    this.isSpinning = true;
     if (value === null || value === undefined || value === ' ' || value.length === 0) {
       this.userServices.removeRolesFromUser(this.userId, [roleNames])
         .pipe(catchError(err => {
@@ -93,27 +106,27 @@ export class UserRoleComponent implements OnInit {
             this.isSpinning = false;
             this.ngOnInit();
           }, 1000);
-          return throwError('Error');
+          return throwError('Error', err);
         }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
             MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_DELETE +  this.userId + ' role!', 'bottomRight');
-            setTimeout(() => {
-              this.isSpinning = false;
-              this.ngOnInit();
-            }, 1000);
+            MessageConstants.NOTIFICATION_DELETE + this.userId + ' role!', 'bottomRight');
+          setTimeout(() => {
+            this.ngOnInit();
+            this.isSpinning = false;
+          }, 1000);
         });
     } else if (roleNames === 'Admin') {
       this.createNotification(
         MessageConstants.TYPE_NOTIFICATION_WARNING,
         MessageConstants.TITLE_NOTIFICATION_SSO,
         MessageConstants.NOTIFICATION_ROLE_AD + ' !', 'bottomRight');
-        setTimeout(() => {
-          this.isSpinning = false;
-          this.ngOnInit();
-        }, 1000);
+      setTimeout(() => {
+        this.ngOnInit();
+        this.isSpinning = false;
+      }, 1000);
     } else {
       const selectedNames = [roleNames];
       const assignRolesToUser = {
@@ -128,21 +141,22 @@ export class UserRoleComponent implements OnInit {
             'bottomRight'
           );
           setTimeout(() => {
-            this.isSpinning = false;
             this.ngOnInit();
+            this.isSpinning = false;
           }, 1000);
-          return throwError('Error');
+          return throwError('Error', err);
         }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
             MessageConstants.TITLE_NOTIFICATION_SSO,
             MessageConstants.NOTIFICATION_ADD + this.userId + ' roles!', 'bottomRight');
-            setTimeout(() => {
-              this.isSpinning = false;
-              this.ngOnInit();
-            }, 1000);
+          setTimeout(() => {
+            this.ngOnInit();
+            this.isSpinning = false;
+          }, 1000);
         });
+
     }
   }
 }

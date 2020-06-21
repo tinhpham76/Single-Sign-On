@@ -54,74 +54,76 @@
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
   [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visibleEditUser" nzTitle=" 👨‍👩‍👧‍👦 Edit User"
   (nzOnClose)="closeEditUser()">
-  <form nz-form [nzLayout]="'vertical'" [formGroup]="formEditUser" (ngSubmit)="saveChanges()">
-    <nz-form-item>
-      <nz-form-label>Id:</nz-form-label>
-      <nz-form-control>
-        <nz-input-group>
-          <input style="background-color: #ececec;" nz-input formControlName="id" readonly />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>User Name:</nz-form-label>
-      <nz-form-control>
-        <nz-input-group>
-          <input style="background-color: #ececec;" nz-input formControlName="userName" readonly />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>First Name:</nz-form-label>
-      <nz-form-control nzErrorTip="The input is not valid!">
-        <nz-input-group>
-          <input formControlName="firstName" nz-input />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>Last Name:</nz-form-label>
-      <nz-form-control nzErrorTip="The input is not valid!">
-        <nz-input-group>
-          <input nz-input formControlName="lastName" />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>Email:</nz-form-label>
-      <nz-form-control nzErrorTip="The input is not valid E-mail!">
-        <nz-input-group>
-          <input nz-input formControlName="email" />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired>Phone Number</nz-form-label>
-      <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="formEditUser.controls['phoneNumber']"
-        nzErrorTip="Please input your phone number!">
-        <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
-          <ng-template #addOnBeforeTemplate>
-            <nz-select formControlName="phoneNumberPrefix" class="phone-select">
-              <nz-option nzLabel="+84" nzValue="+84"></nz-option>
-              <nz-option nzLabel="+85" nzValue="+85"></nz-option>
-            </nz-select>
-          </ng-template>
-          <input formControlName="phoneNumber" id="'phoneNumber'" nz-input />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>Date of birth:</nz-form-label>
-      <nz-form-control nzErrorTip="The input is not valid!">
-        <nz-input-group>
-          <input nz-input formControlName="dob" />
-        </nz-input-group>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-control>
-        <button nz-button nzType="primary" [disabled]="!formEditUser.valid">Save changes</button>
-      </nz-form-control>
-    </nz-form-item>
-  </form>
+  <nz-spin [nzSpinning]="isSpinningEditUser">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="formEditUser" (ngSubmit)="saveChanges()">
+      <nz-form-item>
+        <nz-form-label>Id:</nz-form-label>
+        <nz-form-control>
+          <nz-input-group>
+            <input style="background-color: #ececec;" nz-input formControlName="id" readonly />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>User Name:</nz-form-label>
+        <nz-form-control>
+          <nz-input-group>
+            <input style="background-color: #ececec;" nz-input formControlName="userName" readonly />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>First Name:</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid!">
+          <nz-input-group>
+            <input formControlName="firstName" nz-input />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Last Name:</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid!">
+          <nz-input-group>
+            <input nz-input formControlName="lastName" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Email:</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid E-mail!">
+          <nz-input-group>
+            <input nz-input formControlName="email" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired>Phone Number</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="formEditUser.controls['phoneNumber']"
+          nzErrorTip="Please input your phone number!">
+          <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
+            <ng-template #addOnBeforeTemplate>
+              <nz-select formControlName="phoneNumberPrefix" class="phone-select">
+                <nz-option nzLabel="+84" nzValue="+84"></nz-option>
+                <nz-option nzLabel="+85" nzValue="+85"></nz-option>
+              </nz-select>
+            </ng-template>
+            <input formControlName="phoneNumber" id="'phoneNumber'" nz-input />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>Date of birth:</nz-form-label>
+        <nz-form-control nzErrorTip="The input is not valid!">
+          <nz-input-group>
+            <input nz-input formControlName="dob" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [disabled]="!formEditUser.valid">Save changes</button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
 </nz-drawer>
