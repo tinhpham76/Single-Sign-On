@@ -82,10 +82,6 @@ export class UserComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
-      }, error => {
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
       });
   }
 
@@ -138,7 +134,7 @@ export class UserComponent implements OnInit {
     this.userServices.update(userId, this.formEditUser.getRawValue())
       .pipe(catchError(err => {
         this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
@@ -165,7 +161,7 @@ export class UserComponent implements OnInit {
     this.userServices.delete(userId)
       .pipe(catchError(err => {
         this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
@@ -213,12 +209,12 @@ export class UserComponent implements OnInit {
     this.userServices.resetUserPassword(userId)
       .pipe(catchError(err => {
         this.createNotification(
-          MessageConstants.NOTIFICATION_ERROR,
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(res => {
         this.createNotification(

@@ -122,7 +122,7 @@ export class ScopeComponent implements OnInit {
       .pipe(
         catchError(err => {
           this.createNotification(
-            MessageConstants.NOTIFICATION_ERROR,
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
             MessageConstants.TITLE_NOTIFICATION_SSO,
             MessageConstants.NOTIFICATION_ERROR,
             'bottomRight'
@@ -205,7 +205,7 @@ export class ScopeComponent implements OnInit {
   // Delete api scopes
   delete(scopeName: string) {
     this.isSpinning = true;
-    this.apiResourceServices.deleteApiResourceScope(this.name, scopeName)
+    this.apiResourceServices.deleteApiResourceScope(this.apiName, scopeName)
       .pipe(catchError(err => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,

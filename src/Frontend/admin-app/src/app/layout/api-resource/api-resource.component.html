@@ -10,7 +10,7 @@
         nzType="file-add"></i>Add new api resource</button>
 <!--api Resource-->
 <nz-spin [nzSpinning]="isSpinning">
-    <nz-table #userTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
+    <nz-table #apiTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let api of userTable.data">
+            <tr *ngFor="let api of apiTable.data">
                 <td>{{ api.name }}</td>
                 <td>{{ api.description }}</td>
                 <td>

@@ -46,7 +46,7 @@ export class AddIdentityResourceComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(() => {
         this.createNotification(
@@ -57,11 +57,8 @@ export class AddIdentityResourceComponent implements OnInit {
         setTimeout(() => {
           this.router.navigate(['/identity-resources']);
         }, 500);
-      },
-        error => {
-          setTimeout(() => {
-          }, 500);
-        });
+
+      });
   }
 
   // Notification

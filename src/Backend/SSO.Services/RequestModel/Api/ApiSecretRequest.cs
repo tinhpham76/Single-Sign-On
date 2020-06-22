@@ -8,8 +8,9 @@ namespace SSO.Services.RequestModel.Api
 
         public string Type { get; set; }
 
-        public string HasType { get; set; }
-        public DateTime? Expiration { get; set; }
+        public string HashType { get; set; }
+
+        public string Expiration { get; set; }
         public string Description { get; set; }
     }
 }

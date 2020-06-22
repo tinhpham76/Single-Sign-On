@@ -43,15 +43,16 @@ namespace SSO.Backend.Controllers.Api
             //If api resource not null, Check api Secret
             if (apiResource != null)
             {
-                if (request.HasType == "sha256")
+                if (request.HashType == "Sha256")
                 {
                     var apiSecretRequest = new IdentityServer4.EntityFramework.Entities.ApiSecret()
                     {
                         Type = request.Type,
                         Value = request.Value.ToSha256(),
                         Description = request.Description,
-                        Expiration = request.Expiration,
-                        ApiResourceId = apiResource.Id
+                        ApiResourceId = apiResource.Id,
+                        Expiration = DateTime.Parse(request.Expiration),
+                        Created = DateTime.UtcNow
                     };
                     _context.ApiSecrets.Add(apiSecretRequest);
                     var result = await _context.SaveChangesAsync();
@@ -64,15 +65,16 @@ namespace SSO.Backend.Controllers.Api
                     }
                     return BadRequest();
                 }
-                else if (request.HasType == "sha512")
+                else if (request.HashType == "Sha512")
                 {
                     var apiSecretRequest = new IdentityServer4.EntityFramework.Entities.ApiSecret()
                     {
                         Type = request.Type,
-                        Value = request.Value.ToSha512(),
+                        Value = request.Value.ToSha256(),
                         Description = request.Description,
-                        Expiration = request.Expiration,
-                        ApiResourceId = apiResource.Id
+                        ApiResourceId = apiResource.Id,
+                        Expiration = DateTime.Parse(request.Expiration),
+                        Created = DateTime.UtcNow
                     };
                     _context.ApiSecrets.Add(apiSecretRequest);
                     var result = await _context.SaveChangesAsync();

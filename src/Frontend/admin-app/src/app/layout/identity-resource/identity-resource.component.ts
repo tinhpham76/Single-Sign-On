@@ -95,7 +95,7 @@ export class IdentityResourceComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe((res: IdentityResource) => {
         this.validateForm.setValue({
@@ -175,7 +175,7 @@ export class IdentityResourceComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(() => {
         this.visibleEditIdentity = false;

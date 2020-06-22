@@ -11,7 +11,7 @@
         nzType="file-add"></i>Add new identity resource</button>
 <!--Identity Resource-->
 <nz-spin [nzSpinning]="isSpinning">
-    <nz-table #userTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
+    <nz-table #identityTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let identity of userTable.data">
+            <tr *ngFor="let identity of identityTable.data">
                 <td>{{ identity.name }}</td>
                 <td>{{ identity.description }}</td>
                 <td>

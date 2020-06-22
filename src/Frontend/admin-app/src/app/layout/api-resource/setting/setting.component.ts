@@ -71,7 +71,7 @@ export class SettingComponent implements OnInit {
       .pipe(
         catchError(err => {
           this.createNotification(
-            MessageConstants.NOTIFICATION_ERROR,
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
             MessageConstants.TITLE_NOTIFICATION_SSO,
             MessageConstants.NOTIFICATION_ERROR,
             'bottomRight'

@@ -53,11 +53,7 @@ export class AddApiComponent implements OnInit {
         setTimeout(() => {
           this.router.navigate(['/api-resources']);
         }, 500);
-      },
-        error => {
-          setTimeout(() => {
-          }, 500);
-        });
+      });
   }
 
   // Notification

@@ -160,7 +160,7 @@ export class ApiResourceComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(() => {
         this.visibleEditApi = false;

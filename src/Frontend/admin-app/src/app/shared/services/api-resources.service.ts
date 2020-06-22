@@ -68,4 +68,17 @@ export class ApiResourceServices extends BaseService {
             JSON.stringify(entity), { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
+    getApiResourceSecret(name: string) {
+        return this.http.get(`${environment.apiUrl}/api/ApiResources/${name}/apiSecrets`, { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    addApiResourceSecret(name: string, entity: any) {
+        return this.http.post(`${environment.apiUrl}/api/ApiResources/${name}/apiSecrets`,
+            JSON.stringify(entity), { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    deleteApiResourceSecret(name: string, secretId: number) {
+        return this.http.delete(`${environment.apiUrl}/api/ApiResources/${name}/apiSecrets/${secretId}`
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
 }
