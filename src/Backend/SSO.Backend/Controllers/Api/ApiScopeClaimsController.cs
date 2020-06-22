@@ -5,6 +5,7 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,23 +16,22 @@ namespace SSO.Backend.Controllers.Api
         #region Api Scope Claims
         //Get api scope claim
         [HttpGet("{apiResourceName}/apiScopes/{scopeName}/scopeClaims")]
-        public async Task<IActionResult> GetApiScopeClaims(string apiResourceName)
+        public async Task<IActionResult> GetApiScopeClaims(string apiResourceName, string scopeName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
-            var apiScope = _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
-            var query = _context.ApiScopeClaims.Where(x => x.ApiScopeId.Equals(apiScope.Id));
-            var apiScopeClaims = await query.Select(x => new ApiScopeClaimsViewModel()
-            {
-                Type = x.Type
-            }).ToListAsync();
-
+            var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Name == scopeName);
+            var apiScopeClaims = await _context.ApiScopeClaims.Where(x => x.ApiScopeId == apiScope.Id)
+                                                        .Select(x => new List<string>()
+                                                        {
+                                                            x.Type
+                                                        }).ToListAsync();
             return Ok(apiScopeClaims);
         }
 
         //Post api scope claim
         [HttpPost("{apiResourceName}/apiScopes/{scopeName}/scopeClaims")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiScopeClaim(string apiResourceName, string scopeName, [FromBody]ApiScopeClaimRequest request)
+        public async Task<IActionResult> PostApiScopeClaim(string apiResourceName, string scopeName, [FromBody] ApiScopeClaimRequest request)
         {
             //Check Api Resource
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

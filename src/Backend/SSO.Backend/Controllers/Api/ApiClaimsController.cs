@@ -5,6 +5,7 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,9 +21,9 @@ namespace SSO.Backend.Controllers.Api
 
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             var query = _context.ApiClaims.Where(x => x.ApiResourceId.Equals(apiResource.Id));
-            var apiClaims = await query.Select(x => new ApiClaimsViewModel()
+            var apiClaims = await query.Select(x => new List<string>()
             {
-                Type = x.Type
+                x.Type
             }).ToListAsync();
 
             return Ok(apiClaims);

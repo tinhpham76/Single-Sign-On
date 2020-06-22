@@ -26,8 +26,7 @@ namespace SSO.Backend.Controllers.Api
                 Description = x.Description,
                 Required = x.Required,
                 ShowInDiscoveryDocument = x.ShowInDiscoveryDocument,
-                Emphasize = x.Emphasize,
-                UserClaims = x.UserClaims.Select(x => x.ToString()).ToList()
+                Emphasize = x.Emphasize
             }).ToListAsync();
 
             return Ok(apiScopes);

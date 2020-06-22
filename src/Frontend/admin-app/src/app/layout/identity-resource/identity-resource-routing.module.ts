@@ -6,8 +6,8 @@ import { IdentityClaimComponent } from './identity-claim/identity-claim.componen
 
 const routes: Routes = [
     { path: '', component: IdentityResourceComponent },
-    { path: 'add', component: AddIdentityResourceComponent},
-    { path: 'claim/:name', component:IdentityClaimComponent}
+    { path: 'add', component: AddIdentityResourceComponent },
+    { path: ':name/claim', component: IdentityClaimComponent }
 ];
 
 @NgModule({

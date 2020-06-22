@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
-import { NzModalRef } from 'ng-zorro-antd/modal';
-import { IdentityResourceServices } from '@app/shared/services/identity-resources.service';
+import { ApiResourceServices } from '@app/shared/services/api-resources.service';
+import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
+import { ActivatedRoute } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
 import { throwError } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { IdentityResource } from '@app/shared/models/identity-resource.model';
+import { ApiResource } from '@app/shared/models/api-resource.model';
 
 @Component({
-  selector: 'app-identity-claim',
-  templateUrl: './identity-claim.component.html',
-  styleUrls: ['./identity-claim.component.scss']
+  selector: 'app-setting',
+  templateUrl: './setting.component.html',
+  styleUrls: ['./setting.component.scss']
 })
-export class IdentityClaimComponent implements OnInit {
+export class SettingComponent implements OnInit {
 
   //
   public name: string;
@@ -22,7 +21,7 @@ export class IdentityClaimComponent implements OnInit {
   public isSpinning = true;
 
   // Claim
-  public identityClaimTags = [];
+  public apiClaimTags = [];
   public tempClaim = [];
 
   // Identity resource detail
@@ -30,22 +29,22 @@ export class IdentityClaimComponent implements OnInit {
   public description: string;
   public enabled: boolean;
 
-  constructor(private identityResourceServices: IdentityResourceServices,
+  constructor(private apiResourceServices: ApiResourceServices,
     private notification: NzNotificationService,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.name = params['name'];
-      this.getIdentityResourceClaims(params['name']);
-      this.getIdentityResourceDetail(params['name']);
+      this.getApiResourceDetail(params['name']);
+      this.getApiResourceClaims(params['name']);
     });
   }
 
   // Get Identity resource detail
-  getIdentityResourceDetail(name: string): void {
+  getApiResourceDetail(name: string): void {
     this.isSpinning = true;
-    this.identityResourceServices.getDetail(name)
+    this.apiResourceServices.getDetail(name)
       .pipe(catchError(err => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
@@ -53,9 +52,9 @@ export class IdentityClaimComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
-      .subscribe((res: IdentityResource) => {
+      .subscribe((res: ApiResource) => {
         this.displayName = res.displayName,
           this.description = res.description,
           this.enabled = res.enabled,
@@ -66,9 +65,9 @@ export class IdentityClaimComponent implements OnInit {
   }
 
   // Get claims for identity resource
-  getIdentityResourceClaims(name: string): void {
+  getApiResourceClaims(name: string): void {
     this.isSpinning = true;
-    this.identityResourceServices.getIdentityResourceClaims(name)
+    this.apiResourceServices.getApiResourceClaims(name)
       .pipe(
         catchError(err => {
           this.createNotification(
@@ -80,7 +79,7 @@ export class IdentityClaimComponent implements OnInit {
           return throwError('Error: ', err);
         }))
       .subscribe((res: any[]) => {
-        this.identityClaimTags = res;
+        this.apiClaimTags = res;
         const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
           'nickname', 'preferred_username', 'profile', 'picture', 'website', 'email', 'email_verified',
           'gender', 'birthdate', 'zoneinfo', 'locale', 'phone_number', 'phone_number_verified', 'address', 'updated_at'];
@@ -99,10 +98,10 @@ export class IdentityClaimComponent implements OnInit {
   }
 
   // Add new claim for identity resource
-  addIdentityResourceClaim(type: string): void {
+  addApiResourceClaim(type: string): void {
     this.isSpinning = true;
     const data = Object.assign({ type });
-    this.identityResourceServices.addIdentityResourceClaim(this.name, data)
+    this.apiResourceServices.addApiResourceClaim(this.name, data)
       .pipe(catchError(err => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
@@ -110,7 +109,7 @@ export class IdentityClaimComponent implements OnInit {
           MessageConstants.NOTIFICATION_ERROR,
           'bottomRight'
         );
-        return throwError('Error');
+        return throwError('Error', err);
       }))
       .subscribe(() => {
         this.createNotification(
@@ -127,9 +126,9 @@ export class IdentityClaimComponent implements OnInit {
   }
 
   // delete claim of identity resource
-  deleteIdentityResourceClaim(tag: string) {
+  deleteApiResourceClaim(tag: string) {
     this.isSpinning = true;
-    this.identityResourceServices.deleteIdentityResourceClaim(this.name, tag)
+    this.apiResourceServices.deleteApiResourceClaim(this.name, tag)
       .pipe(catchError(err => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
@@ -158,4 +157,3 @@ export class IdentityClaimComponent implements OnInit {
   }
 
 }
-

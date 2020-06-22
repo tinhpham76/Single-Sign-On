@@ -9,10 +9,17 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/identity-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
-<!--Edit identity-->
 <nz-spin [nzSpinning]="isSpinning">
+    <!--Identity detail-->
+    <nz-descriptions nzTitle="Identity resources {{name}} manager claims ">
+        <nz-descriptions-item nzTitle="Name">{{displayName}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Description">{{description}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Enabled">{{enabled}}</nz-descriptions-item>
+    </nz-descriptions>
+    <!--Edit identity-->
+
     <div class="identity-resource-claim">
-        <b><a href="javascript: void(0)"> {{name}} </a> claims:</b>
+        <b>Claims:</b>
         <div nz-col>
             <nz-tag [nzColor]="'red'" style="margin: 5px;" nz-row *ngFor="let tag of identityClaimTags"
                 [nzMode]="'closeable'" nzMode="checkable" (nzOnClose)="deleteIdentityResourceClaim(tag)">

@@ -1,0 +1,51 @@
+<div class="content-heading">
+    <div>
+        ☁️ Api Resources Setting
+        <br>
+        <small><b> Resources are something you want to protect with apiServer – either APIs (by doing this your
+                data will be protected as well). So to access your database content must be through an API..</b></small>
+    </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/api-resources'><i nz-icon
+        nzType="rollback"></i>Go back</button>
+
+<nz-spin [nzSpinning]="isSpinning">
+    <!--Identity detail-->
+    <nz-descriptions nzTitle="Identity resources {{name}} manager claims ">
+        <nz-descriptions-item nzTitle="Name">{{displayName}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Description">{{description}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Enabled">{{enabled}}</nz-descriptions-item>
+    </nz-descriptions>
+    <!--Edit identity-->
+
+    <div class="identity-resource-claim">
+        <b>Claims:</b>
+        <div nz-col>
+            <nz-tag [nzColor]="'red'" style="margin: 5px;" nz-row *ngFor="let tag of apiClaimTags"
+                [nzMode]="'closeable'" nzMode="checkable" (nzOnClose)="deleteApiResourceClaim(tag)">
+                {{ tag }}</nz-tag>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <b>Add new claim:</b>
+        <div nz-col>
+            <a>
+                <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaim" nzMode="checkable"
+                    [nzColor]="'#108ee9'" (nzCheckedChange)="addApiResourceClaim(tag)"> +
+                    {{ tag }}
+                </nz-tag>
+            </a>
+        </div>
+    </div>
+    <div style="margin-top: 10px;">
+        <b>Api Scopes: </b>
+        <button nz-button nzType="default" nzButtonSize="large" nzShape="round" routerLink='scopes'><i nz-icon
+            nzType="setting"></i>Api Scopes</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <b>Api Secrets: </b>
+        <button nz-button nzType="default" nzButtonSize="large" nzShape="round" routerLink='secrets'><i nz-icon
+            nzType="setting"></i>Api Secrets</button>
+    </div>
+</nz-spin>

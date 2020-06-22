@@ -10,6 +10,5 @@ namespace SSO.Services.ViewModel.Api
         public bool Required { get; set; }
         public bool ShowInDiscoveryDocument { get; set; }
         public bool Emphasize { get; set; }
-        public List<string> UserClaims { get; set; }
     }
 }

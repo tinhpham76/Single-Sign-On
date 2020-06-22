@@ -40,7 +40,7 @@ namespace SSO.Backend
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
             //1. Setup entity framework
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString), ServiceLifetime.Transient);
             //2. Setup idetntity
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
