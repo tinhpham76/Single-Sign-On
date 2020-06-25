@@ -61,19 +61,19 @@ export class ApiResourceComponent implements OnInit {
   loadApiData(pageIndex: number, pageSize: number): void {
     this.isSpinning = true;
     this.apiResourceServices.getAllPaging(this.filter, pageIndex, pageSize)
-      .pipe(catchError(err => {
-        this.isSpinning = true;
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -85,15 +85,6 @@ export class ApiResourceComponent implements OnInit {
     this.visibleEditApi = true;
     this.isSpinningDrawer = true;
     this.apiResourceServices.getDetail(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe((res: ApiResource) => {
         this.validateForm.setValue({
           name: res.name,
@@ -104,6 +95,16 @@ export class ApiResourceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinningDrawer = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningDrawer = false;
+        }, 500);
       });
   }
 
@@ -111,21 +112,22 @@ export class ApiResourceComponent implements OnInit {
   delete(name: string) {
     this.isSpinning = true;
     this.apiResourceServices.delete(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
-      .subscribe(res => {
+      .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
         this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -153,15 +155,6 @@ export class ApiResourceComponent implements OnInit {
     this.isSpinningDrawer = true;
     const name = this.validateForm.get('name').value;
     this.apiResourceServices.update(name, this.validateForm.getRawValue())
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.visibleEditApi = false;
         this.ngOnInit();
@@ -170,6 +163,16 @@ export class ApiResourceComponent implements OnInit {
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_UPDATE + name + '!',
           'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningDrawer = false;
+        }, 500);
       });
   }
 

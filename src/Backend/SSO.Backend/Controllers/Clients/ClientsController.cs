@@ -11,6 +11,7 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,16 +33,13 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Show basic infor all client
-        [HttpGet]
-        public async Task<IActionResult> GetClients()
+        [HttpGet("{clientId}")]
+        public async Task<IActionResult> GetClientDetail(string clientId)
         {
-            var clients = await _configurationDbContext.Clients.Select(x => new ClientsQuickView()
-            {
-                ClientId = x.ClientId,
-                ClientName = x.ClientName,
-                LogoUri = x.LogoUri
-            }).ToListAsync();
-            return Ok(clients);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+                return NotFound();
+            return Ok(client);
         }
 
         // Find clients with client name or id
@@ -78,14 +76,14 @@ namespace SSO.Backend.Controllers.Clients
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostClient([FromBody]ClientQuickRequest request)
         {
-            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == request.ClientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientName == request.ClientName);
             if (client != null)
-                return BadRequest($"Client {request.ClientId} already exist!");
+                return BadRequest($"Client {request.ClientName} already exist!");
             if (request.ClientType == "empty")
             {
                 var clientQuickRequest = new Client()
                 {
-                    ClientId = request.ClientId,
+                    ClientId = Guid.NewGuid().ToString(),
                     ClientName = request.ClientName,
                     Description = request.Description,
                     ClientUri = request.ClientUri,
@@ -100,7 +98,7 @@ namespace SSO.Backend.Controllers.Clients
             {
                 var clientQuickRequest = new Client()
                 {
-                    ClientId = request.ClientId,
+                    ClientId = Guid.NewGuid().ToString(),
                     ClientName = request.ClientName,
                     Description = request.Description,
                     ClientUri = request.ClientUri,
@@ -110,11 +108,11 @@ namespace SSO.Backend.Controllers.Clients
                 };
                 _configurationDbContext.Add(clientQuickRequest.ToEntity());
             }
-            else if (request.ClientType == "web_app_hybird")
+            else if (request.ClientType == "web_app_hybrid")
             {
                 var clientQuickRequest = new Client()
                 {
-                    ClientId = request.ClientId,
+                    ClientId = Guid.NewGuid().ToString(),
                     ClientName = request.ClientName,
                     Description = request.Description,
                     ClientUri = request.ClientUri,
@@ -127,7 +125,7 @@ namespace SSO.Backend.Controllers.Clients
             {
                 var clientQuickRequest = new Client()
                 {
-                    ClientId = request.ClientId,
+                    ClientId = Guid.NewGuid().ToString(),
                     ClientName = request.ClientName,
                     Description = request.Description,
                     ClientUri = request.ClientUri,
@@ -140,7 +138,7 @@ namespace SSO.Backend.Controllers.Clients
             {
                 var clientQuickRequest = new Client()
                 {
-                    ClientId = request.ClientId,
+                    ClientId = Guid.NewGuid().ToString(),
                     ClientName = request.ClientName,
                     Description = request.Description,
                     ClientUri = request.ClientUri,

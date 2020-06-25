@@ -59,18 +59,18 @@ export class SecretComponent implements OnInit {
   getApiResourceSecret(apiName: string) {
     this.isSpinning = true;
     this.apiResourceServices.getApiResourceSecret(apiName)
-      .pipe(catchError(err => {
-        this.isSpinning = true;
+      .subscribe((res: any[]) => {
+        this.items = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
+          errorMessage,
           'bottomRight'
         );
-        return throwError('Error', err);
-      }))
-      .subscribe((res: any[]) => {
-        this.items = res;
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -78,20 +78,11 @@ export class SecretComponent implements OnInit {
   }
 
 
-  // Create new api resource scope
+  // Create new api resource secret
   submitForm(): void {
     this.isSpinning = true;
     const data = this.validateForm.getRawValue();
     this.apiResourceServices.addApiResourceSecret(this.apiName, data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.ngOnInit();
         this.createNotification(
@@ -99,28 +90,39 @@ export class SecretComponent implements OnInit {
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ADD + name + '!',
           'bottomRight');
-      });
-  }
-
-  // Delete api scopes
-  delete(id: string) {
-    this.isSpinning = true;
-    this.apiResourceServices.deleteApiResourceSecret(this.apiName, Number(id))
-      .pipe(catchError(err => {
+      }, errorMessage => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
+          errorMessage,
           'bottomRight'
         );
-        return throwError('Error', err);
-      }))
-      .subscribe(res => {
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete api secret
+  delete(id: string) {
+    this.isSpinning = true;
+    this.apiResourceServices.deleteApiResourceSecret(this.apiName, Number(id))
+      .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
         this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -140,7 +142,6 @@ export class SecretComponent implements OnInit {
         })
     });
   }
-
 
   // Notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {

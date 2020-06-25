@@ -17,6 +17,9 @@ export class AddApiComponent implements OnInit {
   // Init form
   public validateForm!: FormGroup;
 
+  // Spin
+  public isSpinning: boolean;
+
   constructor(private fb: FormBuilder,
     private apiResourceServices: ApiResourceServices,
     private notification: NzNotificationService,
@@ -33,17 +36,9 @@ export class AddApiComponent implements OnInit {
 
   // Create new identity resource
   submitForm(): void {
+    this.isSpinning = true;
     const data = this.validateForm.getRawValue();
     this.apiResourceServices.add(data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -51,7 +46,18 @@ export class AddApiComponent implements OnInit {
           MessageConstants.NOTIFICATION_ADD,
           'bottomRight');
         setTimeout(() => {
+          this.isSpinning = false;
           this.router.navigate(['/api-resources']);
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
         }, 500);
       });
   }

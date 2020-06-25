@@ -70,18 +70,19 @@ export class RoleComponent implements OnInit {
   loadRoleData(filter: string, pageIndex: number, pageSize: number): void {
     this.isSpinning = true;
     this.rolesService.getAllPaging(filter, pageIndex, pageSize)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -103,15 +104,6 @@ export class RoleComponent implements OnInit {
     const data = this.formAddRole.getRawValue();
     if (id === name) {
       this.rolesService.add(data)
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error', err);
-        }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -121,6 +113,15 @@ export class RoleComponent implements OnInit {
           setTimeout(() => {
             this.closeAddRole();
             this.ngOnInit();
+          }, 500);
+        }, errorMessage => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            errorMessage,
+            'bottomRight'
+          );
+          setTimeout(() => {
           }, 500);
         });
     } else {
@@ -136,20 +137,20 @@ export class RoleComponent implements OnInit {
   showModal(roleId: string): void {
     this.showEditRole = true;
     this.rolesService.getDetail(roleId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe((res: Role) => {
         this.formEditRole.setValue({
           id: res.id,
           name: res.name
         });
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+        }, 500);
       });
   }
 
@@ -162,15 +163,6 @@ export class RoleComponent implements OnInit {
     const name = this.formEditRole.get('name').value;
     if (id === name) {
       this.rolesService.update(id, this.formEditRole.getRawValue())
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error', err);
-        }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -181,9 +173,14 @@ export class RoleComponent implements OnInit {
           setTimeout(() => {
             this.showEditRole = false;
           }, 500);
-        }, error => {
+        }, errorMessage => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            errorMessage,
+            'bottomRight'
+          );
           setTimeout(() => {
-            this.showEditRole = false;
           }, 500);
         });
     } else {
@@ -201,22 +198,24 @@ export class RoleComponent implements OnInit {
       this.createNotification(
         MessageConstants.TYPE_NOTIFICATION_ERROR,
         MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ERROR,
+        'Role Admin cannot delete!',
         'bottomRight'
       );
     } else {
       this.isSpinning = true;
       this.rolesService.delete(roleId)
-        .pipe(catchError(err => {
+        .subscribe(() => {
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.ngOnInit();
+          }, 500);
+        }, errorMessage => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_ERROR,
             MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
+            errorMessage,
             'bottomRight'
           );
-          return throwError('Error', err);
-        }))
-        .subscribe(res => {
           setTimeout(() => {
             this.isSpinning = false;
             this.ngOnInit();

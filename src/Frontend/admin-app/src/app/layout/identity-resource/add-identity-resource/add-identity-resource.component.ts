@@ -18,6 +18,9 @@ export class AddIdentityResourceComponent implements OnInit {
   // Init form
   public validateForm!: FormGroup;
 
+  // Spin
+  public isSpinning: boolean;
+
   constructor(private fb: FormBuilder,
     private identityResourceServices: IdentityResourceServices,
     private notification: NzNotificationService,
@@ -39,15 +42,6 @@ export class AddIdentityResourceComponent implements OnInit {
   submitForm(): void {
     const data = this.validateForm.getRawValue();
     this.identityResourceServices.add(data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -57,7 +51,16 @@ export class AddIdentityResourceComponent implements OnInit {
         setTimeout(() => {
           this.router.navigate(['/identity-resources']);
         }, 500);
-
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 

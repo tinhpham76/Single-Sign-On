@@ -1,0 +1,58 @@
+<div class="content-heading">
+  <div>
+    💻 Add new client
+    <br>
+    <small><b> The Client class represents an OpenID Connect or OAuth 2.0 client - e.g. a native application, a web
+        application or a JS-based application..</b></small>
+  </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/clients'><i nz-icon
+    nzType="rollback"></i>Go back</button>
+<!--Add client-->
+<nz-spin [nzSpinning]="isSpinning">
+  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="clientName">Client Name</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+        <input nz-input formControlName="clientName" id="clientName" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description">Description</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+        <input nz-input formControlName="description" id="description" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="clientUri">Client Uri</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
+        <input nz-input formControlName="clientUri" id="clientUri" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="logoUri">Logo Uri</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
+        <input nz-input formControlName="logoUri" id="logoUri" />
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24">Client Type</nz-form-label>
+    <div class="ng-tns-c217-4 ant-form-item-control ant-col ant-col-xs-24 ant-col-sm-14 ng-star-inserted">
+      <nz-tag *ngFor="let tag of tags" style="margin-top: 24px;" class="border" nzMode="checkable"
+        [nzChecked]="tag.check" (nzCheckedChange)="checkChange($event,tag.description, tag.clientType)">
+        <div class="card-body text-center">
+          <div class="text-lg m-0">{{tag.icon}}</div>
+          <p>{{tag.description}}</p>
+          <small>{{tag.type}}</small>
+        </div>
+      </nz-tag>
+    </div>
+  </nz-form-item>
+  <nz-form-item nz-row class="register-area">
+    <nz-form-control [nzSpan]="14" [nzOffset]="6">
+      <button nz-button nzType="default" (click)='ngOnInit()'>Cancel</button>
+      <button nz-button nzType="primary" (click)='submitForm()'>Create new client</button>
+    </nz-form-control>
+  </nz-form-item>
+</nz-spin>

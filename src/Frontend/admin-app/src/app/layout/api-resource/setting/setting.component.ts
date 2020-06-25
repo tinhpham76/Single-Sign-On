@@ -45,15 +45,6 @@ export class SettingComponent implements OnInit {
   getApiResourceDetail(name: string): void {
     this.isSpinning = true;
     this.apiResourceServices.getDetail(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe((res: ApiResource) => {
         this.displayName = res.displayName,
           this.description = res.description,
@@ -61,6 +52,16 @@ export class SettingComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
           }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -68,16 +69,6 @@ export class SettingComponent implements OnInit {
   getApiResourceClaims(name: string): void {
     this.isSpinning = true;
     this.apiResourceServices.getApiResourceClaims(name)
-      .pipe(
-        catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error: ', err);
-        }))
       .subscribe((res: any[]) => {
         this.apiClaimTags = res;
         const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
@@ -94,6 +85,16 @@ export class SettingComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -102,15 +103,6 @@ export class SettingComponent implements OnInit {
     this.isSpinning = true;
     const data = Object.assign({ type });
     this.apiResourceServices.addApiResourceClaim(this.name, data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -121,23 +113,23 @@ export class SettingComponent implements OnInit {
           this.ngOnInit();
           this.isSpinning = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
-
   }
 
   // delete claim of identity resource
   deleteApiResourceClaim(tag: string) {
     this.isSpinning = true;
     this.apiResourceServices.deleteApiResourceClaim(this.name, tag)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -146,6 +138,16 @@ export class SettingComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.ngOnInit();
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
           this.isSpinning = false;
         }, 500);
       });

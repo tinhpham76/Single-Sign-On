@@ -17,13 +17,16 @@ namespace SSO.Backend.Controllers.Clients
         [HttpGet("{clientId}/authentications")]
         public async Task<IActionResult> GetClientAuthentication(string clientId)
         {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x=>x.ClientId == clientId);
             if (client == null)
                 return NotFound();
+            var postLogoutRedirectUris = await _context.ClientPostLogoutRedirectUris
+               .Where(x => x.ClientId == client.Id)
+               .Select(x => x.PostLogoutRedirectUri.ToString()).ToListAsync();
             var clientAuthenticationViewModel = new ClientAuthenticationViewModel()
             {
                 EnableLocalLogin = client.EnableLocalLogin,
-                PostLogoutRedirectUris = client.PostLogoutRedirectUris.Select(x => x.ToString()).ToList(),
+                PostLogoutRedirectUris = postLogoutRedirectUris,
                 FrontChannelLogoutUri = client.FrontChannelLogoutUri,
                 FrontChannelLogoutSessionRequired = client.FrontChannelLogoutSessionRequired,
                 BackChannelLogoutUri = client.BackChannelLogoutUri,
@@ -114,14 +117,14 @@ namespace SSO.Backend.Controllers.Clients
 
         }
         //Delete Client LogoutRedirectUris 
-        [HttpDelete("{clientId}/authentications/postLogoutRedirectUris/{postLogoutRedirectUriId}")]
+        [HttpDelete("{clientId}/authentications/postLogoutRedirectUris/{postLogoutRedirectUriName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteClientPostLogoutRedirectUri(string clientId, int postLogoutRedirectUriId)
+        public async Task<IActionResult> DeleteClientPostLogoutRedirectUri(string clientId, string postLogoutRedirectUriName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return BadRequest();
-            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == postLogoutRedirectUriId);
+            var clientPostLogoutRedirectUri = await _context.ClientPostLogoutRedirectUris.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.PostLogoutRedirectUri == postLogoutRedirectUriName);
             if (clientPostLogoutRedirectUri == null)
                 return NotFound();
             _context.ClientPostLogoutRedirectUris.Remove(clientPostLogoutRedirectUri);

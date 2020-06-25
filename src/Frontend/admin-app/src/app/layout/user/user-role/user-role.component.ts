@@ -44,19 +44,20 @@ export class UserRoleComponent implements OnInit {
   loadUserDetail(userId: string) {
     this.isSpinning = true;
     this.userServices.getDetail(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe((res: User) => {
         this.userName = res.userName;
         this.email = res.email;
         this.isSpinning = false;
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -64,24 +65,21 @@ export class UserRoleComponent implements OnInit {
   getUserRoles(userId: string) {
     this.isSpinning = true;
     this.userServices.getUserRoles(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.ngOnInit();
-          this.isSpinning = false;
-        }, 1000);
-        return throwError('Error', err);
-      }))
       .subscribe((res: any[]) => {
         this.roles = res;
         setTimeout(() => {
           this.isSpinning = false;
-        }, 1000);
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -95,19 +93,6 @@ export class UserRoleComponent implements OnInit {
     this.isSpinning = true;
     if (value === null || value === undefined || value === ' ' || value.length === 0) {
       this.userServices.removeRolesFromUser(this.userId, [roleNames])
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          setTimeout(() => {
-            this.isSpinning = false;
-            this.ngOnInit();
-          }, 1000);
-          return throwError('Error', err);
-        }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -116,36 +101,33 @@ export class UserRoleComponent implements OnInit {
           setTimeout(() => {
             this.ngOnInit();
             this.isSpinning = false;
-          }, 1000);
+          }, 500);
+        }, errorMessage => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            errorMessage,
+            'bottomRight'
+          );
+          setTimeout(() => {
+            this.isSpinning = false;
+          }, 500);
         });
     } else if (roleNames === 'Admin') {
       this.createNotification(
         MessageConstants.TYPE_NOTIFICATION_WARNING,
         MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ROLE_AD + ' !', 'bottomRight');
+        'Role Admin cannot delete!',
+        'bottomRight');
       setTimeout(() => {
         this.ngOnInit();
         this.isSpinning = false;
       }, 1000);
     } else {
       const selectedNames = [roleNames];
-      const assignRolesToUser = {
-        roleNames: selectedNames
-      };
+      const assignRolesToUser = { roleNames: selectedNames };
+      this.isSpinning = true;
       this.userServices.assignRolesToUser(this.userId, assignRolesToUser)
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          setTimeout(() => {
-            this.ngOnInit();
-            this.isSpinning = false;
-          }, 1000);
-          return throwError('Error', err);
-        }))
         .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -154,9 +136,18 @@ export class UserRoleComponent implements OnInit {
           setTimeout(() => {
             this.ngOnInit();
             this.isSpinning = false;
-          }, 1000);
+          }, 500);
+        }, errorMessage => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            errorMessage,
+            'bottomRight'
+          );
+          setTimeout(() => {
+            this.isSpinning = false;
+          }, 500);
         });
-
     }
   }
 }

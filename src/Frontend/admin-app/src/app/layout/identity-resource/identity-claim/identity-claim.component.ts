@@ -46,15 +46,6 @@ export class IdentityClaimComponent implements OnInit {
   getIdentityResourceDetail(name: string): void {
     this.isSpinning = true;
     this.identityResourceServices.getDetail(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe((res: IdentityResource) => {
         this.displayName = res.displayName,
           this.description = res.description,
@@ -62,6 +53,16 @@ export class IdentityClaimComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
           }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -69,16 +70,6 @@ export class IdentityClaimComponent implements OnInit {
   getIdentityResourceClaims(name: string): void {
     this.isSpinning = true;
     this.identityResourceServices.getIdentityResourceClaims(name)
-      .pipe(
-        catchError(err => {
-          this.createNotification(
-            MessageConstants.NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error: ', err);
-        }))
       .subscribe((res: any[]) => {
         this.identityClaimTags = res;
         const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
@@ -95,6 +86,16 @@ export class IdentityClaimComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -103,15 +104,6 @@ export class IdentityClaimComponent implements OnInit {
     this.isSpinning = true;
     const data = Object.assign({ type });
     this.identityResourceServices.addIdentityResourceClaim(this.name, data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -122,6 +114,16 @@ export class IdentityClaimComponent implements OnInit {
           this.ngOnInit();
           this.isSpinning = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
 
   }
@@ -130,15 +132,6 @@ export class IdentityClaimComponent implements OnInit {
   deleteIdentityResourceClaim(tag: string) {
     this.isSpinning = true;
     this.identityResourceServices.deleteIdentityResourceClaim(this.name, tag)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -147,6 +140,16 @@ export class IdentityClaimComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.ngOnInit();
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
           this.isSpinning = false;
         }, 500);
       });

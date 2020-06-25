@@ -9,34 +9,36 @@
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/api-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
 <!--Add api-->
-<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
-    <nz-form-item>
-        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="name">Name</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
-            <input nz-input formControlName="name" id="name" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="displayName">Display Name</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
-            <input nz-input formControlName="displayName" id="displayName" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input formControlName="description" id="description" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="enabled">Enabled</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-            <nz-switch formControlName="enabled" id="enabled"></nz-switch>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item nz-row class="register-area">
-        <nz-form-control [nzSpan]="14" [nzOffset]="6">
-            <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new api resource</button>
-        </nz-form-control>
-    </nz-form-item>
-</form>
+<nz-spin [nzSpinning]="isSpinning">
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+        <nz-form-item>
+            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="name">Name</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+                <input nz-input formControlName="name" id="name" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="displayName">Display Name</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+                <input nz-input formControlName="displayName" id="displayName" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input formControlName="description" id="description" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="enabled">Enabled</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-switch formControlName="enabled" id="enabled"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row class="register-area">
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new api resource</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</nz-spin>

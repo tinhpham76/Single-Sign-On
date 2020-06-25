@@ -5,6 +5,7 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,9 +18,12 @@ namespace SSO.Backend.Controllers.Clients
         [HttpGet("{clientId}/basics")]
         public async Task<IActionResult> GetClientBasic(string clientId)
         {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x=>x.ClientId == clientId);
             if (client == null)
                 return NotFound();
+            var origins = await _context.ClientCorsOrigins
+                .Where(x => x.ClientId == client.Id)
+                .Select(x=> x.Origin.ToString()).ToListAsync();
             var clientBasicViewModel = new ClientBasicViewModel()
             {
                 ClientId = client.ClientId,
@@ -27,8 +31,7 @@ namespace SSO.Backend.Controllers.Clients
                 ClientUri = client.ClientUri,
                 Description = client.Description,
                 LogoUri = client.LogoUri,
-                AllowedCorsOrigins = client.AllowedCorsOrigins.Select(x => x.ToString()).ToList()
-
+                AllowedCorsOrigins = origins
             };
             return Ok(clientBasicViewModel);
 
@@ -112,14 +115,14 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delete Client Origin 
-        [HttpDelete("{clientId}/basics/origins/{originId}")]
+        [HttpDelete("{clientId}/basics/origins/{originName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteClientOrigin(string clientId, int originId)
+        public async Task<IActionResult> DeleteClientOrigin(string clientId, string originName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return BadRequest();
-            var clientOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == originId);
+            var clientOrigin = await _context.ClientCorsOrigins.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Origin == originName);
             if (clientOrigin == null)
                 return NotFound();
             _context.ClientCorsOrigins.Remove(clientOrigin);

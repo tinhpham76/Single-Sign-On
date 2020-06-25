@@ -58,15 +58,6 @@ export class AddUserComponent implements OnInit {
     this.isSpinning = true;
     const data = this.validateForm.getRawValue();
     this.userServices.add(data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -75,6 +66,16 @@ export class AddUserComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.router.navigate(['/users']);
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
           this.isSpinning = false;
         }, 500);
       });

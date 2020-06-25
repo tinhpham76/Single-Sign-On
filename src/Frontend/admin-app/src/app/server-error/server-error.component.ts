@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-server-error',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ServerErrorComponent implements OnInit {
 
-  constructor() { }
+  constructor(private location: Location) { }
 
   ngOnInit() {
+  }
+  goBack() {
+    this.location.back();
   }
 
 }

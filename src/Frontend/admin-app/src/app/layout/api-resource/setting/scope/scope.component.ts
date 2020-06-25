@@ -75,18 +75,18 @@ export class ScopeComponent implements OnInit {
   getApiResourceScope(apiName: string) {
     this.isSpinning = true;
     this.apiResourceServices.getApiResourceScope(apiName)
-      .pipe(catchError(err => {
-        this.isSpinning = true;
+      .subscribe((res: any[]) => {
+        this.items = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_ERROR,
           MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
+          errorMessage,
           'bottomRight'
         );
-        return throwError('Error', err);
-      }))
-      .subscribe((res: any[]) => {
-        this.items = res;
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -119,16 +119,6 @@ export class ScopeComponent implements OnInit {
   getApiResourceScopeClaims(scopeName: string): void {
     this.isSpinningDrawer = true;
     this.apiResourceServices.getApiResourceScopeClaim(this.apiName, scopeName)
-      .pipe(
-        catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error: ', err);
-        }))
       .subscribe((res: any[]) => {
         this.apiClaimTags = res;
         const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
@@ -145,6 +135,16 @@ export class ScopeComponent implements OnInit {
         setTimeout(() => {
           this.isSpinningDrawer = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningDrawer = false;
+        }, 500);
       });
   }
 
@@ -153,15 +153,6 @@ export class ScopeComponent implements OnInit {
     this.isSpinningDrawer = true;
     const data = Object.assign({ type });
     this.apiResourceServices.addApiResourceScopeClaim(this.apiName, this.name, data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -171,7 +162,18 @@ export class ScopeComponent implements OnInit {
         setTimeout(() => {
           this.getApiResourceScopeClaims(this.scopeName);
           this.isSpinningDrawer = false;
-        }, 1000);
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.getApiResourceScopeClaims(this.scopeName);
+          this.isSpinningDrawer = false;
+        }, 500);
       });
 
   }
@@ -183,15 +185,6 @@ export class ScopeComponent implements OnInit {
     this.isSpinning = true;
     const data = this.validateForm.getRawValue();
     this.apiResourceServices.addApiResourceScope(this.apiName, data)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error');
-      }))
       .subscribe(() => {
         this.ngOnInit();
         this.createNotification(
@@ -199,6 +192,16 @@ export class ScopeComponent implements OnInit {
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_ADD + name + '!',
           'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
@@ -206,21 +209,22 @@ export class ScopeComponent implements OnInit {
   delete(scopeName: string) {
     this.isSpinning = true;
     this.apiResourceServices.deleteApiResourceScope(this.apiName, scopeName)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(res => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
         this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -240,7 +244,6 @@ export class ScopeComponent implements OnInit {
         })
     });
   }
-
 
   // Notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {

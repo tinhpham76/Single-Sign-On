@@ -64,19 +64,19 @@ export class IdentityResourceComponent implements OnInit {
   loadIdentityData(pageIndex: number, pageSize: number): void {
     this.isSpinning = true;
     this.identityResourceServices.getAllPaging(this.filter, pageIndex, pageSize)
-      .pipe(catchError(err => {
-        this.isSpinning = true;
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -88,15 +88,6 @@ export class IdentityResourceComponent implements OnInit {
     this.visibleEditIdentity = true;
     this.isSpinningDrawer = true;
     this.identityResourceServices.getDetail(name)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe((res: IdentityResource) => {
         this.validateForm.setValue({
           name: res.name,
@@ -110,6 +101,16 @@ export class IdentityResourceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinningDrawer = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningDrawer = false;
+        }, 500);
       });
   }
 
@@ -119,27 +120,28 @@ export class IdentityResourceComponent implements OnInit {
       this.createNotification(
         MessageConstants.TYPE_NOTIFICATION_ERROR,
         MessageConstants.TITLE_NOTIFICATION_SSO,
-        MessageConstants.NOTIFICATION_ERROR,
+        'Cannot delete Identity resource openid or profile!',
         'bottomRight'
       );
     } else {
       this.isSpinning = true;
       this.identityResourceServices.delete(name)
-        .pipe(catchError(err => {
-          this.createNotification(
-            MessageConstants.TYPE_NOTIFICATION_ERROR,
-            MessageConstants.TITLE_NOTIFICATION_SSO,
-            MessageConstants.NOTIFICATION_ERROR,
-            'bottomRight'
-          );
-          return throwError('Error', err);
-        }))
-        .subscribe(res => {
+        .subscribe(() => {
           this.createNotification(
             MessageConstants.TYPE_NOTIFICATION_SUCCESS,
             MessageConstants.TITLE_NOTIFICATION_SSO,
             MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
           this.ngOnInit();
+          setTimeout(() => {
+            this.isSpinning = false;
+          }, 500);
+        }, errorMessage => {
+          this.createNotification(
+            MessageConstants.TYPE_NOTIFICATION_ERROR,
+            MessageConstants.TITLE_NOTIFICATION_SSO,
+            errorMessage,
+            'bottomRight'
+          );
           setTimeout(() => {
             this.isSpinning = false;
           }, 500);
@@ -168,15 +170,6 @@ export class IdentityResourceComponent implements OnInit {
     this.isSpinningDrawer = true;
     const name = this.validateForm.get('name').value;
     this.identityResourceServices.update(name, this.validateForm.getRawValue())
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.visibleEditIdentity = false;
         this.ngOnInit();
@@ -185,6 +178,16 @@ export class IdentityResourceComponent implements OnInit {
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_UPDATE + name + '!',
           'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningDrawer = false;
+        }, 500);
       });
   }
 

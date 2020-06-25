@@ -5,6 +5,7 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,15 +18,24 @@ namespace SSO.Backend.Controllers.Clients
         [HttpGet("{clientId}/settings")]
         public async Task<IActionResult> GetClientSetting(string clientId)
         {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return NotFound();
+            var allowedScopes = await _context.ClientScopes
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => x.Scope.ToString()).ToListAsync();
+            var redirectUris = await _context.ClientRedirectUris
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => x.RedirectUri.ToString()).ToListAsync();
+            var allowedGrantTypes = await _context.ClientGrantTypes
+                .Where(x => x.ClientId == client.Id)
+                .Select(x => x.GrantType.ToString()).ToListAsync();
             var clientSettingViewModel = new ClientSettingViewModel()
             {
                 Enabled = client.Enabled,
-                AllowedScopes = client.AllowedScopes.Select(x => x.ToString()).ToList(),
-                RedirectUris = client.RedirectUris.Select(x => x.ToString()).ToList(),
-                AllowedGrantTypes = client.AllowedGrantTypes.Select(x => x.ToString()).ToList(),
+                AllowedScopes = allowedScopes,
+                RedirectUris = redirectUris,
+                AllowedGrantTypes = allowedGrantTypes,
                 RequireConsent = client.RequireConsent,
                 AllowRememberConsent = client.AllowRememberConsent,
                 AllowOfflineAccess = client.AllowOfflineAccess,
@@ -36,6 +46,19 @@ namespace SSO.Backend.Controllers.Clients
                 AllowAccessTokensViaBrowser = client.AllowAccessTokensViaBrowser
             };
             return Ok(clientSettingViewModel);
+        }
+
+        //Get setting infor client for edit
+        [HttpGet("allScopes")]
+        public async Task<IActionResult> GetAllScopes()
+        {       
+            var api = await _configurationDbContext.ApiResources
+                .Select(x => x.Name.ToString()).ToListAsync();
+            var identity = await _configurationDbContext.IdentityResources
+                .Select(x => x.Name.ToString()).ToListAsync();
+
+            var allScope = api.Concat(identity);
+            return Ok(allScope);
         }
 
         //Edit setting infor
@@ -122,14 +145,14 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delete Client Scope 
-        [HttpDelete("{clientId}/settings/scopes/{scopeId}")]
+        [HttpDelete("{clientId}/settings/scopes/{scopeName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteClientScope(string clientId, int scopeId)
+        public async Task<IActionResult> DeleteClientScope(string clientId, string scopeName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return BadRequest();
-            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == scopeId);
+            var clientScope = await _context.ClientScopes.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Scope == scopeName);
             if (clientScope == null)
                 return NotFound();
             _context.ClientScopes.Remove(clientScope);
@@ -201,14 +224,14 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delete Client RedirectUris 
-        [HttpDelete("{clientId}/settings/redirectUris/{redirectUriId}")]
+        [HttpDelete("{clientId}/settings/redirectUris/{redirectUriName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteClienRedirectUri(string clientId, int redirectUriId)
+        public async Task<IActionResult> DeleteClienRedirectUri(string clientId, string redirectUriName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return BadRequest();
-            var clienRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == redirectUriId);
+            var clienRedirectUri = await _context.ClientRedirectUris.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.RedirectUri == redirectUriName);
             if (clienRedirectUri == null)
                 return NotFound();
             _context.ClientRedirectUris.Remove(clienRedirectUri);
@@ -280,14 +303,14 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delete Client GrantType 
-        [HttpDelete("{clientId}/settings/grantTypes/{grantTypeId}")]
+        [HttpDelete("{clientId}/settings/grantTypes/{grantTypeName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteClientGrantType(string clientId, int grantTypeId)
+        public async Task<IActionResult> DeleteClientGrantType(string clientId, string grantTypeName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return BadRequest();
-            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == grantTypeId);
+            var clientGrantType = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.GrantType == grantTypeName);
             if (clientGrantType == null)
                 return NotFound();
             _context.ClientGrantTypes.Remove(clientGrantType);

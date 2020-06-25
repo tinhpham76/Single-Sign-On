@@ -9,7 +9,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { User } from '@app/shared/models/user.model';
 import { DatePipe } from '@angular/common';
-import { RolesServices } from '@app/shared/services/role.service';
+import { error } from 'protractor';
 
 @Component({
   selector: 'app-user',
@@ -66,19 +66,19 @@ export class UserComponent implements OnInit {
   loadUserData(pageIndex: number, pageSize: number): void {
     this.isSpinning = true;
     this.userServices.getAllPaging(this.filter, pageIndex, pageSize)
-      .pipe(catchError(err => {
-        this.isSpinning = true;
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -97,15 +97,6 @@ export class UserComponent implements OnInit {
     this.visibleEditUser = true;
     this.userId = userId;
     this.userServices.getDetail(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe((res: User) => {
         const dob = this.datePipe.transform(res.dob, 'yyy/MM/dd');
         this.formEditUser.setValue({
@@ -121,6 +112,16 @@ export class UserComponent implements OnInit {
         setTimeout(() => {
           this.isSpinningEditUser = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinningEditUser = false;
+        }, 500);
       });
   }
 
@@ -132,15 +133,6 @@ export class UserComponent implements OnInit {
     this.isSpinningEditUser = true;
     const userId = this.formEditUser.get('id').value;
     this.userServices.update(userId, this.formEditUser.getRawValue())
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -152,6 +144,17 @@ export class UserComponent implements OnInit {
           this.visibleEditUser = false;
           this.isSpinningEditUser = false;
         }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.visibleEditUser = false;
+          this.isSpinningEditUser = false;
+        }, 500);
       });
   }
 
@@ -159,21 +162,21 @@ export class UserComponent implements OnInit {
   delete(userName: string, userId: string) {
     this.isSpinning = true;
     this.userServices.delete(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
-      .subscribe(res => {
+      .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
           MessageConstants.TITLE_NOTIFICATION_SSO,
           MessageConstants.NOTIFICATION_DELETE + userName + ' !', 'bottomRight');
         this.ngOnInit();
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+        }, 500);
       });
   }
 
@@ -207,21 +210,22 @@ export class UserComponent implements OnInit {
   restPassword(userId: string): void {
     this.isSpinning = true;
     this.userServices.resetUserPassword(userId)
-      .pipe(catchError(err => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight'
-        );
-        return throwError('Error', err);
-      }))
-      .subscribe(res => {
+      .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
           MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_REST_PW + userId + '!', 'bottomRight');
+          MessageConstants.NOTIFICATION_RESET_PW + userId + '!', 'bottomRight');
         this.ngOnInit();
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
       });
   }
 
