@@ -31,6 +31,8 @@ export class AddApiComponent implements OnInit {
       displayName: [null, Validators.required],
       description: [null],
       enabled: [true],
+      showInDiscoveryDocument: [true],
+      allowedAccessTokenSigningAlgorithms: [null]
     });
   }
 

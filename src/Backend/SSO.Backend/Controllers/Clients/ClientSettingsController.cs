@@ -349,7 +349,7 @@ namespace SSO.Backend.Controllers.Clients
         // Post client secrets
         [HttpPost("{clientId}/settings/clientSecrets")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiSecret(string clientId, [FromBody] ClientSecretRequest request)
+        public async Task<IActionResult> PostClientSecret(string clientId, [FromBody] ClientSecretRequest request)
         {
             //Check client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -405,9 +405,9 @@ namespace SSO.Backend.Controllers.Clients
         }
 
         //Delete client secret
-        [HttpDelete("{clientId}/apiSecrets/{secretId}")]
+        [HttpDelete("{clientId}/settings/clientSecrets/{secretId}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> DeleteApiSecret(string clientId, int secretId)
+        public async Task<IActionResult> DeleteClientSecret(string clientId, int secretId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)

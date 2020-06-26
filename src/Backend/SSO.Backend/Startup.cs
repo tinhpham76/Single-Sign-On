@@ -240,6 +240,14 @@ namespace SSO.Backend
                     }
                     context.SaveChanges();
                 }
+                if (!context.ApiScopes.Any())
+                {
+                    foreach (var resource in Config.GetApiScopes())
+                    {
+                        context.ApiScopes.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
             }
         }
 

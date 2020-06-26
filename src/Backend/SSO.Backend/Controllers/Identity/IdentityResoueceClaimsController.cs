@@ -22,7 +22,7 @@ namespace SSO.Backend.Controllers.Identity
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource == null)
                 return NotFound();
-            var query = _context.IdentityClaims.Where(x => x.IdentityResourceId.Equals(identityResource.Id));
+            var query = _context.IdentityResourceClaims.Where(x => x.IdentityResourceId.Equals(identityResource.Id));
             var identityClaims = await query.Select(x => new List<string>()
             {
                  x.Type 
@@ -40,15 +40,15 @@ namespace SSO.Backend.Controllers.Identity
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource != null)
             {
-                var identityClaim = await _context.IdentityClaims.FirstOrDefaultAsync(x => x.IdentityResourceId == identityResource.Id);
+                var identityClaim = await _context.IdentityResourceClaims.FirstOrDefaultAsync(x => x.IdentityResourceId == identityResource.Id);
                 if (identityClaim == null)
                 {
-                    var identityClaimRequest = new IdentityClaim()
+                    var identityClaimRequest = new IdentityResourceClaim()
                     {
                         Type = request.Type,
                         IdentityResourceId = identityResource.Id
                     };
-                    _context.IdentityClaims.Add(identityClaimRequest);
+                    _context.IdentityResourceClaims.Add(identityClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
@@ -67,12 +67,12 @@ namespace SSO.Backend.Controllers.Identity
                     }
                     else
                     {
-                        var identityClaimRequest = new IdentityClaim()
+                        var identityClaimRequest = new IdentityResourceClaim()
                         {
                             Type = request.Type,
                             IdentityResourceId = identityResource.Id
                         };
-                        _context.IdentityClaims.Add(identityClaimRequest);
+                        _context.IdentityResourceClaims.Add(identityClaimRequest);
                         var result = await _context.SaveChangesAsync();
                         if (result > 0)
                         {
@@ -97,10 +97,10 @@ namespace SSO.Backend.Controllers.Identity
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource == null)
                 return NotFound();
-            var identityClaim = await _context.IdentityClaims.FirstOrDefaultAsync(x => x.IdentityResourceId == identityResource.Id && x.Type == claimType);
+            var identityClaim = await _context.IdentityResourceClaims.FirstOrDefaultAsync(x => x.IdentityResourceId == identityResource.Id && x.Type == claimType);
             if (identityClaim == null)
                 return NotFound();
-            _context.IdentityClaims.Remove(identityClaim);
+            _context.IdentityResourceClaims.Remove(identityClaim);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
                 return Ok();

@@ -2,7 +2,7 @@
 Single Sign-on is a open source project for everyone. Every member can create new client, api resource, identity resource and login this with SSO. 
 
 # Migration
-- Add-Migration Initial -OutputDir Data/Migrations
+- Add-Migration Initial -Context ApplicationDbContext -OutputDir Data/Migrations
 - Add-Migration InitialPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/IdentityServer/PersistedGrantDb
 - Add-Migration InitialConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/IdentityServer/ConfigurationDb
 

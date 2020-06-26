@@ -1,6 +1,7 @@
+<!--Start welcome api settings-->
 <div class="content-heading">
     <div>
-        ☁️ Api resource Setting
+        ☁️ Api resource settings
         <br>
         <small><b> Resources are something you want to protect with apiServer – either APIs (by doing this your
                 data will be protected as well). So to access your database content must be through an API..</b></small>
@@ -8,16 +9,16 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/api-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
-
+<!--End welcome api settings-->
 <nz-spin [nzSpinning]="isSpinning">
-    <!--Identity detail-->
+    <!--Start api resource detail-->
     <nz-descriptions nzTitle="Identity resources {{name}} manager claims ">
         <nz-descriptions-item nzTitle="Name">{{displayName}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Description">{{description}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Enabled">{{enabled}}</nz-descriptions-item>
     </nz-descriptions>
-    <!--Edit identity-->
-
+    <!--End api resource detail-->
+    <!--Start add/delete api resource claims-->
     <div class="identity-resource-claim">
         <b>Claims:</b>
         <div nz-col>
@@ -38,14 +39,17 @@
             </a>
         </div>
     </div>
+    <!--Start add/delete api resource claims-->
+    <!--Start scopes/secrets setting-->
     <div style="margin-top: 10px;">
         <b>Api Scopes: </b>
         <button nz-button nzType="default" nzButtonSize="large" nzShape="round" routerLink='scopes'><i nz-icon
-            nzType="setting"></i>Api Scopes</button>
+                nzType="setting"></i>Api Scopes</button>
     </div>
     <div style="margin-top: 10px;">
         <b>Api Secrets: </b>
         <button nz-button nzType="default" nzButtonSize="large" nzShape="round" routerLink='secrets'><i nz-icon
-            nzType="setting"></i>Api Secrets</button>
+                nzType="setting"></i>Api Secrets</button>
     </div>
+    <!--End scopes/secrets settings-->
 </nz-spin>

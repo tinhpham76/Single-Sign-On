@@ -1,3 +1,4 @@
+<!--Start welcome api scopes-->
 <div class="content-heading">
     <div>
         ☁️ Api resource scopes
@@ -8,7 +9,9 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" (click)='goBack()'><i nz-icon
         nzType="rollback"></i>Go back</button>
+<!--End welcome scopes-->
 <nz-spin [nzSpinning]="isSpinning">
+    <!--Start table api scopes-->
     <nz-table #scopeTable [nzData]="items" [nzFrontPagination]="false">
         <thead>
             <tr>
@@ -37,9 +40,11 @@
             </tr>
         </tbody>
     </nz-table>
+    <!--End table api scopes-->
     <hr>
     <hr>
     <div>
+        <!--start form add new api scopes-->
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
             <nz-form-item>
                 <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="name">Name</nz-form-label>
@@ -78,7 +83,6 @@
                     <nz-switch formControlName="emphasize" id="emphasize"></nz-switch>
                 </nz-form-control>
             </nz-form-item>
-
             <nz-form-item nz-row class="register-area">
                 <nz-form-control [nzSpan]="14" [nzOffset]="6">
                     <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new api
@@ -86,10 +90,11 @@
                 </nz-form-control>
             </nz-form-item>
         </form>
+        <!--End form add new api scopes-->
     </div>
 </nz-spin>
 
-<!--Edit scope-->
+<!--Start edit api resource-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
     [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleApi" nzTitle=" ☁️ Edit Api Resource"
     (nzOnClose)="closeEditApiResource()">
@@ -106,8 +111,7 @@
         <div class="identity-resource-claim">
             <b>Claims:</b>
             <div nz-col>
-                <nz-tag [nzColor]="'red'" style="margin: 5px;" nz-row *ngFor="let tag of apiClaimTags"
-                    nzMode="checkable">
+                <nz-tag [nzColor]="'red'" nz-row *ngFor="let tag of apiClaimTags" nzMode="checkable">
                     {{ tag }}</nz-tag>
             </div>
         </div>
@@ -116,8 +120,8 @@
             <b>Add new claim:</b>
             <div nz-col>
                 <a>
-                    <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaim" nzMode="checkable"
-                        [nzColor]="'#108ee9'" (nzCheckedChange)="addApiResourceClaim(tag)"> +
+                    <nz-tag nz-row *ngFor="let tag of tempClaim" nzMode="checkable" [nzColor]="'#108ee9'"
+                        (nzCheckedChange)="addApiResourceClaim(tag)"> +
                         {{ tag }}
                     </nz-tag>
                 </a>
@@ -125,3 +129,4 @@
         </div>
     </nz-spin>
 </nz-drawer>
+<!--End edit api resource-->

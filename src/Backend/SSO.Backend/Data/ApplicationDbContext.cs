@@ -11,6 +11,7 @@ namespace SSO.Backend.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+        // Dbset Client
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
         public DbSet<ClientScope> ClientScopes { get; set; }
@@ -18,11 +19,18 @@ namespace SSO.Backend.Data
         public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
         public DbSet<ClientSecret> ClientSecrets { get; set; }
-        public DbSet<ApiResourceClaim> ApiClaims { get; set; }
-        public DbSet<ApiSecret> ApiSecrets { get; set; }
+        public DbSet<ClientClaim> ClientClaims { get; set; }
+        // Dbset Api resources
+        public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
+        public DbSet<ApiResourceSecret> ApiResourceSecrets { get; set; }
+        public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
+        public DbSet<ApiResourceScope> ApiResourceScopes { get; set; }
+        // Dbset Api scopes
         public DbSet<ApiScope> ApiScopes { get; set; }
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
-        public DbSet<IdentityClaim> IdentityClaims { get; set; }
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+        //
+        public DbSet<IdentityResourceClaim> IdentityResourceClaims { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

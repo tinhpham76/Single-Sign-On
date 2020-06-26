@@ -1,3 +1,4 @@
+<!--Start welcome api resources-->
 <div class="content-heading">
     <div>
         ☁️ Api resources
@@ -8,8 +9,9 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='add'><i nz-icon
         nzType="file-add"></i>Add new api resource</button>
-<!--api Resource-->
+        <!--End api resources-->
 <nz-spin [nzSpinning]="isSpinning">
+    <!--Start table api resources-->
     <nz-table #apiTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
@@ -47,9 +49,10 @@
             </tr>
         </tbody>
     </nz-table>
+    <!--End table api resources-->
 </nz-spin>
 
-<!--Edit api-->
+<!--Start edit api resources-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
     [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditApi" nzTitle=" ☁️ Edit Api Resource"
     (nzOnClose)="closeEditApiResource()">
@@ -87,3 +90,4 @@
         </form>
     </nz-spin>
 </nz-drawer>
+<!--End edit api resources-->

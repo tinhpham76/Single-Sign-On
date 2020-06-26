@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
 {
-    public partial class ApiResourcesController
+    public partial class ApiScopesController
     {
         #region Api Scope Claims
         //Get api scope claim
-        [HttpGet("{apiResourceName}/apiScopes/{scopeName}/scopeClaims")]
-        public async Task<IActionResult> GetApiScopeClaims(string apiResourceName, string scopeName)
+        [HttpGet("{apiScopeName}/scopeClaims")]
+        public async Task<IActionResult> GetApiScopeClaims(string apiScopeName)
         {
-            var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
-            var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Name == scopeName);
-            var apiScopeClaims = await _context.ApiScopeClaims.Where(x => x.ApiScopeId == apiScope.Id)
+            var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
+            var apiClaims = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.ScopeId == apiScope.Id);
+            var apiScopeClaims = await _context.ApiScopeClaims.Where(x => x.ScopeId == apiScope.Id)
                                                         .Select(x => new List<string>()
                                                         {
                                                             x.Type
@@ -29,66 +29,74 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api scope claim
-        [HttpPost("{apiResourceName}/apiScopes/{scopeName}/scopeClaims")]
+        [HttpPost("{apiScopeName}/scopeClaims")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiScopeClaim(string apiResourceName, string scopeName, [FromBody] ApiScopeClaimRequest request)
+        public async Task<IActionResult> PostApiScopeClaim(string apiScopeName, [FromBody] ApiScopeClaimRequest request)
         {
-            //Check Api Resource
-            var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
-            if (apiResource != null)
+            //Check Api scope
+            var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
+            if (apiScope != null)
             {
-                var apiScope = await _context.ApiScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Name == scopeName);
-                if (apiScope != null)
+                var apiScopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.ScopeId == apiScope.Id);
+                if (apiScopeClaim == null)
                 {
-                    var apiScopeClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.ApiScopeId == apiScope.Id);
-                    if (apiScopeClaim == null)
+                    var apiScopeClaimRequest = new IdentityServer4.EntityFramework.Entities.ApiScopeClaim()
+                    {
+                        Type = request.Type,
+                        ScopeId = apiScope.Id
+                    };
+                    _context.ApiScopeClaims.Add(apiScopeClaimRequest);
+                    var result = await _context.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        return Ok();
+                    }
+                    return BadRequest();
+                }
+                else if(apiScopeClaim != null)
+                {
+                    if (apiScopeClaim.Type == request.Type)
+                    {
+                        return BadRequest();
+                    }
+                    else
                     {
                         var apiScopeClaimRequest = new IdentityServer4.EntityFramework.Entities.ApiScopeClaim()
                         {
                             Type = request.Type,
-                            ApiScopeId = apiScope.Id
+                            ScopeId = apiScope.Id
                         };
                         _context.ApiScopeClaims.Add(apiScopeClaimRequest);
                         var result = await _context.SaveChangesAsync();
                         if (result > 0)
                         {
-                            apiResource.Updated = DateTime.UtcNow;
-                            _configurationDbContext.ApiResources.Update(apiResource);
-                            await _configurationDbContext.SaveChangesAsync();
                             return Ok();
                         }
                         return BadRequest();
                     }
-                    else if (apiScopeClaim != null)
-                    {
-                        if (apiScopeClaim.Type == request.Type)
-                        {
-                            return BadRequest();
-                        }
-                        else
-                        {
-                            var apiScopeClaimRequest = new IdentityServer4.EntityFramework.Entities.ApiScopeClaim()
-                            {
-                                Type = request.Type,
-                                ApiScopeId = apiScope.Id
-                            };
-                            _context.ApiScopeClaims.Add(apiScopeClaimRequest);
-                            var result = await _context.SaveChangesAsync();
-                            if (result > 0)
-                            {
-                                apiResource.Updated = DateTime.UtcNow;
-                                _configurationDbContext.ApiResources.Update(apiResource);
-                                await _configurationDbContext.SaveChangesAsync();
-                                return Ok();
-                            }
-                            return BadRequest();
-                        }
-                    }
                 }
-                return BadRequest();
             }
             return BadRequest();
+        }
 
+        //Delete api scope claim
+        [RoleRequirement(RoleCode.Admin)]
+        [HttpDelete("{apiScopeName}/apiScopeClaims/{claimType}")]
+        public async Task<IActionResult> DeleteApiClaim(string apiScopeName, string claimType)
+        {
+            var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
+            if (apiScope == null)
+                return NotFound();
+            var apiClaim = await _context.ApiScopeClaims.FirstOrDefaultAsync(x => x.ScopeId == apiScope.Id && x.Type == claimType);
+            if (apiClaim == null)
+                return NotFound();
+            _context.ApiScopeClaims.Remove(apiClaim);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
         #endregion
     }

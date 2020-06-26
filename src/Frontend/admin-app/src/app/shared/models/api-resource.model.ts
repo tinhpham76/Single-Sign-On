@@ -3,4 +3,6 @@ export class ApiResource {
     displayName: string;
     description: string;
     enabled: boolean;
+    showInDiscoveryDocument: boolean;
+    allowedAccessTokenSigningAlgorithms: string;
 }

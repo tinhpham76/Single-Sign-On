@@ -1,3 +1,4 @@
+<!--Start welcome edit client-->
 <div class="content-heading">
     <div>
         💻 Edit client
@@ -8,18 +9,16 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/clients'><i nz-icon
         nzType="rollback"></i>Go back</button>
-<!--Client detail-->
-<!--Identity detail-->
+<!--End welcome edit client-->
+<!--Start client detail-->
 <nz-descriptions nzTitle="Setting client ">
     <nz-descriptions-item nzTitle="Client id">{{clientId}}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Client Name">{{clientName}}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Client Uri">{{clientUri}}</nz-descriptions-item>
 </nz-descriptions>
-
-<!--Edit identity-->
-
+<!--End client detail-->
 <nz-tabset>
-    <!--Start basic setting-->
+    <!--Start edit basic client-->
     <nz-tab nzTitle="Basic">
         <nz-spin [nzSpinning]="isSpinning">
             <form nz-form [formGroup]="basicForm" (ngSubmit)="submitBasicForm()">
@@ -57,8 +56,8 @@
             <div nz-col style="text-align: center;">
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24">Allowed Cors Origins</nz-form-label>
-                    <nz-tag style="height: 25px; width: max-content;" *ngFor="let tag of originTags" [nzColor]="'#108ee9'"
-                        [nzMode]="'closeable'" (nzOnClose)="deleteOrigin(tag)">
+                    <nz-tag style="height: 25px; width: max-content;" *ngFor="let tag of originTags"
+                        [nzColor]="'#108ee9'" [nzMode]="'closeable'" (nzOnClose)="deleteOrigin(tag)">
                         {{ sliceTagName(tag) }}
                     </nz-tag>
                     <nz-tag style="height: 25px;" *ngIf="!inputVisibleOrigin" class="editable-tag" nzNoAnimation
@@ -76,10 +75,10 @@
                 </nz-form-control>
             </nz-form-item>
         </nz-spin>
+        <!--End edit basic client-->
     </nz-tab>
-    <!--End basic setting-->
-    <!--Start setting setting-->
     <nz-tab nzTitle="Setting">
+        <!--Start edit setting client-->
         <nz-spin [nzSpinning]="isSpinning">
             <form nz-form [formGroup]="settingForm" (ngSubmit)="submitSettingForm()">
                 <nz-form-item>
@@ -145,12 +144,12 @@
                 </nz-form-item>
             </form>
             <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" >Client Secrets</nz-form-label>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24">Client Secrets</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <button nz-button nzType="primary" (click)="openClientSecrets()">Client Secrets</button>
                 </nz-form-control>
             </nz-form-item>
-            <!--Scope-->
+            <!--Start edit client scopes-->
             <div nz-col>
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24">Allowed Scopes</nz-form-label>
@@ -165,8 +164,8 @@
                     </div>
                 </nz-form-item>
             </div>
-            <!--Uri-->
-            <!--Allowed Grant Types  -->
+            <!--End edit client scopes-->
+            <!--Start edit client grant types-->
             <div nz-col>
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24">Allowed Grant Types</nz-form-label>
@@ -181,7 +180,8 @@
                     </div>
                 </nz-form-item>
             </div>
-            <!--Uri-->
+            <!--End edit client grant types-->
+            <!--Start edit client redirect uris-->
             <div nz-col style="text-align: center;">
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24">Redirect Uri's </nz-form-label>
@@ -197,6 +197,7 @@
                         (blur)="handleInputConfirmRedirectUri()" (keydown.enter)="handleInputConfirmRedirectUri()" />
                 </nz-form-item>
             </div>
+            <!--End edit client redirect uris-->
             <nz-form-item nz-row class="register-area">
                 <nz-form-control [nzSpan]="14" [nzOffset]="6">
                     <button nz-button nzType="default" (click)='ngOnInit()'>Cancel</button>
@@ -204,10 +205,10 @@
                 </nz-form-control>
             </nz-form-item>
         </nz-spin>
+        <!--End edit setting client-->
     </nz-tab>
-    <!--End setting setting-->
-    <!--Start authentication setting-->
     <nz-tab nzTitle="Authentication">
+        <!--Start edit authentication client-->
         <nz-spin [nzSpinning]="isSpinning">
             <form nz-form [formGroup]="authenticationForm" (ngSubmit)="submitAuthentication()">
                 <nz-form-item>
@@ -255,6 +256,7 @@
                     </nz-form-control>
                 </nz-form-item>
             </form>
+            <!--Start edit client post logout redirect uris-->
             <div nz-col>
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24">Post Logout Redirect Uris</nz-form-label>
@@ -270,6 +272,7 @@
                         (keydown.enter)="handleInputConfirmLogoutUri()" />
                 </nz-form-item>
             </div>
+            <!--End edit client post logout redirect uris-->
             <nz-form-item nz-row class="register-area">
                 <nz-form-control [nzSpan]="14" [nzOffset]="6">
                     <button nz-button nzType="default" (click)='ngOnInit()'>Cancel</button>
@@ -277,10 +280,10 @@
                 </nz-form-control>
             </nz-form-item>
         </nz-spin>
+        <!--Start edit authentication client-->
     </nz-tab>
-    <!--End authentication setting-->
-    <!--Start token setting-->
     <nz-tab nzTitle="Token">
+        <!--Start edit token client-->
         <nz-spin [nzSpinning]="isSpinning">
             <form nz-form [formGroup]="tokenForm" (ngSubmit)="submitToken()">
                 <nz-form-item>
@@ -398,6 +401,14 @@
                     </nz-form-control>
                 </nz-form-item>
             </form>
+            <!--Start edit client claims-->
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24">Client Claims</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <button nz-button nzType="primary" (click)='openClientClaims()'>Client Claims</button>
+                </nz-form-control>
+            </nz-form-item>
+            <!--End edit client claims-->
             <nz-form-item nz-row class="register-area">
                 <nz-form-control [nzSpan]="14" [nzOffset]="6">
                     <button nz-button nzType="default" (click)='ngOnInit()'>Cancel</button>
@@ -405,10 +416,10 @@
                 </nz-form-control>
             </nz-form-item>
         </nz-spin>
+        <!--End edit token client-->
     </nz-tab>
-    <!--End token setting-->
-    <!--Start device flow setting-->
     <nz-tab nzTitle="Device Flow">
+        <!--Start edit device flow client-->
         <nz-spin [nzSpinning]="isSpinning">
             <form nz-form [formGroup]="deviceFlowForm" (ngSubmit)="submitDeviceFlow()">
                 <nz-form-item>
@@ -433,89 +444,148 @@
                 </nz-form-control>
             </nz-form-item>
         </nz-spin>
+        <!--End edit device flow client-->
     </nz-tab>
-    <!--End device flow setting-->
 </nz-tabset>
+<!--Start client setting secrets-->
+<nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+    [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visibleClientSecrets" nzTitle="Client Secrets"
+    (nzOnClose)="closeClientSecrets()">
+    <nz-table #secretTable [nzData]="itemClientSecrets" [nzFrontPagination]="false">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Secret Value</th>
+                <th>Secret Type</th>
+                <th>Expiration</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let secret of secretTable.data">
+                <td>{{ secret.id }}</td>
+                <td>{{ secret.value }}</td>
+                <td>{{ secret.type }}</td>
+                <td>{{ secret.expiration }}</td>
+                <td>{{ secret.description }}</td>
+                <td>
+                    <div class="table-action">
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
+                            href='javascript:void(0)' (click)='showDeleteConfirmClientSecrets(secret.id)'>
+                            <i nz-icon nzType="delete"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <hr>
+    <hr>
+    <div>
+        <!--Start form add new client secrets-->
+        <form nz-form [formGroup]="validateFormClientSecrets" (ngSubmit)="submitFormClientSecrets()">
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="type">Type secret</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+                    <input nz-input formControlName="type" id="type" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="value">Value secret</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+                    <input nz-input formControlName="value" id="value" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="description" id="description" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="expiration">Expiration</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="expiration" id="expiration" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="hashType">Hash Type</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input formControlName="hashType" id="hashType" readonly />
+                </nz-form-control>
+            </nz-form-item>
 
-<!--Client Secrets-->
-<nz-drawer
-[nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
-[nzMaskClosable]="false"
-[nzWidth]="720"
-[nzVisible]="visibleClientSecrets"
-nzTitle="Client Secrets"
-(nzOnClose)="closeClientSecrets()"
->
-<nz-table #secretTable [nzData]="items" [nzFrontPagination]="false">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Secret Value</th>
-            <th>Secret Type</th>
-            <th>Expiration</th>
-            <th>Description</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let secret of secretTable.data">
-            <td>{{ secret.id }}</td>
-            <td>{{ secret.value }}</td>
-            <td>{{ secret.type }}</td>
-            <td>{{ secret.expiration }}</td>
-            <td>{{ secret.description }}</td>
-            <td>
-                <div class="table-action">
-                    <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
-                        href='javascript:void(0)' (click)='showDeleteConfirmClientSecrets(secret.id)'>
-                        <i nz-icon nzType="delete"></i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</nz-table>
-<hr>
-<hr>
-<div>
-    <form nz-form [formGroup]="validateFormClientSecrets" (ngSubmit)="submitFormClientSecrets()">
-        <nz-form-item>
-            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="type">Type secret</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
-                <input nz-input formControlName="type" id="type" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="value">Value secret</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
-                <input nz-input formControlName="value" id="value" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input formControlName="description" id="description" />
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="expiration">Expiration</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input formControlName="expiration" id="expiration"/>
-            </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-            <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="hashType">Hash Type</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-                <input nz-input formControlName="hashType" id="hashType" readonly/>
-            </nz-form-control>
-        </nz-form-item>
-        
-        <nz-form-item nz-row class="register-area">
-            <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <button nz-button nzType="primary" [disabled]="!validateFormClientSecrets.valid">Create new api
-                    resource secret</button>
-            </nz-form-control>
-        </nz-form-item>
-    </form>
-</div>
+            <nz-form-item nz-row class="register-area">
+                <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                    <button nz-button nzType="primary" [disabled]="!validateFormClientSecrets.valid">Create new client
+                        secret</button>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+        <!--End form add new client secrets-->
+    </div>
 </nz-drawer>
+<!--End client setting secrets-->
+
+<!--Start client token claim-->
+<nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+    [nzMaskClosable]="false" [nzWidth]="720" [nzVisible]="visibleClientClaims" nzTitle="Client Claims"
+    (nzOnClose)="closeClientClaims()">
+    <nz-table #claimsTable [nzData]="itemClientClaims" [nzFrontPagination]="false">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Claim Value</th>
+                <th>Claim Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let claim of claimsTable.data">
+                <td>{{ claim.id }}</td>
+                <td>{{ claim.value }}</td>
+                <td>{{ claim.type }}</td>
+                <td>
+                    <div class="table-action">
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
+                            href='javascript:void(0)' (click)='showDeleteConfirmClientClaims(claim.id)'>
+                            <i nz-icon nzType="delete"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <hr>
+    <hr>
+    <div>
+        <!--Start form add new client claims-->
+        <form nz-form [formGroup]="validateFormClientClaims" (ngSubmit)="submitFormClientClaims()">
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="type">Claim Type</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a person" formControlName="type"
+                        id="type">
+                        <nz-option *ngFor="let claimType of claimTypeSelects" nzLabel={{claimType}}
+                            nzValue={{claimType}}></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="value">Value secret</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+                    <input nz-input formControlName="value" id="value" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item nz-row class="register-area">
+                <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                    <button nz-button nzType="primary" [disabled]="!validateFormClientClaims.valid">Create new client
+                        claim</button>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+        <!--End form add new client claims-->
+    </div>
+</nz-drawer>
+<!--Start client token claim-->

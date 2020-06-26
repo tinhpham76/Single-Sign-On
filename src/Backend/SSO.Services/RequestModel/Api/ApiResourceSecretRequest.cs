@@ -2,7 +2,7 @@
 
 namespace SSO.Services.RequestModel.Api
 {
-    public class ApiSecretRequest
+    public class ApiResourceSecretRequest
     {
         public string Value { get; set; }
 

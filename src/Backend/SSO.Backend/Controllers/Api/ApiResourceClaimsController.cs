@@ -13,14 +13,15 @@ namespace SSO.Backend.Controllers.Api
 {
     public partial class ApiResourcesController
     {
-        #region Api Claim
-        //Get api claim
-        [HttpGet("{apiResourceName}/apiClaims")]
-        public async Task<IActionResult> GetApiClaim(string apiResourceName)
+        #region Api Resource Claims
+        //Get api resource claims
+        [HttpGet("{apiResourceName}/apiResourceClaims")]
+        public async Task<IActionResult> GetApiResourceClaims(string apiResourceName)
         {
-
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
-            var query = _context.ApiClaims.Where(x => x.ApiResourceId.Equals(apiResource.Id));
+            if (apiResource == null)
+                return NotFound();
+            var query = _context.ApiResourceClaims.Where(x => x.ApiResourceId.Equals(apiResource.Id));
             var apiClaims = await query.Select(x => new List<string>()
             {
                 x.Type
@@ -29,17 +30,17 @@ namespace SSO.Backend.Controllers.Api
             return Ok(apiClaims);
         }
 
-        //Post api claim
-        [HttpPost("{apiResourceName}/apiClaims")]
+        //Post api resource claim
+        [HttpPost("{apiResourceName}/apiResourceClaims")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiClaims(string apiResourceName, [FromBody]ApiClaimRequest request)
+        public async Task<IActionResult> PostApiClaim(string apiResourceName, [FromBody]ApiResourceClaimRequest request)
         {
             //Check Api Resource
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             //If api resource not null, Check api claims
             if (apiResource != null)
             {
-                var apiClaim = await _context.ApiClaims.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
+                var apiClaim = await _context.ApiResourceClaims.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
                 //If api claim is null, add claim for client
                 if (apiClaim == null)
                 {
@@ -48,7 +49,7 @@ namespace SSO.Backend.Controllers.Api
                         Type = request.Type,
                         ApiResourceId = apiResource.Id
                     };
-                    _context.ApiClaims.Add(apiClaimRequest);
+                    _context.ApiResourceClaims.Add(apiClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
@@ -70,7 +71,7 @@ namespace SSO.Backend.Controllers.Api
                         Type = request.Type,
                         ApiResourceId = apiResource.Id
                     };
-                    _context.ApiClaims.Add(apiClaimRequest);
+                    _context.ApiResourceClaims.Add(apiClaimRequest);
                     var result = await _context.SaveChangesAsync();
                     if (result > 0)
                     {
@@ -85,18 +86,18 @@ namespace SSO.Backend.Controllers.Api
             return BadRequest();
         }
 
-        //Delete api claim
+        //Delete api resource claim
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiResourceName}/apiClaims/{claimType}")]
+        [HttpDelete("{apiResourceName}/apiResourceClaims/{claimType}")]
         public async Task<IActionResult> DeleteApiClaim(string apiResourceName, string claimType)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             if (apiResource == null)
                 return NotFound();
-            var apiClaim = await _context.ApiClaims.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Type == claimType);
+            var apiClaim = await _context.ApiResourceClaims.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Type == claimType);
             if (apiClaim == null)
                 return NotFound();
-            _context.ApiClaims.Remove(apiClaim);
+            _context.ApiResourceClaims.Remove(apiClaim);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -106,7 +107,6 @@ namespace SSO.Backend.Controllers.Api
                 return Ok();
             }
             return BadRequest();
-
         }
         #endregion
     }

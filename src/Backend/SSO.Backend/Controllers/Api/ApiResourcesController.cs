@@ -30,28 +30,15 @@ namespace SSO.Backend.Controllers.Api
             _context = context;
         }
 
-        //Show basic infor all Api Resource
-        [HttpGet]
-        public async Task<IActionResult> GetApiResources()
-        {
-            var apiResources = await _configurationDbContext.ApiResources.Select(x => new ApiResourcesQuickView()
-            {
-                Name = x.Name,
-                Description = x.Description
-            }).ToListAsync();
-            return Ok(apiResources);
-        }
-
-        // Find clients with client name or id
+        // Find api resource with api resource name or id
         [HttpGet("filter")]
-        public async Task<IActionResult> GetApiResourcePaging(string filter, int pageIndex, int pageSize)
+        public async Task<IActionResult> GetApiResourcesPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.ApiResources.AsQueryable();
 
             if (!string.IsNullOrEmpty(filter))
             {
                 query = query.Where(x => x.Name.Contains(filter));
-
             }
             var totalReconds = await query.CountAsync();
             var items = await query.Skip((pageIndex - 1) * pageSize)
@@ -70,7 +57,7 @@ namespace SSO.Backend.Controllers.Api
             return Ok(pagination);
         }
 
-        //Get infor basic api resource
+        //Get infor api resource
         [HttpGet("{apiResourceName}")]
         public async Task<IActionResult> GetApiResource(string apiResourceName)
         {
@@ -82,7 +69,9 @@ namespace SSO.Backend.Controllers.Api
                 Name = apiResource.Name,
                 DisplayName = apiResource.DisplayName,
                 Description = apiResource.Description,
-                Enabled = apiResource.Enabled
+                Enabled = apiResource.Enabled,
+                AllowedAccessTokenSigningAlgorithms = apiResource.AllowedAccessTokenSigningAlgorithms,
+                ShowInDiscoveryDocument = apiResource.ShowInDiscoveryDocument
             };
             return Ok(apiResourceViewModel);
         }
@@ -100,7 +89,9 @@ namespace SSO.Backend.Controllers.Api
                 Name = request.Name,
                 DisplayName = request.DisplayName,
                 Description = request.Description,
-                Enabled = request.Enabled
+                Enabled = request.Enabled,
+                AllowedAccessTokenSigningAlgorithms = { request.AllowedAccessTokenSigningAlgorithms},
+                ShowInDiscoveryDocument = request.ShowInDiscoveryDocument
             };
             _configurationDbContext.ApiResources.Add(apiResourceRequest.ToEntity());
             var result = await _configurationDbContext.SaveChangesAsync();
@@ -113,7 +104,7 @@ namespace SSO.Backend.Controllers.Api
         //Edit basic infor api resource
         [HttpPut("{apiResourceName}")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutApiResourceBasic(string apiResourceName, [FromBody]ApiResourceRequest request)
+        public async Task<IActionResult> PutApiResource(string apiResourceName, [FromBody]ApiResourceRequest request)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             if (apiResource == null)
@@ -123,6 +114,8 @@ namespace SSO.Backend.Controllers.Api
             apiResource.Description = request.Description;
             apiResource.Enabled = request.Enabled;
             apiResource.Updated = DateTime.UtcNow;
+            apiResource.ShowInDiscoveryDocument = request.ShowInDiscoveryDocument;
+            apiResource.AllowedAccessTokenSigningAlgorithms = request.AllowedAccessTokenSigningAlgorithms;
             _configurationDbContext.ApiResources.Update(apiResource);
             var result = await _configurationDbContext.SaveChangesAsync();
             if (result > 0)

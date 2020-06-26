@@ -25,9 +25,19 @@ namespace SSO.BackendIdentityServer
             {
                 new ApiResource("sso.api", "SSO API")
                 {
-                    ApiSecrets = { new Secret("secret".Sha256()) }
+                    ApiSecrets = { new Secret("secret".Sha256()) },
+                    Scopes = { "sso.api" }
                 }
 
+            };
+        }
+
+        public static IEnumerable<ApiScope> GetApiScopes()
+        {
+            return new List<ApiScope>
+            {
+                // backward compat
+                new ApiScope("sso.api")
             };
         }
 
@@ -54,7 +64,8 @@ namespace SSO.BackendIdentityServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "sso.api"
+                        "sso.api",
+                        "sso.scope"
                     }
                  },
                 new Client
@@ -74,7 +85,8 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api"
+                        "sso.api",
+                        "sso.scope"
                     }
                 },
                 new Client
@@ -109,7 +121,8 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api"
+                        "sso.api",
+                        "sso.scope"
                     }
                 }
             };

@@ -1,14 +1,17 @@
+<!--Start welcome clients-->
 <div class="content-heading">
     <div>
         💻 Clients
         <br>
-        <small><b> The Client class represents an OpenID Connect or OAuth 2.0 client - e.g. a native application, a web application or a JS-based application..</b></small>
+        <small><b> The Client class represents an OpenID Connect or OAuth 2.0 client - e.g. a native application, a web
+                application or a JS-based application..</b></small>
     </div>
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='add'><i nz-icon
-      nzType="desktop"></i>Add new client</button>
-<!--Clients-->
+        nzType="desktop"></i>Add new client</button>
+<!--End welcome clients-->
 <nz-spin [nzSpinning]="isSpinning">
+    <!--Start table clients-->
     <nz-table #clientTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
@@ -28,10 +31,11 @@
                 <td>
                     <div class="table-action">
                         <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Client detail & Edit client"
-                            href='javascript:void(0)' [routerLink]="[client.clientId,'edit']" >
+                            href='javascript:void(0)' [routerLink]="[client.clientId,'edit']">
                             <i nz-icon nzType="edit"></i>
                         </a>
-                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete client" href='javascript:void(0)' (click)='showDeleteConfirm(client.clientId)'>
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete client" href='javascript:void(0)'
+                            (click)='showDeleteConfirm(client.clientId)'>
                             <i nz-icon nzType="delete"></i>
                         </a>
                     </div>
@@ -39,4 +43,5 @@
             </tr>
         </tbody>
     </nz-table>
+    <!--End table clients-->
 </nz-spin>

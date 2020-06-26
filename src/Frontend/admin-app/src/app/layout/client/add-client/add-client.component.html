@@ -1,3 +1,4 @@
+<!--Start welcome add new client-->
 <div class="content-heading">
   <div>
     💻 Add new client
@@ -8,8 +9,9 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/clients'><i nz-icon
     nzType="rollback"></i>Go back</button>
-<!--Add client-->
+<!--End welcome add new client-->
 <nz-spin [nzSpinning]="isSpinning">
+  <!--Start form add new client-->
   <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <nz-form-item>
       <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="clientName">Client Name</nz-form-label>
@@ -55,4 +57,5 @@
       <button nz-button nzType="primary" (click)='submitForm()'>Create new client</button>
     </nz-form-control>
   </nz-form-item>
+  <!--End form add new client-->
 </nz-spin>

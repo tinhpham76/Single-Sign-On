@@ -30,18 +30,6 @@ namespace SSO.Backend.Controllers.Identity
             _context = context;
             
         }
-        //Get Basic infor identity resources
-        [HttpGet]
-        public async Task<IActionResult> GetIdentityResources()
-        {
-            var identityResources = await _configurationDbContext.IdentityResources.Select(x => new IdentityResourcesQuickView()
-            {
-                Name = x.Name,
-                Description = x.Description
-            }).ToListAsync();
-            return Ok(identityResources);
-        }
-
         //Find identity resource
         [HttpGet("filter")]
         public async Task<IActionResult> GetIdentityResourcesPaging(string filter, int pageIndex, int pageSize)

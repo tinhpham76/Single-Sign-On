@@ -47,9 +47,9 @@ export class ClientServices extends BaseService {
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     // Setting setting
-    getAllScope(){
+    getAllScope() {
         return this.http.get(`${environment.apiUrl}/api/clients/allScopes`
-        , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
 
     getSetting(id) {
@@ -84,17 +84,17 @@ export class ClientServices extends BaseService {
         return this.http.delete(`${environment.apiUrl}/api/clients/${id}/settings/grantTypes/${grantTypeName}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
-    getClientSecret(name: string) {
-        return this.http.get(`${environment.apiUrl}/api/clients/${name}/clientSecrets`, { headers: this._sharedHeaders })
+    getClientSecret(id: string) {
+        return this.http.get(`${environment.apiUrl}/api/clients/${id}/settings/clientSecrets`, { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
-    addClientSecret(name: string, entity: any) {
-        return this.http.post(`${environment.apiUrl}/api/clients/${name}/clientSecrets`,
+    addClientSecret(id: string, entity: any) {
+        return this.http.post(`${environment.apiUrl}/api/clients/${id}/settings/clientSecrets`,
             JSON.stringify(entity), { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));
     }
-    deleteClientSecret(name: string, secretId: number) {
-        return this.http.delete(`${environment.apiUrl}/api/clients/${name}/clientSecrets/${secretId}`
+    deleteClientSecret(id: string, secretId: number) {
+        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/settings/clientSecrets/${secretId}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     // Setting authentication
@@ -122,6 +122,19 @@ export class ClientServices extends BaseService {
     putToken(id, entity: any) {
         return this.http.put(`${environment.apiUrl}/api/clients/${id}/Tokens`
             , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
+    getClientClaims(id: string) {
+        return this.http.get(`${environment.apiUrl}/api/clients/${id}/tokens/clientClaims`, { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    addClientClaim(id: string, entity: any) {
+        return this.http.post(`${environment.apiUrl}/api/clients/${id}/tokens/clientClaims`,
+            JSON.stringify(entity), { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    deleteClientClaim(id: string, claimId: number) {
+        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/tokens/clientClaims/${claimId}`
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     // Setting device flow
     getDeviceFlow(id) {

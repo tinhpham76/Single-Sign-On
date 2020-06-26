@@ -1,3 +1,4 @@
+<!--Start login-->
 <div class="login-page" [@routerTransition]>
     <div class="limiter">
         <div class="container-login100">
@@ -6,6 +7,7 @@
                     <span class="login100-form-title p-b-43">
                         Login to continue
                     </span>
+                    <!--Start form login-->
                     <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                         <input class="input100" type="text" name="email">
                         <span class="focus-input100"></span>
@@ -42,7 +44,7 @@
                     </div>
                     <div class="login100-form-social flex-c-m">
                         <a (click)="loginWithIS4()" class="login100-form-social-item flex-c-m bg4 m-r-5">
-                            <img style="color: #fff; height: 45px; width: 45px;" src="./assets/images/is4-logo.png"
+                            <img class="icon" src="./assets/images/is4-logo.png"
                                 alt="">
                         </a>
                         <a (click)="createNotification('error', 'Facebook', 'Unregistered or unsupported applications!')"
@@ -55,11 +57,12 @@
                             <i class="fa fa-twitter" aria-hidden="true"></i>
                         </a>
                     </div>
+                    <!--End form login-->
                 </div>
-
                 <div class="login100-more" style="background-image: url('./assets/images/background-2.jpg');">
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!--End login-->

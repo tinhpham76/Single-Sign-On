@@ -31,6 +31,7 @@ export class EditClientComponent implements OnInit {
   public tokenForm!: FormGroup;
   public deviceFlowForm!: FormGroup;
   public validateFormClientSecrets!: FormGroup;
+  public validateFormClientClaims!: FormGroup;
 
   // Tags origin
   public originTags = [];
@@ -57,12 +58,20 @@ export class EditClientComponent implements OnInit {
 
   // Drawer
   public visibleClientSecrets = false;
+  public visibleClientClaims = false;
 
-  // Client Secrets
-  public items: any[];
+  // Client Drawer
+  public itemClientSecrets: any[];
+  public itemClientClaims: any[];
 
   // Modal
-  confirmDeleteModal?: NzModalRef;
+  confirmDeleteClientSecret?: NzModalRef;
+  confirmDeleteClientClaim?: NzModalRef;
+
+  // Select
+  public claimTypeSelects = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
+    'nickname', 'preferred_username', 'profile', 'picture', 'website', 'email', 'email_verified',
+    'gender', 'birthdate', 'zoneinfo', 'locale', 'phone_number', 'phone_number_verified', 'address', 'updated_at'];
 
   @ViewChild('inputElement', { static: false }) inputElement?: ElementRef;
 
@@ -135,6 +144,11 @@ export class EditClientComponent implements OnInit {
       expiration: [null],
       hashType: ['Sha256'],
     });
+    // Init form client claims
+    this.validateFormClientClaims = this.fb.group({
+      type: ['SharedSecret'],
+      value: [null, Validators.required]
+    });
     this.getClientDetail(this.clientId);
     this.getBasicSetting(this.clientId);
     this.getSettingSetting(this.clientId);
@@ -142,6 +156,8 @@ export class EditClientComponent implements OnInit {
     this.getAuthentication(this.clientId);
     this.getToken(this.clientId);
     this.getDeviceFlow(this.clientId);
+    this.getClientSecret(this.clientId);
+    this.getClientClaim(this.clientId);
   }
 
   // Load client detail
@@ -825,11 +841,11 @@ export class EditClientComponent implements OnInit {
   }
 
   // Get client secret
-  getApiResourceSecret(clientId: string) {
+  getClientSecret(clientId: string) {
     this.isSpinning = true;
     this.clientServices.getClientSecret(clientId)
       .subscribe((res: any[]) => {
-        this.items = res;
+        this.itemClientSecrets = res;
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -898,15 +914,112 @@ export class EditClientComponent implements OnInit {
       });
   }
 
-  // Delete api scope
+  // Delete client secret
   showDeleteConfirmClientSecrets(id: string): void {
-    this.confirmDeleteModal = this.modal.confirm({
+    this.confirmDeleteClientSecret = this.modal.confirm({
       nzTitle: 'Do you Want to delete client secrets' + id + ' ?',
       nzOkText: 'Yes',
       nzOkType: 'danger',
       nzOnOk: () =>
         new Promise((resolve, reject) => {
           this.deleteClientSecret(id);
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
+        })
+    });
+  }
+
+  // Drawer
+  openClientClaims(): void {
+    this.visibleClientClaims = true;
+  }
+
+  closeClientClaims(): void {
+    this.visibleClientClaims = false;
+  }
+
+  // Get client secret
+  getClientClaim(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getClientClaims(clientId)
+      .subscribe((res: any[]) => {
+        this.itemClientClaims = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+
+  // Create new client secret
+  submitFormClientClaims(): void {
+    this.isSpinning = true;
+    const data = this.validateFormClientClaims.getRawValue();
+    this.clientServices.addClientClaim(this.clientId, data)
+      .subscribe(() => {
+        this.ngOnInit();
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ADD + name + '!',
+          'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client claim
+  deleteClientClaim(id: string) {
+    this.isSpinning = true;
+    this.clientServices.deleteClientClaim(this.clientId, Number(id))
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
+        this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client claim
+  showDeleteConfirmClientClaims(id: string): void {
+    this.confirmDeleteClientClaim = this.modal.confirm({
+      nzTitle: 'Do you Want to delete client claims' + id + ' ?',
+      nzOkText: 'Yes',
+      nzOkType: 'danger',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          this.deleteClientClaim(id);
           setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
         })
     });
