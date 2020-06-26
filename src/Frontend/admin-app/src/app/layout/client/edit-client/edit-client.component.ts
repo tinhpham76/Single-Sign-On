@@ -7,6 +7,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
 import { isNumber } from 'util';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-edit-client',
@@ -17,7 +18,6 @@ export class EditClientComponent implements OnInit {
 
   // Spin
   public isSpinning: boolean;
-  public isSpinningBasic: boolean;
 
   // Client
   public clientId: string;
@@ -28,6 +28,9 @@ export class EditClientComponent implements OnInit {
   public basicForm!: FormGroup;
   public settingForm!: FormGroup;
   public authenticationForm!: FormGroup;
+  public tokenForm!: FormGroup;
+  public deviceFlowForm!: FormGroup;
+  public validateFormClientSecrets!: FormGroup;
 
   // Tags origin
   public originTags = [];
@@ -52,12 +55,22 @@ export class EditClientComponent implements OnInit {
   inputVisibleLogoutUri = false;
   inputValueLogoutUri = '';
 
+  // Drawer
+  public visibleClientSecrets = false;
+
+  // Client Secrets
+  public items: any[];
+
+  // Modal
+  confirmDeleteModal?: NzModalRef;
+
   @ViewChild('inputElement', { static: false }) inputElement?: ElementRef;
 
   constructor(private notification: NzNotificationService,
     private route: ActivatedRoute,
     private clientServices: ClientServices,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private modal: NzModalService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -92,11 +105,43 @@ export class EditClientComponent implements OnInit {
       backChannelLogoutSessionRequired: [null],
       userSsoLifetime: [null]
     });
+    // Init form token
+    this.tokenForm = this.fb.group({
+      identityTokenLifetime: [null],
+      accessTokenLifetime: [null],
+      accessTokenType: [null],
+      authorizationCodeLifetime: [null],
+      absoluteRefreshTokenLifetime: [null],
+      slidingRefreshTokenLifetime: [null],
+      refreshTokenUsage: [null],
+      refreshTokenExpiration: [null],
+      updateAccessTokenClaimsOnRefresh: [null],
+      includeJwtId: [null],
+      alwaysSendClientClaims: [null],
+      alwaysIncludeUserClaimsInIdToken: [null],
+      pairWiseSubjectSalt: [null],
+      clientClaimsPrefix: [null],
+    });
+    // Init form device Flow
+    this.deviceFlowForm = this.fb.group({
+      userCodeType: [null],
+      deviceCodeLifetime: [null]
+    });
+    // Init form client secrets
+    this.validateFormClientSecrets = this.fb.group({
+      type: ['SharedSecret'],
+      value: [null, Validators.required],
+      description: [null],
+      expiration: [null],
+      hashType: ['Sha256'],
+    });
     this.getClientDetail(this.clientId);
     this.getBasicSetting(this.clientId);
     this.getSettingSetting(this.clientId);
     this.getAllScope();
     this.getAuthentication(this.clientId);
+    this.getToken(this.clientId);
+    this.getDeviceFlow(this.clientId);
   }
 
   // Load client detail
@@ -125,7 +170,7 @@ export class EditClientComponent implements OnInit {
 
   // Client setting basic
   getBasicSetting(clientId: string) {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.getBasic(clientId)
       .subscribe((res: any) => {
         this.basicForm.setValue({
@@ -137,7 +182,7 @@ export class EditClientComponent implements OnInit {
         });
         this.originTags = res.allowedCorsOrigins;
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -147,7 +192,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
@@ -162,7 +207,7 @@ export class EditClientComponent implements OnInit {
         'bottomRight'
       );
     } else {
-      this.isSpinningBasic = true;
+      this.isSpinning = true;
       this.clientServices.putBasic(this.clientId, this.basicForm.getRawValue())
         .subscribe(() => {
           this.createNotification(
@@ -173,7 +218,7 @@ export class EditClientComponent implements OnInit {
           );
           setTimeout(() => {
             this.ngOnInit();
-            this.isSpinningBasic = false;
+            this.isSpinning = false;
           }, 500);
         }, errorMessage => {
           this.createNotification(
@@ -183,7 +228,7 @@ export class EditClientComponent implements OnInit {
             'bottomRight'
           );
           setTimeout(() => {
-            this.isSpinningBasic = false;
+            this.isSpinning = false;
           }, 500);
         });
     }
@@ -192,7 +237,7 @@ export class EditClientComponent implements OnInit {
   // Origins
   deleteOrigin(removedTag: {}): void {
     this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.deleteBasicOrigin(this.clientId, removedTag)
       .subscribe(() => {
         this.createNotification(
@@ -202,7 +247,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -212,14 +257,14 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   sliceTagName(tag: string): string {
-    const isLongTag = tag.length > 20;
-    return isLongTag ? `${tag.slice(0, 20)}...` : tag;
+    const isLongTag = tag.length > 50;
+    return isLongTag ? `${tag.slice(0, 50)}...` : tag;
   }
 
   showInputOrigin(): void {
@@ -239,7 +284,7 @@ export class EditClientComponent implements OnInit {
   }
   addBasicOrigin(origin: string): void {
     const data = Object.assign({ origin });
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.postBasicOrigin(this.clientId, data)
       .subscribe(() => {
         this.createNotification(
@@ -249,7 +294,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -262,14 +307,14 @@ export class EditClientComponent implements OnInit {
           console.log(this.originTags);
           this.originTags.splice(this.originTags.length - 1, 1);
           console.log(this.originTags);
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   ///////////////// Client setting setting
   getSettingSetting(clientId: string) {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.getSetting(clientId)
       .subscribe((res: any) => {
         this.settingForm.setValue({
@@ -287,7 +332,7 @@ export class EditClientComponent implements OnInit {
         this.allowedScopes = res.allowedScopes;
         this.allowedGrantTypes = res.allowedGrantTypes;
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -297,12 +342,12 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
   submitSettingForm() {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.putSetting(this.clientId, this.settingForm.getRawValue())
       .subscribe(() => {
         this.createNotification(
@@ -313,7 +358,7 @@ export class EditClientComponent implements OnInit {
         );
         setTimeout(() => {
           this.ngOnInit();
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -323,14 +368,14 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   // Grant Types
   addClientGrantType(grantType: string) {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     const data = Object.assign({ grantType });
     this.clientServices.postSettingGrantType(this.clientId, data)
       .subscribe(() => {
@@ -341,7 +386,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.ngOnInit();
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -351,14 +396,14 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   deleteClientGrantType(removedTag: string) {
     this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.deleteSettingGrantType(this.clientId, removedTag)
       .subscribe(() => {
         this.createNotification(
@@ -368,7 +413,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -378,7 +423,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
@@ -400,7 +445,7 @@ export class EditClientComponent implements OnInit {
   }
 
   addClientScope(scope: string) {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     const data = Object.assign({ scope });
     this.clientServices.postSettingScope(this.clientId, data)
       .subscribe(() => {
@@ -411,7 +456,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.ngOnInit();
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -421,14 +466,14 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   deleteClientScope(removedTag: string) {
     this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.deleteSettingScope(this.clientId, removedTag)
       .subscribe(() => {
         this.createNotification(
@@ -438,7 +483,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -448,7 +493,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
@@ -456,7 +501,7 @@ export class EditClientComponent implements OnInit {
   // Redirect Uri
   deleteRedirectUri(removedTag: {}): void {
     this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.deleteSettingRedirectUri(this.clientId, removedTag)
       .subscribe(() => {
         this.createNotification(
@@ -466,7 +511,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -476,7 +521,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
@@ -499,7 +544,7 @@ export class EditClientComponent implements OnInit {
   }
   addSettingRedirectUri(redirectUri: string): void {
     const data = Object.assign({ redirectUri });
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.postSettingRedirectUri(this.clientId, data)
       .subscribe(() => {
         this.createNotification(
@@ -509,7 +554,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -522,14 +567,14 @@ export class EditClientComponent implements OnInit {
           console.log(this.originTags);
           this.originTags.splice(this.originTags.length - 1, 1);
           console.log(this.originTags);
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   ///////////////// Client setting authentication
   getAuthentication(clientId: string) {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.getAuthentication(clientId)
       .subscribe((res: any) => {
         this.authenticationForm.setValue({
@@ -542,7 +587,7 @@ export class EditClientComponent implements OnInit {
         });
         this.postLogoutRedirectUris = res.postLogoutRedirectUris;
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -552,12 +597,12 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
   submitAuthentication() {
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.putAuthentication(this.clientId, this.authenticationForm.getRawValue())
       .subscribe(() => {
         this.createNotification(
@@ -568,7 +613,7 @@ export class EditClientComponent implements OnInit {
         );
         setTimeout(() => {
           this.ngOnInit();
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -578,7 +623,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
@@ -601,7 +646,7 @@ export class EditClientComponent implements OnInit {
   }
   addAuthenticationLogoutUri(postLogoutRedirectUri: string): void {
     const data = Object.assign({ postLogoutRedirectUri });
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.postPostLogoutRedirectUris(this.clientId, data)
       .subscribe(() => {
         this.createNotification(
@@ -611,7 +656,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -624,14 +669,14 @@ export class EditClientComponent implements OnInit {
           console.log(this.originTags);
           this.originTags.splice(this.originTags.length - 1, 1);
           console.log(this.originTags);
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
 
   deletePostLogoutRedirectUris(removedTag: string) {
     this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinningBasic = true;
+    this.isSpinning = true;
     this.clientServices.deletePostLogoutRedirectUris(this.clientId, removedTag)
       .subscribe(() => {
         this.createNotification(
@@ -641,7 +686,7 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       }, errorMessage => {
         this.createNotification(
@@ -651,10 +696,222 @@ export class EditClientComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.isSpinningBasic = false;
+          this.isSpinning = false;
         }, 500);
       });
   }
+
+  // Token
+  getToken(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getToken(clientId)
+      .subscribe((res: any) => {
+        this.tokenForm.setValue({
+          identityTokenLifetime: res.identityTokenLifetime,
+          accessTokenLifetime: res.accessTokenLifetime,
+          accessTokenType: res.accessTokenType,
+          authorizationCodeLifetime: res.authorizationCodeLifetime,
+          absoluteRefreshTokenLifetime: res.absoluteRefreshTokenLifetime,
+          slidingRefreshTokenLifetime: res.slidingRefreshTokenLifetime,
+          refreshTokenUsage: res.refreshTokenUsage,
+          refreshTokenExpiration: res.refreshTokenExpiration,
+          updateAccessTokenClaimsOnRefresh: res.updateAccessTokenClaimsOnRefresh,
+          includeJwtId: res.includeJwtId,
+          alwaysSendClientClaims: res.alwaysSendClientClaims,
+          alwaysIncludeUserClaimsInIdToken: res.alwaysIncludeUserClaimsInIdToken,
+          pairWiseSubjectSalt: res.pairWiseSubjectSalt,
+          clientClaimsPrefix: res.clientClaimsPrefix
+        });
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+  submitToken() {
+    this.isSpinning = true;
+    this.clientServices.putToken(this.clientId, this.tokenForm.getRawValue())
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_UPDATE,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.ngOnInit();
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Device Flow
+  getDeviceFlow(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getDeviceFlow(clientId)
+      .subscribe((res: any) => {
+        this.deviceFlowForm.setValue({
+          userCodeType: res.userCodeType,
+          deviceCodeLifetime: res.deviceCodeLifetime
+        });
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+  submitDeviceFlow() {
+    this.isSpinning = true;
+    this.clientServices.putDeviceFlow(this.clientId, this.tokenForm.getRawValue())
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_UPDATE,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.ngOnInit();
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Drawer
+  openClientSecrets(): void {
+    this.visibleClientSecrets = true;
+  }
+
+  closeClientSecrets(): void {
+    this.visibleClientSecrets = false;
+  }
+
+  // Get client secret
+  getApiResourceSecret(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getClientSecret(clientId)
+      .subscribe((res: any[]) => {
+        this.items = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+
+  // Create new client secret
+  submitFormClientSecrets(): void {
+    this.isSpinning = true;
+    const data = this.validateFormClientSecrets.getRawValue();
+    this.clientServices.addClientSecret(this.clientId, data)
+      .subscribe(() => {
+        this.ngOnInit();
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ADD + name + '!',
+          'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client secret
+  deleteClientSecret(id: string) {
+    this.isSpinning = true;
+    this.clientServices.deleteClientSecret(this.clientId, Number(id))
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
+        this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete api scope
+  showDeleteConfirmClientSecrets(id: string): void {
+    this.confirmDeleteModal = this.modal.confirm({
+      nzTitle: 'Do you Want to delete client secrets' + id + ' ?',
+      nzOkText: 'Yes',
+      nzOkType: 'danger',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          this.deleteClientSecret(id);
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
+        })
+    });
+  }
+
 
 
   // notification

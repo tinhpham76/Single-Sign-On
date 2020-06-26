@@ -17,6 +17,7 @@ namespace SSO.Backend.Data
         public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
         public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
         public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
+        public DbSet<ClientSecret> ClientSecrets { get; set; }
         public DbSet<ApiResourceClaim> ApiClaims { get; set; }
         public DbSet<ApiSecret> ApiSecrets { get; set; }
         public DbSet<ApiScope> ApiScopes { get; set; }

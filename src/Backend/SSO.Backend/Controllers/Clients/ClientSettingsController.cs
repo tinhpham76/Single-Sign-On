@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IdentityModel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
@@ -51,7 +52,7 @@ namespace SSO.Backend.Controllers.Clients
         //Get setting infor client for edit
         [HttpGet("allScopes")]
         public async Task<IActionResult> GetAllScopes()
-        {       
+        {
             var api = await _configurationDbContext.ApiResources
                 .Select(x => x.Name.ToString()).ToListAsync();
             var identity = await _configurationDbContext.IdentityResources
@@ -64,7 +65,7 @@ namespace SSO.Backend.Controllers.Clients
         //Edit setting infor
         [HttpPut("{clientId}/settings")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientSettingRequest request)
+        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody] ClientSettingRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -91,7 +92,7 @@ namespace SSO.Backend.Controllers.Clients
         //Post Client Scope for client
         [HttpPost("{clientId}/settings/scopes")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClientScopes(string clientId, [FromBody]ClientScopeRequest request)
+        public async Task<IActionResult> PostClientScopes(string clientId, [FromBody] ClientScopeRequest request)
         {
             //Check Client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -170,7 +171,7 @@ namespace SSO.Backend.Controllers.Clients
         //Post Client RedirectUris for client
         [HttpPost("{clientId}/settings/redirectUris")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody]ClientRedirectUriRequest request)
+        public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody] ClientRedirectUriRequest request)
         {
             //Check Client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -249,7 +250,7 @@ namespace SSO.Backend.Controllers.Clients
         //Post Client GrantType for client
         [HttpPost("{clientId}/settings/grantTypes")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody]ClientGrantTypeRequest request)
+        public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody] ClientGrantTypeRequest request)
         {
             //Check Client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -323,6 +324,108 @@ namespace SSO.Backend.Controllers.Clients
                 return Ok();
             }
             return BadRequest();
+        }
+
+        // Client Secrets
+        [HttpGet("{clientId}/settings/clientSecrets")]
+        public async Task<IActionResult> GetClientSecrets(string clientId)
+        {
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+                return NotFound();
+            var query = _context.ClientSecrets.Where(x => x.ClientId.Equals(client.Id));
+            var clientSecrets = await query.Select(x => new ClientSecretViewModel()
+            {
+                Id = x.Id,
+                Value = x.Value,
+                Type = x.Type,
+                Expiration = x.Expiration,
+                Description = x.Description
+            }).ToListAsync();
+
+            return Ok(clientSecrets);
+        }
+
+        // Post client secrets
+        [HttpPost("{clientId}/settings/clientSecrets")]
+        [RoleRequirement(RoleCode.Admin)]
+        public async Task<IActionResult> PostApiSecret(string clientId, [FromBody] ClientSecretRequest request)
+        {
+            //Check client
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            //If client not null, Check client Secret
+            if (client != null)
+            {
+                if (request.HashType == "Sha256")
+                {
+                    var clientSecretRequest = new IdentityServer4.EntityFramework.Entities.ClientSecret()
+                    {
+                        Type = request.Type,
+                        Value = request.Value.ToSha256(),
+                        Description = request.Description,
+                        ClientId = client.Id,
+                        Expiration = DateTime.Parse(request.Expiration),
+                        Created = DateTime.UtcNow
+                    };
+                    _context.ClientSecrets.Add(clientSecretRequest);
+                    var result = await _context.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
+                        return Ok();
+                    }
+                    return BadRequest();
+                }
+                else if (request.HashType == "Sha512")
+                {
+                    var clientSecretRequest = new IdentityServer4.EntityFramework.Entities.ClientSecret()
+                    {
+                        Type = request.Type,
+                        Value = request.Value.ToSha256(),
+                        Description = request.Description,
+                        ClientId = client.Id,
+                        Expiration = DateTime.Parse(request.Expiration),
+                        Created = DateTime.UtcNow
+                    };
+                    _context.ClientSecrets.Add(clientSecretRequest);
+                    var result = await _context.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        client.Updated = DateTime.UtcNow;
+                        _configurationDbContext.Clients.Update(client);
+                        await _configurationDbContext.SaveChangesAsync();
+                        return Ok();
+                    }
+                    return BadRequest();
+                }
+            }
+            return BadRequest();
+        }
+
+        //Delete client secret
+        [HttpDelete("{clientId}/apiSecrets/{secretId}")]
+        [RoleRequirement(RoleCode.Admin)]
+        public async Task<IActionResult> DeleteApiSecret(string clientId, int secretId)
+        {
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
+            if (client == null)
+                return NotFound();
+            var clientSecret = await _context.ClientSecrets.FirstOrDefaultAsync(x => x.ClientId == client.Id && x.Id == secretId);
+            if (clientSecret == null)
+                return NotFound();
+            _context.ClientSecrets.Remove(clientSecret);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                client.Updated = DateTime.UtcNow;
+                _configurationDbContext.Clients.Update(client);
+                await _configurationDbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return BadRequest();
+
         }
         #endregion
     }

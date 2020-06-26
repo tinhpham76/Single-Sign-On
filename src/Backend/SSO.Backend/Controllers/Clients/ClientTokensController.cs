@@ -16,19 +16,19 @@ namespace SSO.Backend.Controllers.Clients
         [HttpGet("{clientId}/tokens")]
         public async Task<IActionResult> GetClientToken(string clientId)
         {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return NotFound();
             var clientTokenViewModel = new ClientTokenViewModel()
             {
                 IdentityTokenLifetime = client.IdentityTokenLifetime,
                 AccessTokenLifetime = client.AccessTokenLifetime,
-                AccessTokenType = (int)client.AccessTokenType,
+                AccessTokenType = (client.AccessTokenType == 0) ? "Jwt" : "Reference",
                 AuthorizationCodeLifetime = client.AuthorizationCodeLifetime,
                 AbsoluteRefreshTokenLifetime = client.AbsoluteRefreshTokenLifetime,
                 SlidingRefreshTokenLifetime = client.SlidingRefreshTokenLifetime,
-                RefreshTokenUsage = (int)client.RefreshTokenUsage,
-                RefreshTokenExpiration = (int)client.RefreshTokenExpiration,
+                RefreshTokenUsage = (client.RefreshTokenUsage == 0) ? "ReUse" : "OneTimeOnly",
+                RefreshTokenExpiration = (client.RefreshTokenUsage == 0) ? "Sliding" : "Absolute",
                 UpdateAccessTokenClaimsOnRefresh = client.UpdateAccessTokenClaimsOnRefresh,
                 IncludeJwtId = client.IncludeJwtId,
                 AlwaysSendClientClaims = client.AlwaysSendClientClaims,
@@ -42,7 +42,7 @@ namespace SSO.Backend.Controllers.Clients
         //Edit token infor
         [HttpPut("{clientId}/tokens")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientTokenRequest request)
+        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody] ClientTokenRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -50,12 +50,12 @@ namespace SSO.Backend.Controllers.Clients
             //Table Clients
             client.IdentityTokenLifetime = request.IdentityTokenLifetime;
             client.AccessTokenLifetime = request.AccessTokenLifetime;
-            client.AccessTokenType = request.AccessTokenType;
+            client.AccessTokenType = request.AccessTokenType.Contains("Jwt") ? 0 : 1;
             client.AuthorizationCodeLifetime = request.AuthorizationCodeLifetime;
             client.AbsoluteRefreshTokenLifetime = request.AbsoluteRefreshTokenLifetime;
             client.SlidingRefreshTokenLifetime = request.SlidingRefreshTokenLifetime;
-            client.RefreshTokenUsage = request.RefreshTokenUsage;
-            client.RefreshTokenExpiration = request.RefreshTokenExpiration;
+            client.RefreshTokenUsage = request.RefreshTokenUsage.Contains("ReUse") ? 0 : 1;
+            client.RefreshTokenExpiration = request.RefreshTokenExpiration.Contains("Sliding") ? 0 : 1;
             client.UpdateAccessTokenClaimsOnRefresh = request.UpdateAccessTokenClaimsOnRefresh;
             client.IncludeJwtId = request.IncludeJwtId;
             client.AlwaysSendClientClaims = request.AlwaysSendClientClaims;

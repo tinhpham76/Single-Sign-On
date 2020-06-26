@@ -22,7 +22,7 @@ export class UserComponent implements OnInit {
   // Load user data
   public filter = '';
   public pageIndex = 1;
-  public pageSize = 5;
+  public pageSize = 10;
   public items: any[];
   public totalRecords: number;
 

@@ -24,7 +24,7 @@ export class SecretComponent implements OnInit {
   public isSpinning: boolean;
 
   // Init form
-  validateForm!: FormGroup;
+  public validateForm!: FormGroup;
 
   // Modal
   confirmDeleteModal?: NzModalRef;

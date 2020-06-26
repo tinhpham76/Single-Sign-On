@@ -66,12 +66,12 @@ export class AddClientComponent implements OnInit {
     this.isSpinning = true;
     if (this.validateForm.get('clientName').value === '' ||
       this.validateForm.get('clientUri').value === '') {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ERROR,
-          'bottomRight');
-          this.isSpinning = false;
+      this.createNotification(
+        MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+        MessageConstants.TITLE_NOTIFICATION_SSO,
+        MessageConstants.NOTIFICATION_ERROR,
+        'bottomRight');
+      this.isSpinning = false;
     } else {
       const data = {
         clientName: this.validateForm.get('clientName').value
@@ -103,7 +103,7 @@ export class AddClientComponent implements OnInit {
           }, 500);
         });
     }
-   
+
   }
 
   checkChange(e: boolean, description: string, clientType: string): void {

@@ -16,7 +16,7 @@ namespace SSO.Backend.Controllers.Clients
         [HttpGet("{clientId}/deviceFlows")]
         public async Task<IActionResult> GetClientDeviceFlow(string clientId)
         {
-            var client = await _clientStore.FindClientByIdAsync(clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return NotFound();
             var clientDeviceFlowViewModel = new ClientDeviceFlowViewModel()
@@ -31,7 +31,7 @@ namespace SSO.Backend.Controllers.Clients
         //Edit Device Flows infor
         [HttpPut("{clientId}/deviceFlows")]
         [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutClientDeviceFlow(string clientId, [FromBody]ClientDeviceFlowRequest request)
+        public async Task<IActionResult> PutClientDeviceFlow(string clientId, [FromBody] ClientDeviceFlowRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)

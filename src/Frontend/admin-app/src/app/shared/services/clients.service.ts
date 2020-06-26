@@ -84,6 +84,19 @@ export class ClientServices extends BaseService {
         return this.http.delete(`${environment.apiUrl}/api/clients/${id}/settings/grantTypes/${grantTypeName}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
+    getClientSecret(name: string) {
+        return this.http.get(`${environment.apiUrl}/api/clients/${name}/clientSecrets`, { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    addClientSecret(name: string, entity: any) {
+        return this.http.post(`${environment.apiUrl}/api/clients/${name}/clientSecrets`,
+            JSON.stringify(entity), { headers: this._sharedHeaders })
+            .pipe(catchError(this.handleError));
+    }
+    deleteClientSecret(name: string, secretId: number) {
+        return this.http.delete(`${environment.apiUrl}/api/clients/${name}/clientSecrets/${secretId}`
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
     // Setting authentication
     getAuthentication(id) {
         return this.http.get(`${environment.apiUrl}/api/clients/${id}/Authentications`
@@ -101,5 +114,22 @@ export class ClientServices extends BaseService {
         return this.http.delete(`${environment.apiUrl}/api/clients/${id}/Authentications/postLogoutRedirectUris/${postLogoutRedirectUris}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
-
+    // Setting Token
+    getToken(id) {
+        return this.http.get(`${environment.apiUrl}/api/clients/${id}/Tokens`
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
+    putToken(id, entity: any) {
+        return this.http.put(`${environment.apiUrl}/api/clients/${id}/Tokens`
+            , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
+    // Setting device flow
+    getDeviceFlow(id) {
+        return this.http.get(`${environment.apiUrl}/api/clients/${id}/deviceFlows`
+            , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
+    putDeviceFlow(id, entity: any) {
+        return this.http.put(`${environment.apiUrl}/api/clients/${id}/deviceFlows`
+            , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
+    }
 }

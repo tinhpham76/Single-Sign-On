@@ -91,7 +91,7 @@ namespace SSO.Backend.Controllers.Api
             return BadRequest();
         }
 
-        //Delete api claim
+        //Delete api secre
         [HttpDelete("{apiResourceName}/apiSecrets/{secretId}")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiSecret(string apiResourceName, int secretId)
