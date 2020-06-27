@@ -208,6 +208,12 @@ namespace SSO.Backend
                 scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             }
 
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitializer>();
+                dbInitializer.Seed().Wait();
+            }
+
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
