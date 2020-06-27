@@ -1,30 +1,32 @@
-<!--Start welcome api resources-->
+<!--Start welcome api scopes-->
 <div class="content-heading">
     <div>
-        ☁️ Api resources
+        ☁️ Api scopes
         <br>
         <small><b> Resources are something you want to protect with apiServer – either APIs (by doing this your
                 data will be protected as well). So to access your database content must be through an API..</b></small>
     </div>
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='add'><i nz-icon
-        nzType="file-add"></i>Add new api resource</button>
-<!--End api resources-->
+        nzType="file-add"></i>Add new api scope</button>
+<!--Start welcome api scopes-->
 <nz-spin [nzSpinning]="isSpinning">
-    <!--Start table api resources-->
+    <!--Start table api scopes-->
     <nz-table #apiTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Display Name</th>
                 <th>Description</th>
-                <th>Setting Api</th>
+                <th>Settings</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let api of apiTable.data">
                 <td>{{ api.name }}</td>
+                <td>{{ api.displayName }}</td>
                 <td>{{ api.description }}</td>
                 <td>
                     <div class="table-action">
@@ -37,11 +39,11 @@
                 </td>
                 <td>
                     <div class="table-action">
-                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Api resource detail & Edit.."
-                            href='javascript:void(0)' (click)='openEditApiResource(api.name)'>
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Api scope detail & Edit.."
+                            href='javascript:void(0)' (click)='openEditApiScope(api.name)'>
                             <i nz-icon nzType="edit"></i>
                         </a>
-                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api scope"
                             href='javascript:void(0)' (click)='showDeleteConfirm(api.name)'>
                             <i nz-icon nzType="delete"></i>
                         </a>
@@ -50,15 +52,20 @@
             </tr>
         </tbody>
     </nz-table>
-    <!--End table api resources-->
+    <!--End table api scopes-->
 </nz-spin>
-
 <!--Start edit api resources-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
-    [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditApi" nzTitle=" ☁️ Edit Api Resource"
-    (nzOnClose)="closeEditApiResource()">
+    [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditApi" nzTitle=" ☁️ Edit Api Scope"
+    (nzOnClose)="closeEditApiScope()">
     <nz-spin [nzSpinning]="isSpinningDrawer">
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="enabled">Enabled</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-switch formControlName="enabled" id="enabled"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
             <nz-form-item>
                 <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="name">Name</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
@@ -78,9 +85,21 @@
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="enabled">Enabled</nz-form-label>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="required">Required</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <nz-switch formControlName="enabled" id="enabled"></nz-switch>
+                    <nz-switch formControlName="required" id="required"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="emphasize">Emphasize</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-switch formControlName="emphasize" id="emphasize"></nz-switch>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="showInDiscoveryDocument">Show In Discovery Document</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-switch formControlName="showInDiscoveryDocument" id="showInDiscoveryDocument"></nz-switch>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item nz-row class="register-area">

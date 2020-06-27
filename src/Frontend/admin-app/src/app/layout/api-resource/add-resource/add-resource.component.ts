@@ -3,16 +3,15 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiResourceServices } from '@app/shared/services/api-resources.service';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
-import { throwError } from 'rxjs';
+
 
 @Component({
-  selector: 'app-add-api',
-  templateUrl: './add-api.component.html',
-  styleUrls: ['./add-api.component.scss']
+  selector: 'app-add-resource',
+  templateUrl: './add-resource.component.html',
+  styleUrls: ['./add-resource.component.scss']
 })
-export class AddApiComponent implements OnInit {
+export class AddResourceComponent implements OnInit {
 
   // Init form
   public validateForm!: FormGroup;

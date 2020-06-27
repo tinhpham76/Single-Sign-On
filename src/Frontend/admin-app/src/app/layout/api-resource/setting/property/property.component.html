@@ -1,7 +1,7 @@
-<!--Start welcome api secrets-->
+<!--Start welcome api resource properties-->
 <div class="content-heading">
     <div>
-        ☁️ Api resource secrets
+        ☁️ Api resource properties
         <br>
         <small><b> Resources are something you want to protect with IdentityServer – either APIs (by doing this your
                 data will be protected as well). So to access your database content must be through an API..</b></small>
@@ -9,31 +9,27 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink="../"><i nz-icon
         nzType="rollback"></i>Go back</button>
-<!--End welcome api secrets-->
+<!--End welcome api resource properties-->
 <nz-spin [nzSpinning]="isSpinning">
     <!--Start table api secrets-->
-    <nz-table #secretTable [nzData]="items" [nzFrontPagination]="false">
+    <nz-table #propertyTable [nzData]="items" [nzFrontPagination]="false">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Secret Value</th>
-                <th>Secret Type</th>
-                <th>Expiration</th>
-                <th>Description</th>
+                <th>Value</th>
+                <th>Type</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let secret of secretTable.data">
-                <td>{{ secret.id }}</td>
-                <td>{{ secret.value }}</td>
-                <td>{{ secret.type }}</td>
-                <td>{{ secret.expiration }}</td>
-                <td>{{ secret.description }}</td>
+            <tr *ngFor="let property of propertyTable.data">
+                <td>{{ property.id }}</td>
+                <td>{{ property.value }}</td>
+                <td>{{ property.key }}</td>
                 <td>
                     <div class="table-action">
                         <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
-                            href='javascript:void(0)' (click)='showDeleteConfirm(secret.id)'>
+                            href='javascript:void(0)' (click)='showDeleteConfirm(property.key)'>
                             <i nz-icon nzType="delete"></i>
                         </a>
                     </div>
@@ -48,33 +44,15 @@
         <!--Start form add new api secret-->
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
             <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="type">Type secret</nz-form-label>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="key">Key</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
-                    <input nz-input formControlName="type" id="type" />
+                    <input nz-input formControlName="key" id="key" />
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="value">Value secret</nz-form-label>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="value">Value</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
                     <input nz-input formControlName="value" id="value" />
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="description">Description</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="description" id="description" />
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="expiration">Expiration</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="expiration" id="expiration" />
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="hashType">Hash Type</nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <input nz-input formControlName="hashType" id="hashType" readonly />
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item nz-row class="register-area">

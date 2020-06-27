@@ -1,22 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { ApiResourceServices } from '@app/shared/services/api-resources.service';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { catchError } from 'rxjs/operators';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
-import { throwError } from 'rxjs';
-import { ApiResource } from '@app/shared/models/api-resource.model';
-import { HttpErrorResponse } from '@angular/common/http';
+import { ApiScopeServices } from '@app/shared/services/api-scope.services';
+import { ApiScope } from '@app/shared/models/api-scope.model';
 
 @Component({
-  selector: 'app-api-resource',
-  templateUrl: './api-resource.component.html',
-  styleUrls: ['./api-resource.component.scss']
+  selector: 'app-api-scope',
+  templateUrl: './api-scope.component.html',
+  styleUrls: ['./api-scope.component.scss']
 })
-export class ApiResourceComponent implements OnInit {
-
+export class ApiScopeComponent implements OnInit {
   // Load api data
   public filter = '';
   public pageIndex = 1;
@@ -38,17 +34,20 @@ export class ApiResourceComponent implements OnInit {
   // Modal
   confirmDeleteModal?: NzModalRef;
 
-  constructor(private apiResourceServices: ApiResourceServices,
+  constructor(private apiScopeServices: ApiScopeServices,
     private notification: NzNotificationService,
     private modal: NzModalService,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
-      name: [null, [Validators.required]],
-      displayName: [null, Validators.required],
-      description: [null],
-      enabled: [true],
+      enabled: [null],
+      name:[null, [Validators.required]],
+      displayName: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      required: [null],
+      emphasize: [null],
+      showInDiscoveryDocument: [null]
     });
     this.loadApiData(this.pageIndex, this.pageSize);
   }
@@ -58,10 +57,10 @@ export class ApiResourceComponent implements OnInit {
     this.loadApiData(pageIndex, pageSize);
   }
 
-  // Load api data
+  // Load api scopes data
   loadApiData(pageIndex: number, pageSize: number): void {
     this.isSpinning = true;
-    this.apiResourceServices.getAllPaging(this.filter, pageIndex, pageSize)
+    this.apiScopeServices.getAllPaging(this.filter, pageIndex, pageSize)
       .subscribe(res => {
         this.items = res.items;
         this.totalRecords = res.totalRecords;
@@ -82,16 +81,19 @@ export class ApiResourceComponent implements OnInit {
   }
 
   // Edit api resource
-  openEditApiResource(name: string): void {
+  openEditApiScope(name: string): void {
     this.visibleEditApi = true;
     this.isSpinningDrawer = true;
-    this.apiResourceServices.getDetail(name)
-      .subscribe((res: ApiResource) => {
+    this.apiScopeServices.getDetail(name)
+      .subscribe((res: ApiScope) => {
         this.validateForm.setValue({
+          enabled: res.enabled,
           name: res.name,
           displayName: res.displayName,
           description: res.description,
-          enabled: res.enabled,
+          required: res.required,
+          emphasize: res.emphasize,
+          showInDiscoveryDocument: res.showInDiscoveryDocument
         });
         setTimeout(() => {
           this.isSpinningDrawer = false;
@@ -112,7 +114,7 @@ export class ApiResourceComponent implements OnInit {
   // Delete api resource
   delete(name: string) {
     this.isSpinning = true;
-    this.apiResourceServices.delete(name)
+    this.apiScopeServices.delete(name)
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -137,7 +139,7 @@ export class ApiResourceComponent implements OnInit {
 
   showDeleteConfirm(name: string): void {
     this.confirmDeleteModal = this.modal.confirm({
-      nzTitle: 'Do you Want to delete api resource ' + name + ' ?',
+      nzTitle: 'Do you Want to delete api scope ' + name + ' ?',
       nzOkText: 'Yes',
       nzOkType: 'danger',
       nzOnOk: () =>
@@ -148,14 +150,14 @@ export class ApiResourceComponent implements OnInit {
     });
   }
 
-  closeEditApiResource(): void {
+  closeEditApiScope(): void {
     this.visibleEditApi = false;
   }
 
   submitForm(): void {
     this.isSpinningDrawer = true;
     const name = this.validateForm.get('name').value;
-    this.apiResourceServices.update(name, this.validateForm.getRawValue())
+    this.apiScopeServices.update(name, this.validateForm.getRawValue())
       .subscribe(() => {
         this.visibleEditApi = false;
         this.ngOnInit();

@@ -25,11 +25,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { ScopeComponent } from './scope/scope.component';
 import { SecretComponent } from './secret/secret.component';
+import { PropertyComponent } from './property/property.component';
 
 
 
 @NgModule({
-  declarations: [SettingComponent, ScopeComponent, SecretComponent],
+  declarations: [SettingComponent, ScopeComponent, SecretComponent, PropertyComponent],
   imports: [
     CommonModule,
     NzTableModule,

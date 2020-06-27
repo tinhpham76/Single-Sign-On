@@ -22,19 +22,29 @@ namespace SSO.Backend.Controllers.Api
             if (apiResource == null)
                 return NotFound();
 
-            var allScopes =await _configurationDbContext.ApiResources.Select(x => x.Name.ToString()).ToListAsync();
-          
-            var query = _context.ApiResourceScopes.Where(x => x.ApiResourceId.Equals(apiResource.Id));
-            var apiScopes = await query.Select(x => new ApiResourceScopeViewModel()
+            var apiScopes = await _context.ApiResourceScopes
+                .Where(x => x.ApiResourceId == apiResource.Id)
+                .Select(x => x.Scope.ToString()).ToListAsync();
+            if (apiScopes.Count == 0)
             {
-                Label = x.Scope,
-                Value = x.Scope,
-                Checked = allScopes.Contains(x.Scope) ? true : false,
-                Disabled = false,
-                Name = x.Scope
+                var allScope = await _configurationDbContext.ApiScopes.Select(x => new ApiResourceScopeViewModel()
+                {
+                    Label = x.Name,
+                    Value = x.Name,
+                    Checked = false,
+                    Name = x.Name
+                }).ToListAsync();
+                return Ok(allScope);
+            }
+            var allScopes = await _configurationDbContext.ApiScopes.Select(x => new ApiResourceScopeViewModel()
+            {
+                Label = x.Name,
+                Value = x.Name,
+                Checked = apiScopes.Contains(x.Name) ? true : false,
+                Name = x.Name
             }).ToListAsync();
 
-            return Ok(apiScopes);
+            return Ok(allScopes);
         }
 
         //Post api resource scope
@@ -45,11 +55,30 @@ namespace SSO.Backend.Controllers.Api
             //Check Api Resource
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             //If api resource not null, Check api claims
-            if (apiResource != null)
+            if (apiResource == null)
+                return NotFound();
+            var apiResourceScopes = await _context.ApiResourceScopes.Select(x => x.Scope.ToString()).ToListAsync();
+            if (apiResourceScopes == null)
             {
-                var apiScope = await _context.ApiResourceScopes.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id);
-                //If api claim is null, add claim for client
-                if (apiScope == null)
+                var apiScopeRequest = new IdentityServer4.EntityFramework.Entities.ApiResourceScope()
+                {
+                    Scope = request.Scope,
+                    ApiResourceId = apiResource.Id
+                };
+                _context.ApiResourceScopes.Add(apiScopeRequest);
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    apiResource.Updated = DateTime.UtcNow;
+                    _configurationDbContext.ApiResources.Update(apiResource);
+                    await _configurationDbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                return BadRequest();
+            }
+            else
+            {
+                if (!apiResourceScopes.Contains(request.Scope))
                 {
                     var apiScopeRequest = new IdentityServer4.EntityFramework.Entities.ApiResourceScope()
                     {
@@ -67,31 +96,13 @@ namespace SSO.Backend.Controllers.Api
                     }
                     return BadRequest();
                 }
-                // If api claim not null, Check api claim type on table with request claim type
-                else if (apiScope != null)
+                else
                 {
-                    if (apiScope.Scope == request.Scope)
-                        return BadRequest($"Api resource scope {request.Scope} already exist");
-
-                    var apiScopeRequest = new IdentityServer4.EntityFramework.Entities.ApiResourceScope()
-                    {
-                        Scope = request.Scope,
-                        ApiResourceId = apiResource.Id
-                    };
-                    _context.ApiResourceScopes.Add(apiScopeRequest);
-                    var result = await _context.SaveChangesAsync();
-                    if (result > 0)
-                    {
-                        apiResource.Updated = DateTime.UtcNow;
-                        _configurationDbContext.ApiResources.Update(apiResource);
-                        await _configurationDbContext.SaveChangesAsync();
-                        return Ok();
-                    }
-                    return BadRequest();
+                    return BadRequest($"Scope {request.Scope} is already in another scope");
                 }
             }
-            return BadRequest();
         }
+
 
         //Delete api resource scope
         [RoleRequirement(RoleCode.Admin)]

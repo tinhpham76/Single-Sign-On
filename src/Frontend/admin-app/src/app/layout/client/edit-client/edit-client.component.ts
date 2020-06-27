@@ -49,7 +49,12 @@ export class EditClientComponent implements OnInit {
 
   // Tags Allowed Grant Types
   public allowedGrantTypes = [];
-  public grantTypes = ['empty', 'web_app_authorization_code', 'web_app_hybrid', 'spa', 'native', 'server', 'device'];
+  public grantTypes = ['authorization_code',
+    'client_credentials',
+    'refresh_token',
+    'implicit',
+    'password',
+    'urn:ietf:params:oauth:grant-type:device_code'];
 
   // Tags Post Logout Redirect Uris
   public postLogoutRedirectUris = [];

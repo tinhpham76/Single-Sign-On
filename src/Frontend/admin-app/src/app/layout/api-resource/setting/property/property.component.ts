@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ApiResourceServices } from '@app/shared/services/api-resources.service';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { catchError } from 'rxjs/operators';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
-import { throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-secret',
-  templateUrl: './secret.component.html',
-  styleUrls: ['./secret.component.scss']
+  selector: 'app-property',
+  templateUrl: './property.component.html',
+  styleUrls: ['./property.component.scss']
 })
-export class SecretComponent implements OnInit {
+export class PropertyComponent implements OnInit {
+
 
   //
   public apiName: string;
@@ -32,7 +30,6 @@ export class SecretComponent implements OnInit {
   constructor(private apiResourceServices: ApiResourceServices,
     private notification: NzNotificationService,
     private route: ActivatedRoute,
-    private location: Location,
     private modal: NzModalService,
     private fb: FormBuilder) { }
 
@@ -41,19 +38,16 @@ export class SecretComponent implements OnInit {
       this.apiName = params['name'];
     });
     this.validateForm = this.fb.group({
-      type: ['SharedSecret'],
-      value: [null, Validators.required],
-      description: [null],
-      expiration: [null],
-      hashType: ['Sha256'],
+      key: [null, [Validators.required]],
+      value: [null, Validators.required]
     });
-    this.getApiResourceSecret(this.apiName);
+    this.getApiResourceProperties(this.apiName);
   }
 
-  // Get api secret
-  getApiResourceSecret(apiName: string) {
+   // Get api secret
+   getApiResourceProperties(apiName: string) {
     this.isSpinning = true;
-    this.apiResourceServices.getApiResourceSecret(apiName)
+    this.apiResourceServices.getApiResourceProperty(apiName)
       .subscribe((res: any[]) => {
         this.items = res;
         setTimeout(() => {
@@ -77,7 +71,7 @@ export class SecretComponent implements OnInit {
   submitForm(): void {
     this.isSpinning = true;
     const data = this.validateForm.getRawValue();
-    this.apiResourceServices.addApiResourceSecret(this.apiName, data)
+    this.apiResourceServices.addApiResourceProperty(this.apiName, data)
       .subscribe(() => {
         this.ngOnInit();
         this.createNotification(
@@ -99,9 +93,9 @@ export class SecretComponent implements OnInit {
   }
 
   // Delete api secret
-  delete(id: string) {
+  delete(propertyKey: string) {
     this.isSpinning = true;
-    this.apiResourceServices.deleteApiResourceSecret(this.apiName, Number(id))
+    this.apiResourceServices.deleteApiResourceProperty(this.apiName, propertyKey)
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -125,14 +119,14 @@ export class SecretComponent implements OnInit {
   }
 
   // Delete api scope
-  showDeleteConfirm(id: string): void {
+  showDeleteConfirm(propertyKey: string): void {
     this.confirmDeleteModal = this.modal.confirm({
-      nzTitle: 'Do you Want to delete api resource scope secrets' + id + ' ?',
+      nzTitle: 'Do you Want to delete api resource property' + propertyKey + ' ?',
       nzOkText: 'Yes',
       nzOkType: 'danger',
       nzOnOk: () =>
         new Promise((resolve, reject) => {
-          this.delete(id);
+          this.delete(propertyKey);
           setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
         })
     });
