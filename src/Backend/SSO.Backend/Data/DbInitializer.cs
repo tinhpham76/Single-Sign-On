@@ -54,8 +54,8 @@ namespace SSO.Backend.Data
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = "admin",
-                    FirstName = "Quản trị",
-                    LastName = "administrator",
+                    FirstName = "Admin",
+                    LastName = "",
                     Email = "admin@admin.com",
                     LockoutEnabled = false
                 }, "Admin@123");
@@ -68,8 +68,8 @@ namespace SSO.Backend.Data
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = "xdxg",
-                    FirstName = "Phạm Văn Tịnh",
-                    LastName = "Pham Van Tinh",
+                    FirstName = "Tịnh",
+                    LastName = "Phạm Văn",
                     Email = "tinh_pham@outlook.com",
                     LockoutEnabled = false
                 }, "!kAa36qDc");
