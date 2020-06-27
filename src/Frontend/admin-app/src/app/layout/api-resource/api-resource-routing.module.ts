@@ -6,7 +6,7 @@ import { AddResourceComponent } from './add-resource/add-resource.component';
 const routes: Routes = [
     { path: '', component: ApiResourceComponent },
     { path: 'add', component: AddResourceComponent },
-    { path: ':name/settings', loadChildren: () => import('./setting/setting.module').then(m => m.SettingModule) }
+    { path: ':name/settings', loadChildren: () => import('./setting-resource/setting-resource.module').then(m => m.SettingResourceModule) }
 ];
 
 @NgModule({

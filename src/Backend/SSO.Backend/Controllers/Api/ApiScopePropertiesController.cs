@@ -16,7 +16,7 @@ namespace SSO.Backend.Controllers.Api
     {
         #region Api Scope Properties
         //Get api scope properties
-        [HttpGet("{apiScopeName}/apiScopeProperties")]
+        [HttpGet("{apiScopeName}/scopeProperties")]
         public async Task<IActionResult> GetApiScopeProperties(string apiScopeName)
         {
 
@@ -35,7 +35,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api resource property
-        [HttpPost("{apiScopeName}/apiScopeProperties")]
+        [HttpPost("{apiScopeName}/scopeProperties")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiScopeProperty(string apiScopeName, [FromBody] ApiScopePropertyRequest request)
         {
@@ -44,7 +44,7 @@ namespace SSO.Backend.Controllers.Api
             //If api resource not null, Check api claims
             if (apiScope != null)
             {
-                var apiScopeProperty = await _context.ApiResourceProperties.FirstOrDefaultAsync(x => x.ApiResourceId == apiScope.Id);
+                var apiScopeProperty = await _context.ApiScopeProperties.FirstOrDefaultAsync(x => x.ScopeId == apiScope.Id);
                 //If api claim is null, add claim for client
                 if (apiScopeProperty == null)
                 {
@@ -90,22 +90,19 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource property
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiResourceName}/apiResourceProperties/{propertyKey}")]
-        public async Task<IActionResult> DeleteApiResourceProperty(string apiResourceName, string propertyKey)
+        [HttpDelete("{apiScopeName}/scopeProperties/{propertyKey}")]
+        public async Task<IActionResult> DeleteApiResourceProperty(string apiScopeName, string propertyKey)
         {
-            var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
-            if (apiResource == null)
+            var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
+            if (apiScope == null)
                 return NotFound();
-            var apiProperty = await _context.ApiResourceProperties.FirstOrDefaultAsync(x => x.ApiResourceId == apiResource.Id && x.Key == propertyKey);
+            var apiProperty = await _context.ApiResourceProperties.FirstOrDefaultAsync(x => x.ApiResourceId == apiScope.Id && x.Key == propertyKey);
             if (apiProperty == null)
                 return NotFound();
             _context.ApiResourceProperties.Remove(apiProperty);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
-            {
-                apiResource.Updated = DateTime.UtcNow;
-                _configurationDbContext.ApiResources.Update(apiResource);
-                await _configurationDbContext.SaveChangesAsync();
+            { 
                 return Ok();
             }
             return BadRequest();

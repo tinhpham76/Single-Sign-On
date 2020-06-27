@@ -81,7 +81,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api scope claim
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiScopeName}/apiScopeClaims/{claimType}")]
+        [HttpDelete("{apiScopeName}/scopeClaims/{claimType}")]
         public async Task<IActionResult> DeleteApiClaim(string apiScopeName, string claimType)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);

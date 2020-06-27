@@ -1,0 +1,50 @@
+<!--Start welcome api scope-->
+<div class="content-heading">
+    <div>
+        ☁️ Api scope settings
+        <br>
+        <small><b> Resources are something you want to protect with apiServer – either APIs (by doing this your
+                data will be protected as well). So to access your database content must be through an API..</b></small>
+    </div>
+</div>
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/api-resources'><i nz-icon
+        nzType="rollback"></i>Go back</button>
+<!--End welcome api scope-->
+<nz-spin [nzSpinning]="isSpinning">
+    <!--Start api scope detail-->
+    <nz-descriptions nzTitle="Api scope {{name}} manager setting ">
+        <nz-descriptions-item nzTitle="Name">{{displayName}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Description">{{description}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Enabled">{{enabled}}</nz-descriptions-item>
+    </nz-descriptions>
+    <!--End api scope detail-->
+    <!--Start add/delete api scope claims-->
+    <div class="api-scope-claim">
+        <b>Claims:</b>
+        <div nz-col>
+            <nz-tag [nzColor]="'red'" style="margin: 5px;" nz-row *ngFor="let tag of apiClaimTags"
+                [nzMode]="'closeable'" nzMode="checkable" (nzOnClose)="deleteApiScopeClaim(tag)">
+                {{ tag }}</nz-tag>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <b>Add new claim:</b>
+        <div nz-col>
+            <a>
+                <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaim" nzMode="checkable"
+                    [nzColor]="'#108ee9'" (nzCheckedChange)="addApiScopeClaim(tag)"> +
+                    {{ tag }}
+                </nz-tag>
+            </a>
+        </div>
+    </div>
+    <!--Emd add/delete api scope claims-->
+    <!--Start api scope properties setting-->
+    <div style="margin-top: 10px;">
+        <b>Api Scope Properties: </b>
+        <button nz-button nzType="default" nzButtonSize="large" nzShape="round" routerLink='properties'><i nz-icon
+                nzType="setting"></i>Api Resource Properties</button>
+    </div>
+    <!--End api scopes properties settings-->
+</nz-spin>

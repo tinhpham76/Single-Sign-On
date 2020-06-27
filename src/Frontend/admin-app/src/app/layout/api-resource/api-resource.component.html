@@ -8,8 +8,8 @@
     </div>
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='add'><i nz-icon
-        nzType="file-add"></i>Add new api resource</button>
-<!--End api resources-->
+        nzType="file-add"></i>Create new resource</button>
+<!--End welcome api resources-->
 <nz-spin [nzSpinning]="isSpinning">
     <!--Start table api resources-->
     <nz-table #apiTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
@@ -29,7 +29,7 @@
                 <td>
                     <div class="table-action">
                         <a style="margin: 10px;" nz-tooltip
-                            nzTooltipTitle="Api resource edit claims, scopes, secrets..." href='javascript:void(0)'
+                            nzTooltipTitle="Api resource setting claims, scopes, secrets..." href='javascript:void(0)'
                             [routerLink]="[api.name,'settings']">
                             <i nz-icon nzType="setting"></i>
                         </a>
@@ -37,11 +37,11 @@
                 </td>
                 <td>
                     <div class="table-action">
-                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Api resource detail & Edit.."
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Api resource detail & edit..."
                             href='javascript:void(0)' (click)='openEditApiResource(api.name)'>
                             <i nz-icon nzType="edit"></i>
                         </a>
-                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource"
+                        <a style="margin: 10px;" nz-tooltip nzTooltipTitle="Delete api resource..."
                             href='javascript:void(0)' (click)='showDeleteConfirm(api.name)'>
                             <i nz-icon nzType="delete"></i>
                         </a>
@@ -55,7 +55,7 @@
 
 <!--Start edit api resources-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
-    [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditApi" nzTitle=" ☁️ Edit Api Resource"
+    [nzMaskClosable]="false" [nzWidth]="540" [nzVisible]="visibleEditApi" nzTitle=" ☁️ Edit Api Resource"
     (nzOnClose)="closeEditApiResource()">
     <nz-spin [nzSpinning]="isSpinningDrawer">
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
@@ -66,7 +66,7 @@
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzRequired nzFor="displayName">Display Name</nz-form-label>
+                <nz-form-label [nzSm]=" 6" [nzXs]="24" nzFor="displayName">Display Name</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
                     <input nz-input formControlName="displayName" id="displayName" />
                 </nz-form-control>

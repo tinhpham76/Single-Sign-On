@@ -42,9 +42,9 @@ export class ApiScopeComponent implements OnInit {
   ngOnInit(): void {
     this.validateForm = this.fb.group({
       enabled: [null],
-      name:[null, [Validators.required]],
+      name: [null, [Validators.required]],
       displayName: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [null],
       required: [null],
       emphasize: [null],
       showInDiscoveryDocument: [null]

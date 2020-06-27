@@ -16,7 +16,7 @@ namespace SSO.Backend.Controllers.Api
     {
         #region Api Secrets
         //Get api resource secrets
-        [HttpGet("{apiResourceName}/apiResourceSecrets")]
+        [HttpGet("{apiResourceName}/resourceSecrets")]
         public async Task<IActionResult> GetApiResourceSecrets(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -34,7 +34,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api resource secret
-        [HttpPost("{apiResourceName}/apiResourceSecrets")]
+        [HttpPost("{apiResourceName}/resourceSecrets")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiResourceSecret(string apiResourceName, [FromBody] ApiResourceSecretRequest request)
         {
@@ -92,7 +92,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource secret
-        [HttpDelete("{apiResourceName}/apiResourceSecrets/{secretId}")]
+        [HttpDelete("{apiResourceName}/resourceSecrets/{secretId}")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> DeleteApiResourceSecret(string apiResourceName, int secretId)
         {

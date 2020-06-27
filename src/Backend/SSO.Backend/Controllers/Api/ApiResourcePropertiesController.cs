@@ -16,7 +16,7 @@ namespace SSO.Backend.Controllers.Api
     {
         #region Api Resource Properties
         //Get api resource properties
-        [HttpGet("{apiResourceName}/apiResourceProperties")]
+        [HttpGet("{apiResourceName}/resourceProperties")]
         public async Task<IActionResult> GetApiResourceProperties(string apiResourceName)
         {
 
@@ -35,7 +35,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api resource property
-        [HttpPost("{apiResourceName}/apiResourceProperties")]
+        [HttpPost("{apiResourceName}/resourceProperties")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiResourceProperty(string apiResourceName, [FromBody] ApiResourcePropertyRequest request)
         {
@@ -94,7 +94,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource property
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiResourceName}/apiResourceProperties/{propertyKey}")]
+        [HttpDelete("{apiResourceName}/resourceProperties/{propertyKey}")]
         public async Task<IActionResult> DeleteApiResourceProperty(string apiResourceName, string propertyKey)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

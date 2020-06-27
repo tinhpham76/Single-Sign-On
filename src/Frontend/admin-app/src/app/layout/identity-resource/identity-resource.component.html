@@ -1,3 +1,4 @@
+<!--Start welcome identity resource-->
 <div class="content-heading">
     <div>
         🔖 Identity resources
@@ -8,8 +9,9 @@
     </div>
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='add'><i nz-icon
-        nzType="file-add"></i>Add new identity resource</button>
-<!--Identity Resource-->
+        nzType="file-add"></i>Add new resource</button>
+<!--End welcome identity resource-->
+<!--Start table identity resources-->
 <nz-spin [nzSpinning]="isSpinning">
     <nz-table #identityTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
@@ -48,12 +50,12 @@
             </tr>
         </tbody>
     </nz-table>
+    <!--End table identity resource-->
 </nz-spin>
-
-<!--Edit identity-->
+<!--Start edit identity resource-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
-    [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditIdentity"
-    nzTitle=" 🔖 Edit Identity Resource" (nzOnClose)="closeEditIdentityResource()">
+    [nzMaskClosable]="false" [nzWidth]="1000" [nzVisible]="visibleEditIdentity" nzTitle=" 🔖 Edit Identity Resource"
+    (nzOnClose)="closeEditIdentityResource()">
     <nz-spin [nzSpinning]="isSpinningDrawer">
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
             <nz-form-item>
@@ -107,3 +109,4 @@
         </form>
     </nz-spin>
 </nz-drawer>
+<!--End edit identity resource-->

@@ -1,6 +1,7 @@
+<!--Start welcome identity resource-->
 <div class="content-heading">
     <div>
-        🔖 Add new identity resourc
+        🔖 Add new identity resource
         <br>
         <small><b> Identity resources are data like user ID, name, or email address of a user. An identity resource has
                 a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the
@@ -9,7 +10,8 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/identity-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
-<!--Add identity-->
+<!--End welcome identity resource-->
+<!--Add new identity resource-->
 <nz-spin [nzSpinning]="isSpinning">
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
         <nz-form-item>
@@ -55,12 +57,11 @@
                 <nz-switch formControlName="emphasize" id="emphasize"></nz-switch>
             </nz-form-control>
         </nz-form-item>
-
         <nz-form-item nz-row class="register-area">
             <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new identity
-                    resource</button>
+                <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create</button>
             </nz-form-control>
         </nz-form-item>
     </form>
+    <!--End add new identity resource-->
 </nz-spin>

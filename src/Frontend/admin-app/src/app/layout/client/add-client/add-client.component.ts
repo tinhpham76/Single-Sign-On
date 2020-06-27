@@ -31,7 +31,6 @@ export class AddClientComponent implements OnInit {
   // Type client
   public clientType = 'empty';
 
-
   constructor(private fb: FormBuilder,
     private clientServices: ClientServices,
     private notification: NzNotificationService,
@@ -74,11 +73,11 @@ export class AddClientComponent implements OnInit {
       this.isSpinning = false;
     } else {
       const data = {
-        clientName: this.validateForm.get('clientName').value
-        , description: this.validateForm.get('description').value
-        , clientUri: this.validateForm.get('clientUri').value
-        , logoUri: this.validateForm.get('logoUri').value
-        , clientType: this.clientType
+        clientName: this.validateForm.get('clientName').value,
+        description: this.validateForm.get('description').value,
+        clientUri: this.validateForm.get('clientUri').value,
+        logoUri: this.validateForm.get('logoUri').value,
+        clientType: this.clientType
       };
       this.clientServices.add(data)
         .subscribe(() => {
@@ -138,8 +137,6 @@ export class AddClientComponent implements OnInit {
     }
     console.log(this.clientType);
   }
-
-
 
   // Notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {

@@ -1,52 +1,47 @@
 import { Component, OnInit } from '@angular/core';
-import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
-import { NzModalRef } from 'ng-zorro-antd/modal';
-import { IdentityResourceServices } from '@app/shared/services/identity-resources.service';
-import { catchError } from 'rxjs/operators';
-import { MessageConstants } from '@app/shared/constants/messages.constant';
-import { throwError } from 'rxjs';
+import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { ActivatedRoute } from '@angular/router';
-import { IdentityResource } from '@app/shared/models/identity-resource.model';
+import { ApiScopeServices } from '@app/shared/services/api-scope.services';
+import { MessageConstants } from '@app/shared/constants/messages.constant';
+import { ApiScope } from '@app/shared/models/api-scope.model';
 
 @Component({
-  selector: 'app-identity-claim',
-  templateUrl: './identity-claim.component.html',
-  styleUrls: ['./identity-claim.component.scss']
+  selector: 'app-setting-scope',
+  templateUrl: './setting-scope.component.html',
+  styleUrls: ['./setting-scope.component.scss']
 })
-export class IdentityClaimComponent implements OnInit {
-
-  //
+export class SettingScopeComponent implements OnInit {
   public name: string;
 
   // Spin
   public isSpinning = true;
 
   // Claim
-  public identityClaimTags = [];
-  public tempClaims = [];
+  public apiClaimTags = [];
+  public tempClaim = [];
 
   // Identity resource detail
   public displayName: string;
   public description: string;
   public enabled: boolean;
 
-  constructor(private identityResourceServices: IdentityResourceServices,
+  constructor(private apiScopeServices: ApiScopeServices,
     private notification: NzNotificationService,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.name = params['name'];
-      this.getIdentityResourceClaims(params['name']);
-      this.getIdentityResourceDetail(params['name']);
+      this.getApiScopeDetail(params['name']);
+      this.getApiScopeClaims(params['name']);
     });
   }
 
-  // Get Identity resource detail
-  getIdentityResourceDetail(name: string): void {
+  // Get api scope detail
+  getApiScopeDetail(name: string): void {
     this.isSpinning = true;
-    this.identityResourceServices.getDetail(name)
-      .subscribe((res: IdentityResource) => {
+    this.apiScopeServices.getDetail(name)
+      .subscribe((res: ApiScope) => {
         this.displayName = res.displayName,
           this.description = res.description,
           this.enabled = res.enabled,
@@ -66,12 +61,12 @@ export class IdentityClaimComponent implements OnInit {
       });
   }
 
-  // Get claims for identity resource
-  getIdentityResourceClaims(name: string): void {
+  // Get api scope
+  getApiScopeClaims(name: string): void {
     this.isSpinning = true;
-    this.identityResourceServices.getIdentityResourceClaims(name)
+    this.apiScopeServices.getApiScopeClaims(name)
       .subscribe((res: any[]) => {
-        this.identityClaimTags = res;
+        this.apiClaimTags = res;
         const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
           'nickname', 'preferred_username', 'profile', 'picture', 'website', 'email', 'email_verified',
           'gender', 'birthdate', 'zoneinfo', 'locale', 'phone_number', 'phone_number_verified', 'address', 'updated_at'];
@@ -82,7 +77,7 @@ export class IdentityClaimComponent implements OnInit {
             }
           }
         });
-        this.tempClaims = temp;
+        this.tempClaim = temp;
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -99,11 +94,11 @@ export class IdentityClaimComponent implements OnInit {
       });
   }
 
-  // Add new claim for identity resource
-  addIdentityResourceClaim(type: string): void {
+  // Add new api scope claim
+  addApiScopeClaim(type: string): void {
     this.isSpinning = true;
     const data = Object.assign({ type });
-    this.identityResourceServices.addIdentityResourceClaim(this.name, data)
+    this.apiScopeServices.addApiScopeClaim(this.name, data)
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,
@@ -126,13 +121,12 @@ export class IdentityClaimComponent implements OnInit {
           this.isSpinning = false;
         }, 500);
       });
-
   }
 
-  // delete claim of identity resource
-  deleteIdentityResourceClaim(tag: string) {
+  // delete claim of api scope
+  deleteApiScopeClaim(tag: string) {
     this.isSpinning = true;
-    this.identityResourceServices.deleteIdentityResourceClaim(this.name, tag)
+    this.apiScopeServices.deleteApiScopeClaim(this.name, tag)
       .subscribe(() => {
         this.createNotification(
           MessageConstants.TYPE_NOTIFICATION_SUCCESS,

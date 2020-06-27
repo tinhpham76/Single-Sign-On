@@ -15,7 +15,7 @@ namespace SSO.Backend.Controllers.Api
     {
         #region Api Resource Claims
         //Get api resource claims
-        [HttpGet("{apiResourceName}/apiResourceClaims")]
+        [HttpGet("{apiResourceName}/resourceClaims")]
         public async Task<IActionResult> GetApiResourceClaims(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -31,7 +31,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api resource claim
-        [HttpPost("{apiResourceName}/apiResourceClaims")]
+        [HttpPost("{apiResourceName}/resourceClaims")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiClaim(string apiResourceName, [FromBody]ApiResourceClaimRequest request)
         {
@@ -88,7 +88,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource claim
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiResourceName}/apiResourceClaims/{claimType}")]
+        [HttpDelete("{apiResourceName}/resourceClaims/{claimType}")]
         public async Task<IActionResult> DeleteApiClaim(string apiResourceName, string claimType)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

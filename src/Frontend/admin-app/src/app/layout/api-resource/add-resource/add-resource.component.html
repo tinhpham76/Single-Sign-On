@@ -1,4 +1,4 @@
-<!--Start welcome api-->
+<!--Start welcome api resource-->
 <div class="content-heading">
     <div>
         ☁️ Add api resource
@@ -9,8 +9,8 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/api-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
-<!--End welcome api-->
-<!--Start add new api-->
+<!--End welcome api resource-->
+<!--Start add new api resource-->
 <nz-spin [nzSpinning]="isSpinning">
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
         <nz-form-item>
@@ -51,9 +51,9 @@
         </nz-form-item>
         <nz-form-item nz-row class="register-area">
             <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create new api resource</button>
+                <button nz-button nzType="primary" [disabled]="!validateForm.valid">Create</button>
             </nz-form-control>
         </nz-form-item>
     </form>
 </nz-spin>
-<!--End add new api-->
+<!--End add new api resource-->

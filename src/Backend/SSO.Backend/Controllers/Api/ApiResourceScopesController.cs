@@ -15,7 +15,7 @@ namespace SSO.Backend.Controllers.Api
     {
         #region Api Resource Scopes
         //Get api resource scopes
-        [HttpGet("{apiResourceName}/apiResourceScopes")]
+        [HttpGet("{apiResourceName}/resourceScopes")]
         public async Task<IActionResult> GetApiResourceScopes(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -48,7 +48,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Post api resource scope
-        [HttpPost("{apiResourceName}/apiResourceScopes")]
+        [HttpPost("{apiResourceName}/resourceScopes")]
         [RoleRequirement(RoleCode.Admin)]
         public async Task<IActionResult> PostApiResourceScope(string apiResourceName, [FromBody] ApiResourceScopeRequest request)
         {
@@ -106,7 +106,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource scope
         [RoleRequirement(RoleCode.Admin)]
-        [HttpDelete("{apiResourceName}/apiResourceScopes/{scopeName}")]
+        [HttpDelete("{apiResourceName}/resourceScopes/{scopeName}")]
         public async Task<IActionResult> DeleteApiResourceScope(string apiResourceName, string scopeName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

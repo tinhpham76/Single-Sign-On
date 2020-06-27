@@ -13,8 +13,7 @@ import { MessageConstants } from '@app/shared/constants/messages.constant';
 })
 export class PropertyComponent implements OnInit {
 
-
-  //
+  // 
   public apiName: string;
   public items: any[];
 
@@ -44,8 +43,8 @@ export class PropertyComponent implements OnInit {
     this.getApiResourceProperties(this.apiName);
   }
 
-   // Get api secret
-   getApiResourceProperties(apiName: string) {
+  // Get api resource properties
+  getApiResourceProperties(apiName: string) {
     this.isSpinning = true;
     this.apiResourceServices.getApiResourceProperty(apiName)
       .subscribe((res: any[]) => {
@@ -67,7 +66,7 @@ export class PropertyComponent implements OnInit {
   }
 
 
-  // Create new api resource secret
+  // Create new api resource property
   submitForm(): void {
     this.isSpinning = true;
     const data = this.validateForm.getRawValue();
@@ -92,7 +91,7 @@ export class PropertyComponent implements OnInit {
       });
   }
 
-  // Delete api secret
+  // Delete api resource property
   delete(propertyKey: string) {
     this.isSpinning = true;
     this.apiResourceServices.deleteApiResourceProperty(this.apiName, propertyKey)
@@ -118,7 +117,7 @@ export class PropertyComponent implements OnInit {
       });
   }
 
-  // Delete api scope
+  // Delete api resource property
   showDeleteConfirm(propertyKey: string): void {
     this.confirmDeleteModal = this.modal.confirm({
       nzTitle: 'Do you Want to delete api resource property' + propertyKey + ' ?',

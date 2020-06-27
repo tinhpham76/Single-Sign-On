@@ -1,13 +1,15 @@
-<!--Role-->
-
+<!--Start welcome roles-->
 <div class="content-heading">
   <div>
-      🔑 Roles
-      <br>
-      <small><b>Represents a role in the identity system</b></small>
+    🔑 Roles
+    <br>
+    <small><b>Represents a role in the identity system</b></small>
   </div>
 </div>
-<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" (click)='openAddRole()'><i nz-icon nzType="file-add"></i>Add new role</button> 
+<button nz-button nzType="primary" nzButtonSize="large" nzShape="round" (click)='openAddRole()'><i nz-icon
+    nzType="file-add"></i>Create new role</button>
+    <!--End welcome roles-->
+    <!--Start table roles-->
 <nz-spin [nzSpinning]="isSpinning">
   <nz-table #roleTable [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzData]="items" [nzTotal]="totalRecords"
     [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
@@ -26,10 +28,10 @@
         <td>{{ role.normalizedName }}</td>
         <td>
           <div class="table-action">
-            <a style="margin: 5px;"  nz-tooltip nzTooltipTitle="Role detail & Edit Role" (click)="showModal(role.id)">
+            <a style="margin: 5px;" nz-tooltip nzTooltipTitle="Role detail & Edit Role" (click)="showModal(role.id)">
               <i nz-icon nzType="edit"></i>
             </a>
-            <a style="margin: 5px;"  nz-tooltip nzTooltipTitle="Delete Role" (click)='showConfirm(role.id)'>
+            <a style="margin: 5px;" nz-tooltip nzTooltipTitle="Delete Role" (click)='showConfirm(role.id)'>
               <i nz-icon nzType="delete"></i>
             </a>
           </div>
@@ -38,38 +40,41 @@
     </tbody>
   </nz-table>
 </nz-spin>
+<!--End table role-->
 
-
-<!--Add Role-->
+<!--Start create new role-->
 <nz-drawer [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
-  [nzMaskClosable]="false" [nzWidth]="360" [nzVisible]="visibleAddRole" nzTitle="🔑 Add Role" (nzOnClose)="closeAddRole()">
-    <form nz-form [nzLayout]="'vertical'" [formGroup]="formAddRole" (ngSubmit)="createRole()">
-      <nz-form-item>
-        <nz-form-label>Id:</nz-form-label>
-        <nz-form-control  nzErrorTip="The input is not valid!">
-          <nz-input-group>
-            <input nz-input formControlName="id" />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label>Name:</nz-form-label>
-        <nz-form-control nzErrorTip="The input is not valid!">
-          <nz-input-group>
-            <input formControlName="name" nz-input />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-control>
-          <button nz-button nzType="primary" [disabled]="!formAddRole.valid">Save changes</button>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
+  [nzMaskClosable]="false" [nzWidth]="360" [nzVisible]="visibleAddRole" nzTitle="🔑 Add Role"
+  (nzOnClose)="closeAddRole()">
+  <form nz-form [nzLayout]="'vertical'" [formGroup]="formAddRole" (ngSubmit)="createRole()">
+    <nz-form-item>
+      <nz-form-label>Id:</nz-form-label>
+      <nz-form-control nzErrorTip="The input is not valid!">
+        <nz-input-group>
+          <input nz-input formControlName="id" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Name:</nz-form-label>
+      <nz-form-control nzErrorTip="The input is not valid!">
+        <nz-input-group>
+          <input formControlName="name" nz-input />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" [disabled]="!formAddRole.valid">Create</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
 </nz-drawer>
+<!--End create new role-->
 
-<!--Edit Role-->
-<nz-modal [(nzVisible)]="showEditRole" nzTitle="🔑 Edit Role" nzWidth="360" (nzOnCancel)="handleCancel()" nzOkText="Save Changes" (nzOnOk)="saveChanges()">
+<!--Start edit role-->
+<nz-modal [(nzVisible)]="showEditRole" nzTitle="🔑 Edit Role" nzWidth="360" (nzOnCancel)="handleCancel()"
+  nzOkText="Save Changes" (nzOnOk)="saveChanges()">
   <form nz-form [nzLayout]="'vertical'" [formGroup]="formEditRole" (ngSubmit)="saveChanges()">
     <nz-form-item>
       <nz-form-control>
@@ -87,3 +92,4 @@
     </nz-form-item>
   </form>
 </nz-modal>
+<!--End edit role-->

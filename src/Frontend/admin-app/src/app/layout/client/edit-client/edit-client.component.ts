@@ -49,7 +49,8 @@ export class EditClientComponent implements OnInit {
 
   // Tags Allowed Grant Types
   public allowedGrantTypes = [];
-  public grantTypes = ['authorization_code',
+  public grantTypes = [
+    'authorization_code',
     'client_credentials',
     'refresh_token',
     'implicit',
@@ -90,6 +91,7 @@ export class EditClientComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.clientId = params['id'];
     });
+
     // Init form basic
     this.basicForm = this.fb.group({
       clientId: [null, [Validators.required]],
@@ -98,6 +100,7 @@ export class EditClientComponent implements OnInit {
       clientUri: [null, [Validators.required]],
       logoUri: [null],
     });
+
     // Init form setting
     this.settingForm = this.fb.group({
       enabled: [null],
@@ -110,6 +113,7 @@ export class EditClientComponent implements OnInit {
       allowPlainTextPkce: [null],
       allowAccessTokensViaBrowser: [null],
     });
+
     // Init form authentication
     this.authenticationForm = this.fb.group({
       enableLocalLogin: [null],
@@ -119,6 +123,7 @@ export class EditClientComponent implements OnInit {
       backChannelLogoutSessionRequired: [null],
       userSsoLifetime: [null]
     });
+
     // Init form token
     this.tokenForm = this.fb.group({
       identityTokenLifetime: [null],
@@ -136,11 +141,13 @@ export class EditClientComponent implements OnInit {
       pairWiseSubjectSalt: [null],
       clientClaimsPrefix: [null],
     });
+
     // Init form device Flow
     this.deviceFlowForm = this.fb.group({
       userCodeType: [null],
       deviceCodeLifetime: [null]
     });
+
     // Init form client secrets
     this.validateFormClientSecrets = this.fb.group({
       type: ['SharedSecret'],
@@ -149,11 +156,13 @@ export class EditClientComponent implements OnInit {
       expiration: [null],
       hashType: ['Sha256'],
     });
+
     // Init form client claims
     this.validateFormClientClaims = this.fb.group({
       type: ['SharedSecret'],
       value: [null, Validators.required]
     });
+
     this.getClientDetail(this.clientId);
     this.getBasicSetting(this.clientId);
     this.getSettingSetting(this.clientId);
@@ -165,6 +174,7 @@ export class EditClientComponent implements OnInit {
     this.getClientClaim(this.clientId);
   }
 
+  //#region Client Detail
   // Load client detail
   getClientDetail(clientId: string): void {
     this.isSpinning = true;
@@ -188,6 +198,9 @@ export class EditClientComponent implements OnInit {
         }, 500);
       });
   }
+  //#endregion
+
+  //#region Basic setting
 
   // Client setting basic
   getBasicSetting(clientId: string) {
@@ -217,6 +230,7 @@ export class EditClientComponent implements OnInit {
         }, 500);
       });
   }
+
   submitBasicForm() {
     const clientName = this.basicForm.get('clientName').value;
     const clientUri = this.basicForm.get('clientUri').value;
@@ -256,33 +270,6 @@ export class EditClientComponent implements OnInit {
   }
 
   // Origins
-  deleteOrigin(removedTag: {}): void {
-    this.originTags = this.originTags.filter(tag => tag !== removedTag);
-    this.isSpinning = true;
-    this.clientServices.deleteBasicOrigin(this.clientId, removedTag)
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_DELETE,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
   sliceTagName(tag: string): string {
     const isLongTag = tag.length > 50;
     return isLongTag ? `${tag.slice(0, 50)}...` : tag;
@@ -333,7 +320,37 @@ export class EditClientComponent implements OnInit {
       });
   }
 
-  ///////////////// Client setting setting
+  deleteOrigin(removedTag: {}): void {
+    this.originTags = this.originTags.filter(tag => tag !== removedTag);
+    this.isSpinning = true;
+    this.clientServices.deleteBasicOrigin(this.clientId, removedTag)
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+  //#endregion
+
+  //#region Setting
+
+  // Client setting setting
   getSettingSetting(clientId: string) {
     this.isSpinning = true;
     this.clientServices.getSetting(clientId)
@@ -367,6 +384,7 @@ export class EditClientComponent implements OnInit {
         }, 500);
       });
   }
+
   submitSettingForm() {
     this.isSpinning = true;
     this.clientServices.putSetting(this.clientId, this.settingForm.getRawValue())
@@ -593,7 +611,108 @@ export class EditClientComponent implements OnInit {
       });
   }
 
-  ///////////////// Client setting authentication
+  // Drawer
+  openClientSecrets(): void {
+    this.visibleClientSecrets = true;
+  }
+
+  closeClientSecrets(): void {
+    this.visibleClientSecrets = false;
+  }
+
+  // Get client secret
+  getClientSecret(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getClientSecret(clientId)
+      .subscribe((res: any[]) => {
+        this.itemClientSecrets = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+
+  // Create new client secret
+  submitFormClientSecrets(): void {
+    this.isSpinning = true;
+    const data = this.validateFormClientSecrets.getRawValue();
+    this.clientServices.addClientSecret(this.clientId, data)
+      .subscribe(() => {
+        this.ngOnInit();
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ADD + name + '!',
+          'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client secret
+  deleteClientSecret(id: string) {
+    this.isSpinning = true;
+    this.clientServices.deleteClientSecret(this.clientId, Number(id))
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
+        this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client secret
+  showDeleteConfirmClientSecrets(id: string): void {
+    this.confirmDeleteClientSecret = this.modal.confirm({
+      nzTitle: 'Do you Want to delete client secrets' + id + ' ?',
+      nzOkText: 'Yes',
+      nzOkType: 'danger',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          this.deleteClientSecret(id);
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
+        })
+    });
+  }
+
+  //#endregion
+
+  //#region Authentication setting
+
+  // Client setting authentication
   getAuthentication(clientId: string) {
     this.isSpinning = true;
     this.clientServices.getAuthentication(clientId)
@@ -722,6 +841,10 @@ export class EditClientComponent implements OnInit {
       });
   }
 
+  //#endregion
+
+  //#region Token setting
+
   // Token
   getToken(clientId: string) {
     this.isSpinning = true;
@@ -758,6 +881,7 @@ export class EditClientComponent implements OnInit {
         }, 500);
       });
   }
+
   submitToken() {
     this.isSpinning = true;
     this.clientServices.putToken(this.clientId, this.tokenForm.getRawValue())
@@ -784,6 +908,109 @@ export class EditClientComponent implements OnInit {
         }, 500);
       });
   }
+
+  // Client claim
+
+  // Drawer
+  openClientClaims(): void {
+    this.visibleClientClaims = true;
+  }
+
+  closeClientClaims(): void {
+    this.visibleClientClaims = false;
+  }
+
+  // Get client claim
+  getClientClaim(clientId: string) {
+    this.isSpinning = true;
+    this.clientServices.getClientClaims(clientId)
+      .subscribe((res: any[]) => {
+        this.itemClientClaims = res;
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+
+  // Create new client claim
+  submitFormClientClaims(): void {
+    this.isSpinning = true;
+    const data = this.validateFormClientClaims.getRawValue();
+    this.clientServices.addClientClaim(this.clientId, data)
+      .subscribe(() => {
+        this.ngOnInit();
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_ADD + name + '!',
+          'bottomRight');
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client claim
+  deleteClientClaim(id: string) {
+    this.isSpinning = true;
+    this.clientServices.deleteClientClaim(this.clientId, Number(id))
+      .subscribe(() => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          MessageConstants.NOTIFICATION_DELETE, 'bottomRight');
+        this.ngOnInit();
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      }, errorMessage => {
+        this.createNotification(
+          MessageConstants.TYPE_NOTIFICATION_ERROR,
+          MessageConstants.TITLE_NOTIFICATION_SSO,
+          errorMessage,
+          'bottomRight'
+        );
+        setTimeout(() => {
+          this.isSpinning = false;
+        }, 500);
+      });
+  }
+
+  // Delete client claim
+  showDeleteConfirmClientClaims(id: string): void {
+    this.confirmDeleteClientClaim = this.modal.confirm({
+      nzTitle: 'Do you Want to delete client claims' + id + ' ?',
+      nzOkText: 'Yes',
+      nzOkType: 'danger',
+      nzOnOk: () =>
+        new Promise((resolve, reject) => {
+          this.deleteClientClaim(id);
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
+        })
+    });
+  }
+
+  //#endregion
+
+  //#region Device Flow setting
 
   // Device Flow
   getDeviceFlow(clientId: string) {
@@ -836,204 +1063,11 @@ export class EditClientComponent implements OnInit {
       });
   }
 
-  // Drawer
-  openClientSecrets(): void {
-    this.visibleClientSecrets = true;
-  }
-
-  closeClientSecrets(): void {
-    this.visibleClientSecrets = false;
-  }
-
-  // Get client secret
-  getClientSecret(clientId: string) {
-    this.isSpinning = true;
-    this.clientServices.getClientSecret(clientId)
-      .subscribe((res: any[]) => {
-        this.itemClientSecrets = res;
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-
-  // Create new client secret
-  submitFormClientSecrets(): void {
-    this.isSpinning = true;
-    const data = this.validateFormClientSecrets.getRawValue();
-    this.clientServices.addClientSecret(this.clientId, data)
-      .subscribe(() => {
-        this.ngOnInit();
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ADD + name + '!',
-          'bottomRight');
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-  // Delete client secret
-  deleteClientSecret(id: string) {
-    this.isSpinning = true;
-    this.clientServices.deleteClientSecret(this.clientId, Number(id))
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
-        this.ngOnInit();
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-  // Delete client secret
-  showDeleteConfirmClientSecrets(id: string): void {
-    this.confirmDeleteClientSecret = this.modal.confirm({
-      nzTitle: 'Do you Want to delete client secrets' + id + ' ?',
-      nzOkText: 'Yes',
-      nzOkType: 'danger',
-      nzOnOk: () =>
-        new Promise((resolve, reject) => {
-          this.deleteClientSecret(id);
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
-        })
-    });
-  }
-
-  // Drawer
-  openClientClaims(): void {
-    this.visibleClientClaims = true;
-  }
-
-  closeClientClaims(): void {
-    this.visibleClientClaims = false;
-  }
-
-  // Get client secret
-  getClientClaim(clientId: string) {
-    this.isSpinning = true;
-    this.clientServices.getClientClaims(clientId)
-      .subscribe((res: any[]) => {
-        this.itemClientClaims = res;
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-
-  // Create new client secret
-  submitFormClientClaims(): void {
-    this.isSpinning = true;
-    const data = this.validateFormClientClaims.getRawValue();
-    this.clientServices.addClientClaim(this.clientId, data)
-      .subscribe(() => {
-        this.ngOnInit();
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_ADD + name + '!',
-          'bottomRight');
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-  // Delete client claim
-  deleteClientClaim(id: string) {
-    this.isSpinning = true;
-    this.clientServices.deleteClientClaim(this.clientId, Number(id))
-      .subscribe(() => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_SUCCESS,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          MessageConstants.NOTIFICATION_DELETE + name + ' !', 'bottomRight');
-        this.ngOnInit();
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      }, errorMessage => {
-        this.createNotification(
-          MessageConstants.TYPE_NOTIFICATION_ERROR,
-          MessageConstants.TITLE_NOTIFICATION_SSO,
-          errorMessage,
-          'bottomRight'
-        );
-        setTimeout(() => {
-          this.isSpinning = false;
-        }, 500);
-      });
-  }
-
-  // Delete client claim
-  showDeleteConfirmClientClaims(id: string): void {
-    this.confirmDeleteClientClaim = this.modal.confirm({
-      nzTitle: 'Do you Want to delete client claims' + id + ' ?',
-      nzOkText: 'Yes',
-      nzOkType: 'danger',
-      nzOnOk: () =>
-        new Promise((resolve, reject) => {
-          this.deleteClientClaim(id);
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 200);
-        })
-    });
-  }
-
-
+  //#endregion
 
   // notification
   createNotification(type: string, title: string, content: string, position: NzNotificationPlacement): void {
     this.notification.create(type, title, content, { nzPlacement: position });
   }
+
 }

@@ -2,17 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ApiResourceServices } from '@app/shared/services/api-resources.service';
 import { NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { ActivatedRoute } from '@angular/router';
-import { catchError } from 'rxjs/operators';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
-import { throwError } from 'rxjs';
 import { ApiResource } from '@app/shared/models/api-resource.model';
 
+
 @Component({
-  selector: 'app-setting',
-  templateUrl: './setting.component.html',
-  styleUrls: ['./setting.component.scss']
+  selector: 'app-setting-resource',
+  templateUrl: './setting-resource.component.html',
+  styleUrls: ['./setting-resource.component.scss']
 })
-export class SettingComponent implements OnInit {
+export class SettingResourceComponent implements OnInit {
 
   //
   public name: string;
@@ -24,7 +23,7 @@ export class SettingComponent implements OnInit {
   public apiClaimTags = [];
   public tempClaim = [];
 
-  // Identity resource detail
+  // Api resource detail
   public displayName: string;
   public description: string;
   public enabled: boolean;
@@ -41,7 +40,7 @@ export class SettingComponent implements OnInit {
     });
   }
 
-  // Get Identity resource detail
+  // Get Api resource detail
   getApiResourceDetail(name: string): void {
     this.isSpinning = true;
     this.apiResourceServices.getDetail(name)
@@ -65,7 +64,7 @@ export class SettingComponent implements OnInit {
       });
   }
 
-  // Get claims for identity resource
+  // Get claims for api resource
   getApiResourceClaims(name: string): void {
     this.isSpinning = true;
     this.apiResourceServices.getApiResourceClaims(name)
@@ -98,7 +97,7 @@ export class SettingComponent implements OnInit {
       });
   }
 
-  // Add new claim for identity resource
+  // Add new claim for api resource
   addApiResourceClaim(type: string): void {
     this.isSpinning = true;
     const data = Object.assign({ type });
@@ -121,12 +120,13 @@ export class SettingComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
+          this.ngOnInit();
           this.isSpinning = false;
         }, 500);
       });
   }
 
-  // delete claim of identity resource
+  // delete claim of api resource
   deleteApiResourceClaim(tag: string) {
     this.isSpinning = true;
     this.apiResourceServices.deleteApiResourceClaim(this.name, tag)
@@ -148,6 +148,7 @@ export class SettingComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
+          this.ngOnInit();
           this.isSpinning = false;
         }, 500);
       });

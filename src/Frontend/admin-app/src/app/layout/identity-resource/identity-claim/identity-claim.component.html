@@ -1,3 +1,4 @@
+<!--Start welcome identity resource-->
 <div class="content-heading">
     <div>
         🔖 Identity resource claims
@@ -9,15 +10,16 @@
 </div>
 <button nz-button nzType="primary" nzButtonSize="large" nzShape="round" routerLink='/identity-resources'><i nz-icon
         nzType="rollback"></i>Go back</button>
+<!--End welcome identity resource-->
 <nz-spin [nzSpinning]="isSpinning">
-    <!--Identity detail-->
+    <!--Identity resource detail-->
     <nz-descriptions nzTitle="Identity resources {{name}} manager claims ">
         <nz-descriptions-item nzTitle="Name">{{displayName}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Description">{{description}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Enabled">{{enabled}}</nz-descriptions-item>
     </nz-descriptions>
-    <!--Edit identity-->
-
+    <!--End resource identity-->
+    <!--Start edit identity resource claims-->
     <div class="identity-resource-claim">
         <b>Claims:</b>
         <div nz-col>
@@ -31,11 +33,12 @@
         <b>Add new claim:</b>
         <div nz-col>
             <a>
-                <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaim" nzMode="checkable"
+                <nz-tag style="margin: 5px;" nz-row *ngFor="let tag of tempClaims" nzMode="checkable"
                     [nzColor]="'#108ee9'" (nzCheckedChange)="addIdentityResourceClaim(tag)"> +
                     {{ tag }}
                 </nz-tag>
             </a>
         </div>
     </div>
+    <!--End edit identity resource claims-->
 </nz-spin>
