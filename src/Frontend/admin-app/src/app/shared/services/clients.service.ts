@@ -43,7 +43,7 @@ export class ClientServices extends BaseService {
             , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     deleteBasicOrigin(id, originName) {
-        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/basics/origins/${originName}`
+        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/basics/origins/originName?originName=${originName}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     // Setting setting
@@ -73,7 +73,7 @@ export class ClientServices extends BaseService {
             , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     deleteSettingRedirectUri(id, redirectUriName) {
-        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/settings/redirectUris/${redirectUriName}`
+        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/settings/redirectUris/redirectUriName?redirectUriName=${redirectUriName}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     postSettingGrantType(id, entity: any) {
@@ -111,7 +111,7 @@ export class ClientServices extends BaseService {
             , JSON.stringify(entity), { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     deletePostLogoutRedirectUris(id, postLogoutRedirectUris) {
-        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/Authentications/postLogoutRedirectUris/${postLogoutRedirectUris}`
+        return this.http.delete(`${environment.apiUrl}/api/clients/${id}/Authentications/postLogoutRedirectUris/postLogoutRedirectUriName?postLogoutRedirectUriName=${postLogoutRedirectUris}`
             , { headers: this._sharedHeaders }).pipe(catchError(this.handleError));
     }
     // Setting Token

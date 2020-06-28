@@ -1,0 +1,25 @@
+{
+    "Language": "Ngôn Ngữ",
+    "English": "Tiếng Anh",
+    "Vietnamese": "Tiếng Việt",
+    "Full Name": "Họ tên",
+    "Email": "Email",
+    "Settings": "Cài đặt",
+    "Log Out": "Đăng xuất",
+    "Home": "Trang chủ",        
+    "WELCOME": "Xin Chào",
+    "This is Single Sign-On Admin Panel. Here you can manage your SSO settings..": "Đây là trang quản trị Single Sign-On. Bạn có thể quản lý các cài đặt SSO của mình..",
+    "Learn more": "Tìm hiểu thêm",
+    "Manage":"Quản lý",
+    "Password": "Mật khẩu",
+    "Log in": "Đăng nhập",
+    "Register": "Đăng ký",
+    "Add": "Thêm mới",
+    "Go back": "Trở về",
+    "Not this time, access forbidden": "Không phải bây giờ! Bạn không có quyền truy cập",
+    "Home Page":"Trang chủ",
+    "Please, login with Admin Account! You will be redirected to the":"Vui lòng đăng nhập bằng tài khoản Admin. Bạn sẽ phải quay về trang chủ",
+    "SSO homepage": "SSO"
+
+
+}

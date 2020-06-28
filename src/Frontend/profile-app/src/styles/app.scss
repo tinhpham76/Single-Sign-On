@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/bootstrap";
+@import "spinner";
+@import "utils";
+@import "rtl";
+@import "responsive";
+@import "toastr.scss";
+@import "~ng-zorro-antd/ng-zorro-antd.min.css";
+
+@media print {
+    .breadcrumb {
+        display: none !important;
+    }
+}

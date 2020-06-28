@@ -1,0 +1,65 @@
+<div class="home-container">
+  <!--Start welcome sso-->
+  <h1>Welcome!</h1>
+  <p>This is Single Sign-On Admin Panel. Here you can manage your SSO settings..</p>
+  <hr>
+  <div class="row justify-content-md-center">
+    <div class="text-center">
+      <a href="https://dotnet.microsoft.com" target="_blank" nz-tooltip nzTooltipTitle="ASPNETCore">
+        <img class="img-intro" src="./assets/images/netcore-logo.png" alt="">
+      </a>
+      <a href="https://angular.io" target="_blank" nz-tooltip nzTooltipTitle="Angular ">
+        <img style="width: 200px; height: 200px; margin: 10px;" src="./assets/images/angular-logo.png" alt="">
+      </a>
+      <a href="https://identityserver4.readthedocs.io/en/latest/" target="_blank" nz-tooltip
+        nzTooltipTitle="Identity Server">
+        <img class="img-intro" src="./assets/images/is4-logo.png" alt="">
+      </a>
+    </div>
+  </div>
+  <a nz-button nzType="primary" href="https://github.com/tinhpham76/Single-Sign-On" target="_blank">Learn More</a>
+  <!--End welcome sso-->
+  <!--Start card-->
+  <div style="background: #ECECEC;padding:30px;">
+    <div nz-row [nzGutter]="8">
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Clients" nz-tooltip
+          nzTooltipTitle="The Client class represents an OpenID Connect or OAuth 2.0 client - e.g. a native application, a web application or a JS-based application.">
+          <a routerLink='/clients'>Manage</a>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Api Resources" nz-tooltip
+          nzTooltipTitle="Resources are something you want to protect with IdentityServer – either APIs (by doing this your data will be protected as well). So to access your database content must be through an API.">
+          <a routerLink='/api-resources'>Manage</a>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Identity Resources" nz-tooltip
+          nzTooltipTitle="Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user..">
+          <a routerLink='/identity-resources'>Manage</a>
+        </nz-card>
+      </div>
+    </div>
+    <br>
+    <div nz-row [nzGutter]="8">
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Users" nz-tooltip
+          nzTooltipTitle="A user is a person or robot that can access resources and clients..">
+          <a routerLink='/users'>Manage</a>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Roles" nz-tooltip nzTooltipTitle="Represents a role in the identity system">
+          <a routerLink='/roles'>Manage</a>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="8" style="text-align: center;">
+        <nz-card nzTitle="Developer Apis" nz-tooltip nzTooltipTitle="Manage all apis with swagger..">
+          <a href="https://localhost:5000/swagger/index.html" target="_blank">Manage</a>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+<!--End Card-->
+</div>
