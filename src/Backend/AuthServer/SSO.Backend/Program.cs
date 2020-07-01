@@ -17,6 +17,8 @@ namespace SSO.Backend
                              .WriteTo.Console()
                              .CreateLogger();
             var host = CreateHostBuilder(args).Build();
+
+          
             host.Run();
         }
 
