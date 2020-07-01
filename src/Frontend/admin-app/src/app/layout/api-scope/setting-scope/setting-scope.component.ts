@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiScopeServices } from '@app/shared/services/api-scope.services';
 import { MessageConstants } from '@app/shared/constants/messages.constant';
 import { ApiScope } from '@app/shared/models/api-scope.model';
+import { RolesServices } from '@app/shared/services/role.service';
 
 @Component({
   selector: 'app-setting-scope',
@@ -19,6 +20,7 @@ export class SettingScopeComponent implements OnInit {
   // Claim
   public apiClaimTags = [];
   public tempClaim = [];
+  public temp = []
 
   // Identity resource detail
   public displayName: string;
@@ -26,6 +28,7 @@ export class SettingScopeComponent implements OnInit {
   public enabled: boolean;
 
   constructor(private apiScopeServices: ApiScopeServices,
+    private roleServices: RolesServices,
     private notification: NzNotificationService,
     private route: ActivatedRoute) { }
 
@@ -61,23 +64,25 @@ export class SettingScopeComponent implements OnInit {
       });
   }
 
+
+
   // Get api scope
   getApiScopeClaims(name: string): void {
+    this.roleServices.getAll()
+    .subscribe((res: any[]) => {
+      this.tempClaim = res;
+    });
     this.isSpinning = true;
     this.apiScopeServices.getApiScopeClaims(name)
       .subscribe((res: any[]) => {
         this.apiClaimTags = res;
-        const temp = ['sub', 'name', 'given_name', 'family_name', 'middle_name',
-          'nickname', 'preferred_username', 'profile', 'picture', 'website', 'email', 'email_verified',
-          'gender', 'birthdate', 'zoneinfo', 'locale', 'phone_number', 'phone_number_verified', 'address', 'updated_at'];
         res.forEach(type => {
-          for (let i = 0; i < temp.length; i++) {
-            if (temp[i].toString() === type.toString()) {
-              temp.splice(Number(i), 1);
+          for (let i = 0; i < this.tempClaim.length; i++) {
+            if (this.tempClaim[i].toString() === type.toString()) {
+              this.tempClaim.splice(Number(i), 1);
             }
           }
         });
-        this.tempClaim = temp;
         setTimeout(() => {
           this.isSpinning = false;
         }, 500);
@@ -106,7 +111,7 @@ export class SettingScopeComponent implements OnInit {
           MessageConstants.NOTIFICATION_ADD + type + ' claim for ' + this.name + ' resource!',
           'bottomRight');
         setTimeout(() => {
-          this.ngOnInit();
+          this.getApiScopeClaims(this.name);
           this.isSpinning = false;
         }, 500);
       }, errorMessage => {
@@ -145,8 +150,9 @@ export class SettingScopeComponent implements OnInit {
           'bottomRight'
         );
         setTimeout(() => {
-          this.ngOnInit();
+          this.getApiScopeClaims(this.name);
           this.isSpinning = false;
+         
         }, 500);
       });
   }

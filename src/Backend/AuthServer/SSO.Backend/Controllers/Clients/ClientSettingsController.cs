@@ -6,7 +6,6 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +16,7 @@ namespace SSO.Backend.Controllers.Clients
         #region Client Setting
         //Get setting infor client for edit
         [HttpGet("{clientId}/settings")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientSetting(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -51,6 +51,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Get setting infor client for edit
         [HttpGet("allScopes")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetAllScopes()
         {
             var api = await _configurationDbContext.ApiResources
@@ -66,7 +67,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit setting infor
         [HttpPut("{clientId}/settings")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutClientBasic(string clientId, [FromBody] ClientSettingRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -93,7 +94,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client Scope for client
         [HttpPost("{clientId}/settings/scopes")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostClientScopes(string clientId, [FromBody] ClientScopeRequest request)
         {
             //Check Client
@@ -155,7 +156,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client Scope 
         [HttpDelete("{clientId}/settings/scopes/{scopeName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientScope(string clientId, string scopeName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -178,7 +179,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client RedirectUris for client
         [HttpPost("{clientId}/settings/redirectUris")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostClientRedirectUri(string clientId, [FromBody] ClientRedirectUriRequest request)
         {
             //Check Client
@@ -239,7 +240,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client RedirectUris 
         [HttpDelete("{clientId}/settings/redirectUris/redirectUriName")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClienRedirectUri(string clientId, string redirectUriName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -262,7 +263,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client GrantType for client
         [HttpPost("{clientId}/settings/grantTypes")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostClientGrantType(string clientId, [FromBody] ClientGrantTypeRequest request)
         {
             //Check Client
@@ -274,9 +275,6 @@ namespace SSO.Backend.Controllers.Clients
                 //If Client GrantType is null, add GrantType for client
                 if (clientGrantType == null)
                 {
-                    var temp = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.GrantType == request.GrantType);
-                    if (temp != null)
-                        return BadRequest();
                     var clientGrantTypeRequest = new IdentityServer4.EntityFramework.Entities.ClientGrantType()
                     {
                         GrantType = request.GrantType,
@@ -296,9 +294,8 @@ namespace SSO.Backend.Controllers.Clients
                 // If Client GrantType not null, Check Client GrantType on table with request GrantType
                 else if (clientGrantType != null)
                 {
-                    var temp = await _context.ClientGrantTypes.FirstOrDefaultAsync(x => x.GrantType == request.GrantType);
-                    if (temp != null)
-                        return BadRequest();
+
+
                     if (clientGrantType.GrantType == request.GrantType)
                         return BadRequest($"Client GrantType {request.GrantType} already exist");
 
@@ -324,7 +321,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client GrantType 
         [HttpDelete("{clientId}/settings/grantTypes/{grantTypeName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientGrantType(string clientId, string grantTypeName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -347,6 +344,7 @@ namespace SSO.Backend.Controllers.Clients
 
         // Client Secrets
         [HttpGet("{clientId}/settings/clientSecrets")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientSecrets(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -367,7 +365,7 @@ namespace SSO.Backend.Controllers.Clients
 
         // Post client secrets
         [HttpPost("{clientId}/settings/clientSecrets")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostClientSecret(string clientId, [FromBody] ClientSecretRequest request)
         {
             //Check client
@@ -386,7 +384,7 @@ namespace SSO.Backend.Controllers.Clients
                         Value = request.Value.ToSha256(),
                         Description = request.Description,
                         ClientId = client.Id,
-                        Expiration = DateTime.Parse(request.Expiration),
+                        Expiration = null,
                         Created = DateTime.UtcNow
                     };
                     _context.ClientSecrets.Add(clientSecretRequest);
@@ -431,7 +429,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete client secret
         [HttpDelete("{clientId}/settings/clientSecrets/{secretId}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientSecret(string clientId, int secretId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
 {
@@ -17,6 +15,7 @@ namespace SSO.Backend.Controllers.Api
         #region Api Resource Properties
         //Get api resource properties
         [HttpGet("{apiResourceName}/resourceProperties")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiResourceProperties(string apiResourceName)
         {
 
@@ -26,9 +25,9 @@ namespace SSO.Backend.Controllers.Api
             var query = _context.ApiResourceProperties.Where(x => x.ApiResourceId.Equals(apiResource.Id));
             var apiResourceProperties = await query.Select(x => new ApiResourcePropertitesViewModel()
             {
-               Id = x.Id,
-               Key = x.Key,
-               Value = x.Value
+                Id = x.Id,
+                Key = x.Key,
+                Value = x.Value
             }).ToListAsync();
 
             return Ok(apiResourceProperties);
@@ -36,7 +35,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api resource property
         [HttpPost("{apiResourceName}/resourceProperties")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostApiResourceProperty(string apiResourceName, [FromBody] ApiResourcePropertyRequest request)
         {
             //Check Api Resource
@@ -51,7 +50,7 @@ namespace SSO.Backend.Controllers.Api
                     var apiResourcePropertyRequest = new IdentityServer4.EntityFramework.Entities.ApiResourceProperty()
                     {
                         Key = request.Key,
-                        Value = request.Value,                        
+                        Value = request.Value,
                         ApiResourceId = apiResource.Id
                     };
                     _context.ApiResourceProperties.Add(apiResourcePropertyRequest);
@@ -93,8 +92,9 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource property
-        [RoleRequirement(RoleCode.Admin)]
+
         [HttpDelete("{apiResourceName}/resourceProperties/{propertyKey}")]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResourceProperty(string apiResourceName, string propertyKey)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

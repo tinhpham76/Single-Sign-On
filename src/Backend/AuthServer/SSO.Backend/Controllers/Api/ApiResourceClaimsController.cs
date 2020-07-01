@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
-using SSO.Services.ViewModel.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +15,7 @@ namespace SSO.Backend.Controllers.Api
         #region Api Resource Claims
         //Get api resource claims
         [HttpGet("{apiResourceName}/resourceClaims")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiResourceClaims(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -32,8 +32,8 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api resource claim
         [HttpPost("{apiResourceName}/resourceClaims")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiClaim(string apiResourceName, [FromBody]ApiResourceClaimRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostApiClaim(string apiResourceName, [FromBody] ApiResourceClaimRequest request)
         {
             //Check Api Resource
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -87,8 +87,8 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource claim
-        [RoleRequirement(RoleCode.Admin)]
         [HttpDelete("{apiResourceName}/resourceClaims/{claimType}")]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiClaim(string apiResourceName, string claimType)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SSO.Services.ViewModel.Api
+﻿namespace SSO.Services.ViewModel.Api
 {
     public class ApiScopeViewModel
     {

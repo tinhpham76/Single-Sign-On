@@ -7,7 +7,6 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel.User;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,17 +24,16 @@ namespace SSO.Backend.Controllers.Users
 
         //get all role
         [HttpGet]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetRoles()
         {
-            var roles = _roleManager.Roles;
-            var rolesQuickView = await roles.Select(x => new List<string>()
-            {
-                x.Id
-            }).ToListAsync();
-            return Ok(rolesQuickView);
+            var roles = await _roleManager.Roles.Select(x => x.Id.ToString()).ToListAsync();
+
+            return Ok(roles);
         }
 
         [HttpGet("{roleId}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetRole(string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
@@ -51,6 +49,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetRolePaging(string filter, int pageIndex, int pageSize)
         {
             var query = _roleManager.Roles;
@@ -63,7 +62,7 @@ namespace SSO.Backend.Controllers.Users
                 .Take(pageSize)
                 .Select(x => new RolesQuickView()
                 {
-                    Id = x.Id, 
+                    Id = x.Id,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName
                 }).ToListAsync();
@@ -76,8 +75,8 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostRole([FromBody]RoleRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostRole([FromBody] RoleRequest request)
         {
             var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Name == request.Name);
             if (role != null)
@@ -95,8 +94,8 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPut("{roleId}")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutRole(string roleId, [FromBody]RoleRequest request)
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        public async Task<IActionResult> PutRole(string roleId, [FromBody] RoleRequest request)
         {
             if (roleId != request.Id)
                 return BadRequest("Role id not match");
@@ -116,7 +115,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpDelete("{roleId}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);

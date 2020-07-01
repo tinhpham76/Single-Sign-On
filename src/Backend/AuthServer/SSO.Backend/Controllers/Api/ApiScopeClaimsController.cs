@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
-using SSO.Services.ViewModel.Api;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +14,7 @@ namespace SSO.Backend.Controllers.Api
         #region Api Scope Claims
         //Get api scope claim
         [HttpGet("{apiScopeName}/scopeClaims")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiScopeClaims(string apiScopeName)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
@@ -30,7 +29,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api scope claim
         [HttpPost("{apiScopeName}/scopeClaims")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostApiScopeClaim(string apiScopeName, [FromBody] ApiScopeClaimRequest request)
         {
             //Check Api scope
@@ -53,7 +52,7 @@ namespace SSO.Backend.Controllers.Api
                     }
                     return BadRequest();
                 }
-                else if(apiScopeClaim != null)
+                else if (apiScopeClaim != null)
                 {
                     if (apiScopeClaim.Type == request.Type)
                     {
@@ -80,7 +79,7 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api scope claim
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         [HttpDelete("{apiScopeName}/scopeClaims/{claimType}")]
         public async Task<IActionResult> DeleteApiClaim(string apiScopeName, string claimType)
         {

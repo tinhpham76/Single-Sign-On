@@ -5,7 +5,6 @@ using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Client;
 using SSO.Services.ViewModel.Client;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,14 +15,15 @@ namespace SSO.Backend.Controllers.Clients
         #region Client Basics
         //Get basic infor client for edit
         [HttpGet("{clientId}/basics")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientBasic(string clientId)
         {
-            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x=>x.ClientId == clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return NotFound();
             var origins = await _context.ClientCorsOrigins
                 .Where(x => x.ClientId == client.Id)
-                .Select(x=> x.Origin.ToString()).ToListAsync();
+                .Select(x => x.Origin.ToString()).ToListAsync();
             var clientBasicViewModel = new ClientBasicViewModel()
             {
                 ClientId = client.ClientId,
@@ -38,8 +38,8 @@ namespace SSO.Backend.Controllers.Clients
         }
         //Edit basic infor
         [HttpPut("{clientId}/basics")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody]ClientBasicRequest request)
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        public async Task<IActionResult> PutClientBasic(string clientId, [FromBody] ClientBasicRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -60,8 +60,8 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client Origins for client
         [HttpPost("{clientId}/basics/origins")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClientOrigin(string clientId, [FromBody]ClientOriginRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostClientOrigin(string clientId, [FromBody] ClientOriginRequest request)
         {
             //Check Client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -122,7 +122,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete Client Origin 
         [HttpDelete("{clientId}/basics/origins/originName")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientOrigin(string clientId, string originName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

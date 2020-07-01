@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SSO.Services.RequestModel.Api
+﻿namespace SSO.Services.RequestModel.Api
 {
     public class ApiResourceSecretRequest
     {

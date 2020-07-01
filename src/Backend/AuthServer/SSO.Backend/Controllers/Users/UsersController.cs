@@ -1,5 +1,4 @@
-﻿using IdentityServer4.Extensions;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
@@ -9,7 +8,6 @@ using SSO.Services;
 using SSO.Services.RequestModel.User;
 using SSO.Services.ViewModel.User;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +25,7 @@ namespace SSO.Backend.Controllers.Users
         }
         //Post new user
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostUser([FromBody] UserCreateRequest request)
         {
             var user = new User()
@@ -52,6 +50,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Get all user info
         [HttpGet]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetUsers()
         {
             var user = User.Identity.Name;
@@ -71,6 +70,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Find user with User Name, Email, First Name, Last Name, Phone Number 
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetUsersPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _userManager.Users;
@@ -106,6 +106,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Get detail user with user id
         [HttpGet("{id}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -129,7 +130,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user wiht user id
         [HttpPut("{id}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutUser(string id, [FromBody] UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -154,7 +155,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put reset user password with user id
         [HttpPut("{id}/reset-password")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutResetPassword(string id)
         {
 
@@ -174,6 +175,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user password with user id
         [HttpPut("{id}/change-password")]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutUserPassword(string id, [FromBody] UserPasswordChangeUpdateRequest request)
         {
 
@@ -193,7 +195,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Delete user with user id
         [HttpDelete("{id}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -229,7 +231,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpGet("{userId}/roles")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetUserRoles(string userId)
         {
 
@@ -261,6 +263,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpPost("{userId}/roles")]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostRolesToUser(string userId, [FromBody] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)
@@ -278,7 +281,7 @@ namespace SSO.Backend.Controllers.Users
         }
 
         [HttpDelete("{userId}/roles")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> RemoveRolesFromUser(string userId, [FromQuery] RoleAssignRequest request)
         {
             if (request.RoleNames?.Length == 0)

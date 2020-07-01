@@ -82,6 +82,12 @@ namespace SSO.Backend.Data
 
             #endregion
 
+            #region permission
+
+
+
+            #endregion
+
             await _context.SaveChangesAsync();
         }
     }

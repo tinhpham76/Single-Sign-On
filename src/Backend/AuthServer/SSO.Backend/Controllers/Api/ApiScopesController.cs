@@ -10,7 +10,6 @@ using SSO.Backend.Data;
 using SSO.Services;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,6 +29,7 @@ namespace SSO.Backend.Controllers.Api
 
         // Find api scopes with scope name or id
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiScopesPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.ApiScopes.AsQueryable();
@@ -58,13 +58,14 @@ namespace SSO.Backend.Controllers.Api
 
         //Get infor api scope
         [HttpGet("{apiScopeName}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiScope(string apiScopeName)
         {
-            var apiScope= await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
+            var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
             if (apiScope == null)
                 return NotFound();
             var apiScopeViewModel = new ApiScopeViewModel()
-            {                
+            {
                 Name = apiScope.Name,
                 DisplayName = apiScope.DisplayName,
                 Description = apiScope.Description,
@@ -78,8 +79,8 @@ namespace SSO.Backend.Controllers.Api
 
         //Post basic infor api scope
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiScope([FromBody]ApiScopeRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostApiScope([FromBody] ApiScopeRequest request)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == request.Name);
             if (apiScope != null)
@@ -92,7 +93,7 @@ namespace SSO.Backend.Controllers.Api
                 Enabled = request.Enabled,
                 ShowInDiscoveryDocument = request.ShowInDiscoveryDocument,
                 Emphasize = request.Emphasize,
-                Required = request.Required                
+                Required = request.Required
             };
             _configurationDbContext.ApiScopes.Add(apiApiScopeRequest.ToEntity());
             var result = await _configurationDbContext.SaveChangesAsync();
@@ -103,7 +104,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Edit basic infor api scope
         [HttpPut("{apiScopeName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutApiScope(string apiScopeName, [FromBody] ApiScopeRequest request)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
@@ -125,7 +126,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api scope
         [HttpDelete("{apiScopeName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiScope(string apiScopeName)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);

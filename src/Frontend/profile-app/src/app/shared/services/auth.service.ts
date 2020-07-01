@@ -66,7 +66,7 @@ export function getClientSettings(): UserManagerSettings {
     redirect_uri: 'http://localhost:4300/auth-callback',
     post_logout_redirect_uri: 'http://localhost:4300/',
     response_type: 'code',
-    scope: 'sso.api user.api openid profile',
+    scope: 'user.api openid profile',
     filterProtocolClaims: true,
     loadUserInfo: true,
     automaticSilentRenew: true,

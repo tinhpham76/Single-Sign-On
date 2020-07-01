@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SSO.Services.ViewModel.User
+﻿namespace SSO.Services.ViewModel.User
 {
     public class UserRoleViewModel
     {

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
 {
-    public partial class ApiScopesController 
+    public partial class ApiScopesController
     {
         #region Api Scope Properties
         //Get api scope properties
         [HttpGet("{apiScopeName}/scopeProperties")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiScopeProperties(string apiScopeName)
         {
 
@@ -36,7 +34,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api resource property
         [HttpPost("{apiScopeName}/scopeProperties")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostApiScopeProperty(string apiScopeName, [FromBody] ApiScopePropertyRequest request)
         {
             //Check Api scope
@@ -89,8 +87,9 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource property
-        [RoleRequirement(RoleCode.Admin)]
+
         [HttpDelete("{apiScopeName}/scopeProperties/{propertyKey}")]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResourceProperty(string apiScopeName, string propertyKey)
         {
             var apiScope = await _configurationDbContext.ApiScopes.FirstOrDefaultAsync(x => x.Name == apiScopeName);
@@ -102,7 +101,7 @@ namespace SSO.Backend.Controllers.Api
             _context.ApiResourceProperties.Remove(apiProperty);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
-            { 
+            {
                 return Ok();
             }
             return BadRequest();

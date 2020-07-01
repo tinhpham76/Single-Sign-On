@@ -15,9 +15,10 @@ namespace SSO.Backend.Controllers.Clients
         #region Client Authentication
         //Get Authentication infor client for edit
         [HttpGet("{clientId}/authentications")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientAuthentication(string clientId)
         {
-            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x=>x.ClientId == clientId);
+            var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
                 return NotFound();
             var postLogoutRedirectUris = await _context.ClientPostLogoutRedirectUris
@@ -39,8 +40,8 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit authentication infor
         [HttpPut("{clientId}/authentications")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutGetClientAuthentication(string clientId, [FromBody]ClientAuthenticationRequest request)
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        public async Task<IActionResult> PutGetClientAuthentication(string clientId, [FromBody] ClientAuthenticationRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
             if (client == null)
@@ -62,8 +63,8 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post Client LogoutRedirectUri for client
         [HttpPost("{clientId}/authentications/postLogoutRedirectUris")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClientPostClientRedirectUri(string clientId, [FromBody]ClientPostClientRedirectUriRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostClientPostClientRedirectUri(string clientId, [FromBody] ClientPostClientRedirectUriRequest request)
         {
             //Check Client
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -123,7 +124,7 @@ namespace SSO.Backend.Controllers.Clients
         }
         //Delete Client LogoutRedirectUris 
         [HttpDelete("{clientId}/authentications/postLogoutRedirectUris/postLogoutRedirectUriName")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientPostLogoutRedirectUri(string clientId, string postLogoutRedirectUriName)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

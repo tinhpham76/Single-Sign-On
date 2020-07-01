@@ -32,6 +32,7 @@ namespace SSO.Backend.Controllers.Api
 
         // Find api resource with api resource name or id
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiResourcesPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.ApiResources.AsQueryable();
@@ -59,6 +60,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Get infor api resource
         [HttpGet("{apiResourceName}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiResource(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -78,8 +80,8 @@ namespace SSO.Backend.Controllers.Api
 
         //Post basic infor api resource
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostApiResource([FromBody]ApiResourceRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostApiResource([FromBody] ApiResourceRequest request)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == request.Name);
             if (apiResource != null)
@@ -90,7 +92,7 @@ namespace SSO.Backend.Controllers.Api
                 DisplayName = request.DisplayName,
                 Description = request.Description,
                 Enabled = request.Enabled,
-                AllowedAccessTokenSigningAlgorithms = { request.AllowedAccessTokenSigningAlgorithms},
+                AllowedAccessTokenSigningAlgorithms = { request.AllowedAccessTokenSigningAlgorithms },
                 ShowInDiscoveryDocument = request.ShowInDiscoveryDocument
             };
             _configurationDbContext.ApiResources.Add(apiResourceRequest.ToEntity());
@@ -103,8 +105,8 @@ namespace SSO.Backend.Controllers.Api
 
         //Edit basic infor api resource
         [HttpPut("{apiResourceName}")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutApiResource(string apiResourceName, [FromBody]ApiResourceRequest request)
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        public async Task<IActionResult> PutApiResource(string apiResourceName, [FromBody] ApiResourceRequest request)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
             if (apiResource == null)
@@ -125,7 +127,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Delete api resource
         [HttpDelete("{apiResourceName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResource(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

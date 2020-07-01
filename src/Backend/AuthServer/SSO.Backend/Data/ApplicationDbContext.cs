@@ -31,12 +31,14 @@ namespace SSO.Backend.Data
         public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
         //
         public DbSet<IdentityResourceClaim> IdentityResourceClaims { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<IdentityRole>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
             builder.Entity<User>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
+
         }
     }
 }

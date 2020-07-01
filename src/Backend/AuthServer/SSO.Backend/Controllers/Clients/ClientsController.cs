@@ -34,6 +34,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Show basic infor all client
         [HttpGet("{clientId}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientDetail(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -44,6 +45,7 @@ namespace SSO.Backend.Controllers.Clients
 
         // Find clients with client name or id
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientsPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.Clients.AsQueryable();
@@ -73,8 +75,8 @@ namespace SSO.Backend.Controllers.Clients
 
         //Post basic info client
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostClient([FromBody]ClientQuickRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostClient([FromBody] ClientQuickRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientName == request.ClientName);
             if (client != null)
@@ -156,7 +158,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delele client
         [HttpDelete("{clientId}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClient(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

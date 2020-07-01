@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Identity;
-using SSO.Services.ViewModel.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +16,7 @@ namespace SSO.Backend.Controllers.Identity
         #region Identity Resource Claim
         //Get ientity resource claim
         [HttpGet("{identityResourceName}/identityClaims")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetIdentityClaims(string identityResourceName)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
@@ -25,8 +25,8 @@ namespace SSO.Backend.Controllers.Identity
             var query = _context.IdentityResourceClaims.Where(x => x.IdentityResourceId.Equals(identityResource.Id));
             var identityClaims = await query.Select(x => new List<string>()
             {
-                 x.Type 
-                
+                 x.Type
+
             }).ToListAsync();
 
             return Ok(identityClaims);
@@ -34,8 +34,8 @@ namespace SSO.Backend.Controllers.Identity
 
         //Post identity claim
         [HttpPost("{identityResourceName}/identityClaims")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostIdentityClaim(string identityResourceName, [FromBody]IdentityClaimRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostIdentityClaim(string identityResourceName, [FromBody] IdentityClaimRequest request)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource != null)
@@ -91,7 +91,7 @@ namespace SSO.Backend.Controllers.Identity
 
         //Delete identity claim
         [HttpDelete("{identityResourceName}/identityClaims/{claimType}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiClaim(string identityResourceName, string claimType)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);

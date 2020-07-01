@@ -23,10 +23,10 @@ namespace SSO.BackendIdentityServer
         {
             return new List<ApiResource>
             {
-                new ApiResource("sso.api", "SSO API")
+                new ApiResource("SSO_API", "SSO API")
                 {
                     ApiSecrets = { new Secret("secret".Sha256()) },
-                    Scopes = { "sso.api" }
+                    Scopes = { "SSO_API", "SSO_VIEW", "SSO_CREATE", "SSO_UPDATE" , "SSO_DELETE"}
                 },
                  new ApiResource("user.api", "USER API")
                 {
@@ -43,6 +43,23 @@ namespace SSO.BackendIdentityServer
             {
                 // backward compat
                 new ApiScope("sso.api"),
+                new ApiScope("SSO_VIEW")
+                {
+                    UserClaims = {"Admin"}
+                },
+                new ApiScope("SSO_CREATE")
+                {
+                    UserClaims = {"Admin"}
+                },
+                new ApiScope("SSO_UPDATE")
+                {
+                    UserClaims = {"Admin"}
+                },
+                    new ApiScope("SSO_DELETE")
+                {
+                    UserClaims = {"Admin"}
+
+                },
                 new ApiScope("user.api")
             };
         }
@@ -87,8 +104,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api",
-                        "user.api",
+                        "user.api"
                     }
                 },
                 new Client
@@ -105,11 +121,8 @@ namespace SSO.BackendIdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RedirectUris = new List<string>
                     {
-
-                        "http://localhost:4200",
                         "http://localhost:4200/auth-callback",
                         "http://localhost:4200/silent-renew.html"
-
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
@@ -140,11 +153,8 @@ namespace SSO.BackendIdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RedirectUris = new List<string>
                     {
-
-                        "http://localhost:4300",
                         "http://localhost:4300/auth-callback",
                         "http://localhost:4300/silent-renew.html"
-
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
@@ -158,8 +168,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api",
-                         "user.api",
+                        "user.api",
                     }
                 }
             };

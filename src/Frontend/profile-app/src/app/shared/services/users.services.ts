@@ -16,6 +16,12 @@ export class UserServices extends BaseService {
         this._sharedHeaders = this._sharedHeaders.set('Content-Type', 'application/json');
 
     }
+    get(){
+        return this.http.get(`https://localhost:5001/weatherforecast`, {headers: this._sharedHeaders})
+        .pipe(catchError(this.handleError));
+
+    }
+
     add(entity: User) {
         return this.http.post(`${environment.apiUrl}/api/users`, JSON.stringify(entity), { headers: this._sharedHeaders })
             .pipe(catchError(this.handleError));

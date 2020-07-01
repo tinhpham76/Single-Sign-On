@@ -29,8 +29,8 @@ export class AddScopeComponent implements OnInit {
       name: [null, [Validators.required]],
       displayName: [null],
       description: [null],
-      required: [null],
-      emphasize: [null],
+      required: [false],
+      emphasize: [false],
       showInDiscoveryDocument: [true]
     });
   }
@@ -48,7 +48,6 @@ export class AddScopeComponent implements OnInit {
           'bottomRight');
         setTimeout(() => {
           this.isSpinning = false;
-          this.router.navigate(['/api-scopes']);
         }, 500);
       }, errorMessage => {
         this.createNotification(

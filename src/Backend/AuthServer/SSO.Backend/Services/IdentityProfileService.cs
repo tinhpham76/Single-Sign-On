@@ -2,6 +2,8 @@
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SSO.Backend.Data;
 using SSO.Backend.Data.Entities;
 using System;
@@ -40,14 +42,22 @@ namespace SSO.Backend.Services
 
             var principal = await _claimsFactory.CreateAsync(user);
             var claims = principal.Claims.ToList();
-            var roles = await _userManager.GetRolesAsync(user);          
-
+            var roles = await _userManager.GetRolesAsync(user);
+            var query = from c in _context.ApiScopeClaims
+                        join s in _context.ApiScopes
+                        on c.ScopeId equals s.Id
+                        where roles.Contains(c.Type)
+                        select s.Name;
+            var permissions = await query.Distinct().ToListAsync();
+            var scope = await _context.ApiScopes.Where(x => permissions.Contains(x.Name) && x.Enabled == true)
+                .Select(x => x.Name.ToString()).ToListAsync();
 
             //Add more claims like this
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim("fullName", user.LastName + " " + user.FirstName));
             claims.Add(new Claim(ClaimTypes.Role, string.Join(";", roles)));
+            claims.Add(new Claim("Permissions", JsonConvert.SerializeObject(scope)));
 
 
 

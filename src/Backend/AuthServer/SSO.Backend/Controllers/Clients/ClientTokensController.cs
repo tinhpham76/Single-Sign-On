@@ -15,6 +15,7 @@ namespace SSO.Backend.Controllers.Clients
         #region Client Token
         //Get token infor client for edit
         [HttpGet("{clientId}/tokens")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientToken(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -42,7 +43,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit token infor
         [HttpPut("{clientId}/tokens")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutClientBasic(string clientId, [FromBody] ClientTokenRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -74,6 +75,7 @@ namespace SSO.Backend.Controllers.Clients
 
         // Client Claim
         [HttpGet("{clientId}/tokens/clientClaims")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientClientClaims(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -92,7 +94,7 @@ namespace SSO.Backend.Controllers.Clients
 
         // Post client claim
         [HttpPost("{clientId}/tokens/clientClaims")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostClientClaim(string clientId, [FromBody] ClientClaimRequest request)
         {
             //Check client
@@ -125,7 +127,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Delete client claim
         [HttpDelete("{clientId}/tokens/clientClaims/{claimId}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteClientClaim(string clientId, int claimId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

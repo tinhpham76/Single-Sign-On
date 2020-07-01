@@ -14,6 +14,7 @@ namespace SSO.Backend.Controllers.Clients
         #region Client Device Flows
         //Get Device Flows infor client for edit
         [HttpGet("{clientId}/deviceFlows")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetClientDeviceFlow(string clientId)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);
@@ -30,7 +31,7 @@ namespace SSO.Backend.Controllers.Clients
 
         //Edit Device Flows infor
         [HttpPut("{clientId}/deviceFlows")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
         public async Task<IActionResult> PutClientDeviceFlow(string clientId, [FromBody] ClientDeviceFlowRequest request)
         {
             var client = await _configurationDbContext.Clients.FirstOrDefaultAsync(x => x.ClientId == clientId);

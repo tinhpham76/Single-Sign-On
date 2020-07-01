@@ -21,17 +21,18 @@ namespace SSO.Backend.Controllers.Identity
         #region Identity Resource
         private readonly ConfigurationDbContext _configurationDbContext;
         private readonly ApplicationDbContext _context;
-  
+
         public IdentityResourcesController(ConfigurationDbContext configurationDbContext,
             ApplicationDbContext context
             )
         {
             _configurationDbContext = configurationDbContext;
             _context = context;
-            
+
         }
         //Find identity resource
         [HttpGet("filter")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetIdentityResourcesPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _configurationDbContext.IdentityResources.AsQueryable();
@@ -57,6 +58,7 @@ namespace SSO.Backend.Controllers.Identity
 
         //Get detail info identity resource
         [HttpGet("{identityResourceName}")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetIdentityResource(string identityResourceName)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
@@ -77,8 +79,8 @@ namespace SSO.Backend.Controllers.Identity
 
         //Post identity resource
         [HttpPost]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PostIdentityResource([FromBody]IdentityResourceRequest request)
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        public async Task<IActionResult> PostIdentityResource([FromBody] IdentityResourceRequest request)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == request.Name);
             if (identityResource != null)
@@ -102,8 +104,8 @@ namespace SSO.Backend.Controllers.Identity
 
         //Put Identity Resource 
         [HttpPut("{identityResourceName}")]
-        [RoleRequirement(RoleCode.Admin)]
-        public async Task<IActionResult> PutIdentityResource(string identityResourceName, [FromBody]IdentityResourceRequest request)
+        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        public async Task<IActionResult> PutIdentityResource(string identityResourceName, [FromBody] IdentityResourceRequest request)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);
             if (identityResource == null)
@@ -126,7 +128,7 @@ namespace SSO.Backend.Controllers.Identity
 
         //Delete Identity Resource
         [HttpDelete("{identityResourceName}")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteIdentityResource(string identityResourceName)
         {
             var identityResource = await _configurationDbContext.IdentityResources.FirstOrDefaultAsync(x => x.Name == identityResourceName);

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSO.Backend.Authorization;
 using SSO.Backend.Constants;
 using SSO.Services.RequestModel.Api;
 using SSO.Services.ViewModel.Api;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Api
 {
@@ -16,6 +15,7 @@ namespace SSO.Backend.Controllers.Api
         #region Api Resource Scopes
         //Get api resource scopes
         [HttpGet("{apiResourceName}/resourceScopes")]
+        [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetApiResourceScopes(string apiResourceName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);
@@ -49,7 +49,7 @@ namespace SSO.Backend.Controllers.Api
 
         //Post api resource scope
         [HttpPost("{apiResourceName}/resourceScopes")]
-        [RoleRequirement(RoleCode.Admin)]
+        [ClaimRequirement(PermissionCode.SSO_CREATE)]
         public async Task<IActionResult> PostApiResourceScope(string apiResourceName, [FromBody] ApiResourceScopeRequest request)
         {
             //Check Api Resource
@@ -105,8 +105,9 @@ namespace SSO.Backend.Controllers.Api
 
 
         //Delete api resource scope
-        [RoleRequirement(RoleCode.Admin)]
+
         [HttpDelete("{apiResourceName}/resourceScopes/{scopeName}")]
+        [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResourceScope(string apiResourceName, string scopeName)
         {
             var apiResource = await _configurationDbContext.ApiResources.FirstOrDefaultAsync(x => x.Name == apiResourceName);

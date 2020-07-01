@@ -158,7 +158,7 @@ namespace SSO.Backend
                         new List<string>{ "sso.api" }
                     }
                 });
-            });            
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -190,7 +190,7 @@ namespace SSO.Backend
                 endpoints.MapRazorPages();
             });
 
-            app.UseSwagger();           
+            app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
