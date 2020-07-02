@@ -106,7 +106,7 @@ namespace SSO.Backend.Controllers.Clients
                 //If Client Scope is null, add Scope for client
                 if (clientScope == null)
                 {
-                    var temp = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Scope == request.Scope);
+                    var temp = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Scope == request.Scope && x.ClientId == client.Id);
                     if (temp != null)
                         return BadRequest();
                     var clientScopeRequest = new IdentityServer4.EntityFramework.Entities.ClientScope()
@@ -128,9 +128,6 @@ namespace SSO.Backend.Controllers.Clients
                 // If Client Scope not null, Check Client Scope on table with request Scope
                 else if (clientScope != null)
                 {
-                    var temp = await _context.ClientScopes.FirstOrDefaultAsync(x => x.Scope == request.Scope);
-                    if (temp != null)
-                        return BadRequest();
                     if (clientScope.Scope == request.Scope)
                         return BadRequest($"Client Scope {request.Scope} already exist");
 
@@ -294,8 +291,6 @@ namespace SSO.Backend.Controllers.Clients
                 // If Client GrantType not null, Check Client GrantType on table with request GrantType
                 else if (clientGrantType != null)
                 {
-
-
                     if (clientGrantType.GrantType == request.GrantType)
                         return BadRequest($"Client GrantType {request.GrantType} already exist");
 
@@ -448,7 +443,6 @@ namespace SSO.Backend.Controllers.Clients
                 return Ok();
             }
             return BadRequest();
-
         }
         #endregion
     }

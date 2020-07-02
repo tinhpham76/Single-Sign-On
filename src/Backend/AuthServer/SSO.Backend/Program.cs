@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using SSO.Backend.Data;
-using System;
 
 namespace SSO.Backend
 {
@@ -18,7 +14,7 @@ namespace SSO.Backend
                              .CreateLogger();
             var host = CreateHostBuilder(args).Build();
 
-          
+
             host.Run();
         }
 

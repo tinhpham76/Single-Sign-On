@@ -151,8 +151,7 @@ export class SettingScopeComponent implements OnInit {
         );
         setTimeout(() => {
           this.getApiScopeClaims(this.name);
-          this.isSpinning = false;
-         
+          this.isSpinning = false;    
         }, 500);
       });
   }

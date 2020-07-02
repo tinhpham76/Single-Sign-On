@@ -17,7 +17,7 @@ namespace SSO.Services.ViewModel.User
 
         public string LastName { get; set; }
 
-        public DateTime Dob { get; set; }
+        public String Dob { get; set; }
 
         public DateTime CreateDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }

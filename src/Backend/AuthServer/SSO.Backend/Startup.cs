@@ -105,7 +105,7 @@ namespace SSO.Backend
             services.AddAuthentication()
                .AddLocalApi("Bearer", option =>
                {
-                   option.ExpectedScope = "sso.api";
+                   option.ExpectedScope = "SSO_API";
                });
 
             services.AddAuthorization(options =>
@@ -144,7 +144,7 @@ namespace SSO.Backend
                         Implicit = new OpenApiOAuthFlow
                         {
                             AuthorizationUrl = new Uri("https://localhost:5000/connect/authorize"),
-                            Scopes = new Dictionary<string, string> { { "sso.api", "SSO API" } }
+                            Scopes = new Dictionary<string, string> { { "SSO_API", "SSO API" } }
                         },
                     },
                 });
@@ -155,7 +155,7 @@ namespace SSO.Backend
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
                         },
-                        new List<string>{ "sso.api" }
+                        new List<string>{ "SSO_API" }
                     }
                 });
             });
@@ -256,7 +256,5 @@ namespace SSO.Backend
                 }
             }
         }
-
-
     }
 }

@@ -87,7 +87,6 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource property
-
         [HttpDelete("{apiScopeName}/scopeProperties/{propertyKey}")]
         [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResourceProperty(string apiScopeName, string propertyKey)

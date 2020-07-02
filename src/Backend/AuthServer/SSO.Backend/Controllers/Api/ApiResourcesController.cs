@@ -46,6 +46,7 @@ namespace SSO.Backend.Controllers.Api
                 .Take(pageSize)
                 .Select(x => new ApiResourcesQuickView()
                 {
+                    Id = x.Id,
                     Name = x.Name,
                     Description = x.Description
                 }).ToListAsync();
@@ -101,7 +102,6 @@ namespace SSO.Backend.Controllers.Api
                 return Ok();
             return BadRequest();
         }
-
 
         //Edit basic infor api resource
         [HttpPut("{apiResourceName}")]

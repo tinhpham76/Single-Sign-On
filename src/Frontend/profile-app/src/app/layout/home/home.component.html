@@ -3,10 +3,133 @@
   <h1>Welcome {{lastName}} {{firstName}} !</h1>
   <p></p>
   <hr>
-  
   <!--End welcome sso-->
-  <button (click)='ngOnInit()'>
-    abc
-  </button>
-  
+  <nz-spin [nzSpinning]="isSpinning">
+    <!--Start description user-->
+    <nz-descriptions nzTitle=" User Info">
+    <nz-descriptions-item nzTitle="User Name"> {{userId}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="User Name"> {{userName}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Email"> {{email}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="First Name"> {{firstName}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Last Name"> {{lastName}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Phone Number"> {{phoneNumber}} </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Day of birth"> {{dob}} </nz-descriptions-item>
+    </nz-descriptions>
+    <!--End description user-->
+
+    <!--Edit-->
+    <nz-collapse>
+      <nz-collapse-panel *ngFor="let panel of panelUpdate" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
+        <form nz-form [nzLayout]="'vertical'"  [formGroup]="formEditUser" (ngSubmit)="saveChanges()">
+          <nz-form-item>
+            <nz-form-label>User Name:</nz-form-label>
+            <nz-form-control>
+              <nz-input-group>
+                <input style="background-color: #ececec;" nz-input formControlName="userName" readonly />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>First Name:</nz-form-label>
+            <nz-form-control nzErrorTip="The input is not valid!">
+              <nz-input-group>
+                <input formControlName="firstName" nz-input />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Last Name:</nz-form-label>
+            <nz-form-control nzErrorTip="The input is not valid!">
+              <nz-input-group>
+                <input nz-input formControlName="lastName" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Email:</nz-form-label>
+            <nz-form-control nzErrorTip="The input is not valid E-mail!">
+              <nz-input-group>
+                <input nz-input formControlName="email" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label  nzFor="phoneNumber" nzRequired>Phone Number</nz-form-label>
+            <nz-form-control [nzValidateStatus]="formEditUser.controls['phoneNumber']"
+              nzErrorTip="Please input your phone number!">
+              <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
+                <ng-template #addOnBeforeTemplate>
+                  <nz-select formControlName="phoneNumberPrefix" class="phone-select">
+                    <nz-option nzLabel="+84" nzValue="+84"></nz-option>
+                    <nz-option nzLabel="+85" nzValue="+85"></nz-option>
+                  </nz-select>
+                </ng-template>
+                <input formControlName="phoneNumber" id="'phoneNumber'" nz-input />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Date of birth:</nz-form-label>
+            <nz-form-control nzErrorTip="The input is not valid!">
+              <nz-input-group>
+                <input nz-input formControlName="dob" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" [disabled]="!formEditUser.valid">Save changes</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <nz-collapse>
+      <nz-collapse-panel *ngFor="let panel of panelChangePassword" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
+        <form nz-form [nzLayout]="'vertical'"  [formGroup]="formChangePassword" (ngSubmit)="changePassword()">
+          <nz-form-item>
+            <nz-form-label  [nzSm]="6" [nzXs]="24" nzRequired>Old Password:</nz-form-label>
+            <nz-form-control  [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid!">
+              <nz-input-group>
+                <input type="password" formControlName="currentPassword" nz-input />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Password</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your password!">
+              <input nz-input type="password" id="newPassword" formControlName="newPassword"
+                (ngModelChange)="updateConfirmValidator()" />
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword" nzRequired>Confirm Password</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+              <input nz-input type="password" formControlName="checkPassword" id="checkPassword" />
+              <ng-template #errorTpl let-control>
+                <ng-container *ngIf="control.hasError('required')">
+                  Please confirm your password!
+                </ng-container>
+                <ng-container *ngIf="control.hasError('confirm')">
+                  Two passwords that you enter is inconsistent!
+                </ng-container>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" [disabled]="!formChangePassword.valid">Change password</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <nz-collapse>
+      <nz-collapse-panel *ngFor="let panel of panelDelete" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
+        <button nz-button nzType="primary" nzDanger (click)= 'delete()' >Delete your account</button>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </nz-spin>
+
+
 </div>

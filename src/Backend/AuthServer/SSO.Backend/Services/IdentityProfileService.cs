@@ -56,10 +56,8 @@ namespace SSO.Backend.Services
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim("fullName", user.LastName + " " + user.FirstName));
-            claims.Add(new Claim(ClaimTypes.Role, string.Join(";", roles)));
+            claims.Add(new Claim("Role", string.Join(";", roles)));
             claims.Add(new Claim("Permissions", JsonConvert.SerializeObject(scope)));
-
-
 
             context.IssuedClaims = claims;
         }

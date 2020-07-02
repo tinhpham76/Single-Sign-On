@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace SSO.Backend.Controllers.Identity
 {
-
     public partial class IdentityResourcesController : BaseController
     {
         #region Identity Resource
@@ -45,6 +44,7 @@ namespace SSO.Backend.Controllers.Identity
                 .Take(pageSize)
                 .Select(x => new IdentityResourcesQuickView()
                 {
+                    Id = x.Id,
                     Name = x.Name,
                     Description = x.Description
                 }).ToListAsync();

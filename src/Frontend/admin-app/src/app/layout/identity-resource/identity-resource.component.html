@@ -17,6 +17,7 @@
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
+                <th>Index</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Identity Claim</th>
@@ -25,6 +26,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let identity of identityTable.data">
+                <td>{{ identity.id }}</td>
                 <td>{{ identity.name }}</td>
                 <td>{{ identity.description }}</td>
                 <td>

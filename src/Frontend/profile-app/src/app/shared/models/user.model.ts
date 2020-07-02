@@ -5,7 +5,7 @@ export class User {
     lastName: string;
     email: string;
     phoneNumber: number;
-    dob: Date;
+    dob: string;
     createDate: Date;
     lastModifiedDate: Date;
 }

@@ -107,7 +107,7 @@ export class UserComponent implements OnInit {
           email: res.email,
           phoneNumberPrefix: '+84',
           phoneNumber: res.phoneNumber,
-          dob: dob
+          dob: res.dob
         });
         setTimeout(() => {
           this.isSpinningEditUser = false;

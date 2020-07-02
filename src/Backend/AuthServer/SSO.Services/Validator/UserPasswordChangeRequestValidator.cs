@@ -7,7 +7,6 @@ namespace SSO.Services.Validator
     {
         public UserPasswordChangeRequestValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty().WithMessage("UserId name is required");
 
             RuleFor(x => x.CurrentPassword).NotEmpty().WithMessage("CurrentPassword name is required");
 

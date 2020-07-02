@@ -16,6 +16,7 @@
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
+                <th>Index</th>
                 <th>Client Id</th>
                 <th>Logo</th>
                 <th>Client Name</th>
@@ -24,9 +25,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let client of clientTable.data">
+                <td>{{ client.id }}</td>
                 <td>{{ client.clientId }}</td>
                 <td>{{ client.logoUri }}</td>
-                <td>{{client.clientName}}</td>
+                <td>{{ client.clientName }}</td>
 
                 <td>
                     <div class="table-action">

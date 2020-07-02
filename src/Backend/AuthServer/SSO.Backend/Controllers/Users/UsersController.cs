@@ -23,9 +23,10 @@ namespace SSO.Backend.Controllers.Users
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
         //Post new user
         [HttpPost]
-        [ClaimRequirement(PermissionCode.SSO_CREATE)]
+        [ClaimRequirement(PermissionCode.USER_CREATE)]
         public async Task<IActionResult> PostUser([FromBody] UserCreateRequest request)
         {
             var user = new User()
@@ -50,7 +51,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Get all user info
         [HttpGet]
-        [ClaimRequirement(PermissionCode.SSO_VIEW)]
+        [ClaimRequirement(PermissionCode.USER_VIEW)]
         public async Task<IActionResult> GetUsers()
         {
             var user = User.Identity.Name;
@@ -62,7 +63,7 @@ namespace SSO.Backend.Controllers.Users
                 LastName = x.FirstName,
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
-                Dob = x.Dob,
+                Dob = x.Dob.ToString("MM/dd/yyyy"),
                 CreateDate = x.CreateDate
             }).ToListAsync();
             return Ok(users);
@@ -70,7 +71,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Find user with User Name, Email, First Name, Last Name, Phone Number 
         [HttpGet("filter")]
-        [ClaimRequirement(PermissionCode.SSO_VIEW)]
+        [ClaimRequirement(PermissionCode.USER_VIEW)]
         public async Task<IActionResult> GetUsersPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _userManager.Users;
@@ -92,7 +93,7 @@ namespace SSO.Backend.Controllers.Users
                     FullName = x.LastName + ' ' + x.FirstName,
                     Email = x.Email,
                     PhoneNumber = x.PhoneNumber,
-                    Dob = x.Dob,
+                    Dob = x.Dob.ToString("MM/dd/yyyy"),
                     CreateDate = x.CreateDate
                 }).ToListAsync();
 
@@ -106,7 +107,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Get detail user with user id
         [HttpGet("{id}")]
-        [ClaimRequirement(PermissionCode.SSO_VIEW)]
+        [ClaimRequirement(PermissionCode.USER_VIEW)]
         public async Task<IActionResult> GetById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -118,7 +119,7 @@ namespace SSO.Backend.Controllers.Users
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Dob = user.Dob,
+                Dob = user.Dob.ToString("MM/dd/yyyy"),
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 FirstName = user.FirstName,
@@ -130,8 +131,8 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user wiht user id
         [HttpPut("{id}")]
-        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
-        public async Task<IActionResult> PutUser(string id, [FromBody] UserCreateRequest request)
+        [ClaimRequirement(PermissionCode.USER_UPDATE)]
+        public async Task<IActionResult> PutUser(string id, [FromBody] UserUpdateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -151,7 +152,6 @@ namespace SSO.Backend.Controllers.Users
             }
             return BadRequest();
         }
-
 
         //Put reset user password with user id
         [HttpPut("{id}/reset-password")]
@@ -175,14 +175,12 @@ namespace SSO.Backend.Controllers.Users
 
         //Put user password with user id
         [HttpPut("{id}/change-password")]
-        [ClaimRequirement(PermissionCode.SSO_UPDATE)]
+        [ClaimRequirement(PermissionCode.USER_UPDATE)]
         public async Task<IActionResult> PutUserPassword(string id, [FromBody] UserPasswordChangeUpdateRequest request)
         {
-
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound($"Cannot found user with id: {id}");
-
 
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 
@@ -195,7 +193,7 @@ namespace SSO.Backend.Controllers.Users
 
         //Delete user with user id
         [HttpDelete("{id}")]
-        [ClaimRequirement(PermissionCode.SSO_DELETE)]
+        [ClaimRequirement(PermissionCode.USER_DELETE)]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -217,7 +215,7 @@ namespace SSO.Backend.Controllers.Users
                 {
                     Id = user.Id,
                     UserName = user.UserName,
-                    Dob = user.Dob,
+                    Dob = user.Dob.ToString("MM/dd/yyyy"),
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
                     FirstName = user.FirstName,
@@ -234,7 +232,6 @@ namespace SSO.Backend.Controllers.Users
         [ClaimRequirement(PermissionCode.SSO_VIEW)]
         public async Task<IActionResult> GetUserRoles(string userId)
         {
-
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return NotFound();
@@ -301,7 +298,6 @@ namespace SSO.Backend.Controllers.Users
 
             return BadRequest();
         }
-
         #endregion
     }
 }

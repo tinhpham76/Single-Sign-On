@@ -16,6 +16,7 @@
         [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
+                <th>Index</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Setting Api</th>
@@ -24,6 +25,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let api of apiTable.data">
+                <td>{{ api.id }}</td>
                 <td>{{ api.name }}</td>
                 <td>{{ api.description }}</td>
                 <td>

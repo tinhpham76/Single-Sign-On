@@ -23,7 +23,6 @@ namespace SSO.Backend.Controllers.Clients
         private readonly IClientStore _clientStore;
         private readonly ApplicationDbContext _context;
         private readonly ConfigurationDbContext _configurationDbContext;
-
         public ClientsController(ConfigurationDbContext configurationDbContext, IClientStore clientStore, ApplicationDbContext context
             )
         {
@@ -60,6 +59,7 @@ namespace SSO.Backend.Controllers.Clients
                 .Take(pageSize)
                 .Select(x => new ClientsQuickView()
                 {
+                    Id = x.Id,
                     ClientId = x.ClientId,
                     ClientName = x.ClientName,
                     LogoUri = x.LogoUri
@@ -153,7 +153,6 @@ namespace SSO.Backend.Controllers.Clients
             if (result > 0)
                 return Ok();
             return BadRequest();
-
         }
 
         //Delele client

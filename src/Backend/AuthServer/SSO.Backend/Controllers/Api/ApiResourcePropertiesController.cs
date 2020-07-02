@@ -92,7 +92,6 @@ namespace SSO.Backend.Controllers.Api
         }
 
         //Delete api resource property
-
         [HttpDelete("{apiResourceName}/resourceProperties/{propertyKey}")]
         [ClaimRequirement(PermissionCode.SSO_DELETE)]
         public async Task<IActionResult> DeleteApiResourceProperty(string apiResourceName, string propertyKey)
@@ -115,6 +114,5 @@ namespace SSO.Backend.Controllers.Api
             return BadRequest();
         }
         #endregion
-
     }
 }

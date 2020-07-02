@@ -26,12 +26,12 @@ namespace SSO.BackendIdentityServer
                 new ApiResource("SSO_API", "SSO API")
                 {
                     ApiSecrets = { new Secret("secret".Sha256()) },
-                    Scopes = { "SSO_API", "SSO_VIEW", "SSO_CREATE", "SSO_UPDATE" , "SSO_DELETE"}
+                    Scopes = { "SSO_API"}
                 },
-                 new ApiResource("user.api", "USER API")
+                 new ApiResource("USER_API", "USER API")
                 {
                     ApiSecrets = { new Secret("secret".Sha256()) },
-                    Scopes = { "user.api" }
+                    Scopes = { "USER_API"}
                 }
 
             };
@@ -42,7 +42,7 @@ namespace SSO.BackendIdentityServer
             return new List<ApiScope>
             {
                 // backward compat
-                new ApiScope("sso.api"),
+                new ApiScope("SSO_API"),
                 new ApiScope("SSO_VIEW")
                 {
                     UserClaims = {"Admin"}
@@ -60,7 +60,24 @@ namespace SSO.BackendIdentityServer
                     UserClaims = {"Admin"}
 
                 },
-                new ApiScope("user.api")
+                new ApiScope("USER_API"),
+                 new ApiScope("USER_VIEW")
+                {
+                    UserClaims = {"Admin", "Member"}
+                },
+                new ApiScope("USER_CREATE")
+                {
+                    UserClaims ={"Admin", "Member"}
+                },
+                new ApiScope("USER_UPDATE")
+                {
+                    UserClaims = {"Admin", "Member"}
+                },
+                    new ApiScope("USER_DELETE")
+                {
+                    UserClaims = {"Admin", "Member"}
+
+                },
             };
         }
 
@@ -84,7 +101,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api"
+                        "SSO_API"
                     }
                 },
                  new Client
@@ -104,7 +121,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "user.api"
+                          "USER_API", "SSO_API"
                     }
                 },
                 new Client
@@ -136,7 +153,7 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "sso.api",
+                        "SSO_API"
                     }
                 },
                 new Client
@@ -168,9 +185,10 @@ namespace SSO.BackendIdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "user.api",
+                        "USER_API", "SSO_API"
                     }
                 }
+
             };
         }
     }

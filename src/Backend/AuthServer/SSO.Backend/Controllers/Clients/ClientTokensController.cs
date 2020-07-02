@@ -146,7 +146,6 @@ namespace SSO.Backend.Controllers.Clients
                 return Ok();
             }
             return BadRequest();
-
         }
         #endregion
     }

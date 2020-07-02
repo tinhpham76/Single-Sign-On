@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace USERAPI.Backend.Models
+namespace SSO.Services.RequestModel.User
 {
-    public class UserViewModel
+    public class UserUpdateRequest
     {
-        public string Id { get; set; }
-
         public string UserName { get; set; }
 
         public string Email { get; set; }
@@ -20,8 +17,5 @@ namespace USERAPI.Backend.Models
         public string LastName { get; set; }
 
         public string Dob { get; set; }
-
-        public DateTime CreateDate { get; set; }
-        public DateTime? LastModifiedDate { get; set; }
     }
 }

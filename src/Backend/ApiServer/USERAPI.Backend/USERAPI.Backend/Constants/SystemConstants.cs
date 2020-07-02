@@ -1,15 +1,15 @@
-﻿namespace SSO.Backend.Constants
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace USERAPI.Backend.Constants
 {
     public class SystemConstants
     {
-        public class Roles
-        {
-            public const string Admin = "Admin";
-        }
         public class Permission
         {
             public const string Type = "Permissions";
         }
-
     }
 }

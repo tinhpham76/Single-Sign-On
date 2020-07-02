@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-using SSO.Backend.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using USERAPI.Backend.Constants;
 
-namespace SSO.Backend.Authorization
+namespace USERAPI.Backend.Authorization
 {
     public class ClaimRequirementFilter : IAuthorizationFilter
     {

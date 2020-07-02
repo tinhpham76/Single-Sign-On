@@ -105,7 +105,6 @@ namespace SSO.Backend.Controllers.Identity
             if (result > 0)
                 return Ok();
             return BadRequest();
-
         }
         #endregion
     }

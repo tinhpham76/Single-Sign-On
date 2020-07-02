@@ -43,6 +43,7 @@ namespace SSO.Backend.Controllers.Api
                 .Take(pageSize)
                 .Select(x => new ApiScopesQuickView()
                 {
+                    Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
                     DisplayName = x.DisplayName

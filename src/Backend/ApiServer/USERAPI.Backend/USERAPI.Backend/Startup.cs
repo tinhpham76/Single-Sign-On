@@ -1,22 +1,31 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using USERAPI.Backend.Data;
-using USERAPI.Data.Entities;
+using USERAPI.Backend.Services;
 
 namespace USERAPI.Backend
 {
@@ -26,36 +35,53 @@ namespace USERAPI.Backend
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-           // services.AddControllers();
-            //1. Setup entity framework
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            ////2. Setup idetntity
-            /*services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-                */
-             services.AddMvc();
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            services.AddHttpClient("BackendApi").ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+                //if (environment == Environments.Development)
+                //{
+                //    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                //}
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                return handler;
+            });
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
+
+            services.AddControllersWithViews();
+            services.AddAuthentication(options=>
+            {
+                options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+              
+            })
             .AddIdentityServerAuthentication(options =>
             {
-                options.Authority = "https://localhost:5000";
-                options.ApiName = "user.api";
-                options.ApiSecret = "secret";
+                options.Authority = Configuration["Authorization:AuthorityUrl"];
+                options.ApiSecret = Configuration["Authorization:ClientSecret"];
+                options.ApiName = "USER_API";
+                options.ApiName = "SSO_API";
+
             });
+
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("myPolicy", builder =>
                 {
                     // require scope1
-                    builder.RequireScope("user.api");
-
+                    builder.RequireScope("USER_API");
+                    builder.RequireScope("SSO_API");
                 });
             });
 
@@ -71,7 +97,7 @@ namespace USERAPI.Backend
                         Implicit = new OpenApiOAuthFlow
                         {
                             AuthorizationUrl = new Uri("https://localhost:5000/connect/authorize"),
-                            Scopes = new Dictionary<string, string> { { "user.api", "USER API" } }
+                            Scopes = new Dictionary<string, string> { { "SSO_API", "SSO API" }, { "USER_API", "USER API" } }
                         },
                     },
                 });
@@ -82,15 +108,19 @@ namespace USERAPI.Backend
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
                         },
-                        new List<string>{ "user.api" }
+                        new List<string>{ "USER_API", "SSO_API" }
                     }
                 });
             });
 
-            
-            
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        }
+            //Declare DI containers
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IUserApiClient, UserApiClient>();
+
+            
+    }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -99,13 +129,14 @@ namespace USERAPI.Backend
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseSession();
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection();  
 
             app.UseRouting();
 
             app.UseCors(corsPolicyBuilder =>
-            corsPolicyBuilder.WithOrigins("http://localhost:4300")
+            corsPolicyBuilder.WithOrigins(Configuration["AllowOrigins"])
             .AllowAnyMethod()
             .AllowAnyHeader()
             );
@@ -114,7 +145,7 @@ namespace USERAPI.Backend
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
 
             app.UseSwagger();
