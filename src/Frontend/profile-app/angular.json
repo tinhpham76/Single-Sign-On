@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "admin-app": {
+    "profile-app": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -67,18 +67,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "admin-app:build"
+            "browserTarget": "profile-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "admin-app:build:production"
+              "browserTarget": "profile-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "admin-app:build"
+            "browserTarget": "profile-app:build"
           }
         },
         "test": {
@@ -115,7 +115,7 @@
         }
       }
     },
-    "admin-app-e2e": {
+    "profile-app-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -124,11 +124,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "admin-app:serve"
+            "devServerTarget": "profile-app:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "admin-app:serve:production"
+              "devServerTarget": "profile-app:serve:production"
             }
           }
         },
@@ -144,7 +144,7 @@
       }
     }
   },
-  "defaultProject": "admin-app",
+  "defaultProject": "profile-app",
   "schematics": {
     "@schematics/angular:component": {
       "style": "scss",
