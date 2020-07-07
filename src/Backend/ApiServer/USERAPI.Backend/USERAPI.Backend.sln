@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USERAPI.Backend", "USERAPI.Backend\USERAPI.Backend.csproj", "{EE6579D0-F719-4845-A17D-670221D1B23E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USERAPI.Backend", "USERAPI.Backend\USERAPI.Backend.csproj", "{EE6579D0-F719-4845-A17D-670221D1B23E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

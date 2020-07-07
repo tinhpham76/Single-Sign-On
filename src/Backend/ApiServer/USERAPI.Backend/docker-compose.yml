@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  userapi.backend:
+    image: ${DOCKER_REGISTRY-}userapibackend
+    build:
+      context: .
+      dockerfile: USERAPI.Backend/Dockerfile

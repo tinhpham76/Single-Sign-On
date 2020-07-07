@@ -1,0 +1,79 @@
+version: '3.4'
+
+services:
+  ### Database ###
+  database:
+    image: "mcr.microsoft.com/mssql/server:2019-CU5-ubuntu-18.04"
+    container_name: 'database'
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "!kAa36qDc"  
+    ports:
+      - "1430:1433" 
+    volumes:
+    - type: bind
+      source: ./Database/data
+      target: /var/opt/mssql/data 
+    - type: bind
+      source: ./Database/log
+      target: /var/opt/mssql/logs
+    networks: 
+      - network-sso              
+  ###Front end ###
+  profile-app:
+    container_name: profile-app
+    build:
+      context: ./src/Frontend/profile-app
+      dockerfile: Dockerfile
+    ports:
+      - "4300:4300"
+    networks:
+      - network-sso
+  admin-app:
+    container_name: admin-app
+    build:
+      context: ./src/Frontend/admin-app
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - network-sso
+  ### Back end ###    
+  sso.backend:
+    image: ${DOCKER_REGISTRY-}auth-server
+    container_name: auth-server
+    build:
+      context: ./src/Backend/AuthServer
+      dockerfile: Dockerfile
+    ports: 
+      - "5000:5000"  
+    volumes:
+    - type: bind
+      source: ./Backend/SSO.Backend/logs
+      target: /app/wwwroot/logs
+    depends_on: 
+      - "database"
+    networks: 
+      - network-sso 
+  userapi.backend:
+    image: ${DOCKER_REGISTRY-}user-api
+    container_name: user-api
+    build:
+      context: ./src/Backend/ApiServer/USERAPI.Backend
+      dockerfile: Dockerfile
+    ports: 
+      - "5001:5001"  
+    volumes:
+    - type: bind
+      source: ./Backend/USERAPI.Backend/logs
+      target: /app/wwwroot/logs
+    depends_on: 
+      - "database"
+      - "sso.backend"
+    networks: 
+      - network-sso    
+
+networks:
+  network-sso:
+    driver: bridge
+      
