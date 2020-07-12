@@ -7,17 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["./SSO.Backend/SSO.Backend.csproj", "SSO.Backend/"]
-COPY ["./SSO.Services/SSO.Services.csproj", "SSO.Services/"]
-RUN dotnet restore "SSO.Backend/SSO.Backend.csproj"
+COPY ["./USERAPI.Backend/USERAPI.Backend.csproj", "USERAPI.Backend/"]
+RUN dotnet restore "USERAPI.Backend/USERAPI.Backend.csproj"
 COPY . .
-WORKDIR "/src/SSO.Backend"
-RUN dotnet build "SSO.Backend.csproj" -c Release -o /app/build
+WORKDIR "/src/USERAPI.Backend"
+RUN dotnet build "USERAPI.Backend.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "SSO.Backend.csproj" -c Release -o /app/publish
+RUN dotnet publish "USERAPI.Backend.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SSO.Backend.dll"]
+ENTRYPOINT ["dotnet", "USERAPI.Backend.dll"]

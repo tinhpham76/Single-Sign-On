@@ -1,0 +1,112 @@
+version: '3.4'
+
+services:
+  #############################
+  # Database
+  #############################
+  database:
+    image: "mcr.microsoft.com/mssql/server:2019-CU5-ubuntu-18.04"
+    container_name: 'database'
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "kAa36qDc"  
+      TZ: "Asia/Ho_Chi_Minh"
+    ports:
+      - "1430:1433" 
+    volumes:
+    - type: bind
+      source: ./DATA-DOCKER/Database/data
+      target: /var/opt/mssql/data
+    restart: unless-stopped   
+    networks: 
+      - network-sso              
+  #############################
+  # Auth Server
+  #############################   
+  auth-server:
+    image: "auth-server"
+    container_name: "auth-server"
+    build:
+      context: ../Backend/AuthServer/
+      dockerfile: Dockerfile
+    environment:
+      TZ: "Asia/Ho_Chi_Minh"
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:5000
+      SwaggerAuthorityUrl: "https://localhost:5000"
+      Https: "true"
+      IssuerUri: "https://auth-server"
+      ConnectionStrings:DefaultConnection: "Server=database;Database=SingleSignOn;User Id=sa;password=kAa36qDc;"  
+    volumes:
+    - type: bind
+      source: ./DATA-DOCKER/Backend/SSO.Backend/logs
+      target: /app/wwwroot/logs
+    depends_on: 
+      - "database"
+    ports: 
+      - "5000:5000"   
+    networks: 
+      - network-sso 
+    restart: unless-stopped  
+  ##############################
+  ## User Api
+  ##############################
+  user-api:
+    image: "user-api"
+    container_name: "user-api"
+    build:
+      context: ../Backend/ApiServer/
+      dockerfile: Dockerfile
+    environment:
+      TZ: "Asia/Ho_Chi_Minh"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: https://+:5002
+      Authority: "https://auth-server:5000"
+      RequireHttpsMetadata: "true"
+      Https: "true"
+      SwaggerAuthorityUrl: "https://localhost:5000"
+      BackendApiUrl: "https://auth-server:5000"
+    volumes:
+    - type: bind
+      source: ./DATA-DOCKER/Backend/USERAPI.Backend/logs
+      target: /app/wwwroot/logs
+    ports: 
+      - "5002:5002"
+    networks: 
+      - network-sso 
+    restart: unless-stopped 
+  ##############################
+  ## Admin app
+  ##############################
+  admin-app:
+    container_name: admin-app
+    build:
+      context: ../Frontend/admin-app
+      dockerfile: Dockerfile
+    environment:   
+      TZ: "Asia/Ho_Chi_Minh"  
+    ports:
+      - "4200:4200"
+    networks:
+      - network-sso
+  ##############################
+  ## Profile app
+  ##############################
+  profile-app:
+    container_name: profile-app
+    build:
+      context: ../Frontend/profile-app
+      dockerfile: Dockerfile
+    environment:   
+      TZ: "Asia/Ho_Chi_Minh"   
+    ports:
+      - "4300:4300"
+    networks:
+      - network-sso
+##############################
+## Docker NetWork
+##############################
+networks:
+  network-sso:
+    driver: bridge
+      

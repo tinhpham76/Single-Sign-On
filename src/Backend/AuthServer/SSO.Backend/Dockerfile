@@ -7,8 +7,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["./SSO.Backend/SSO.Backend.csproj", "SSO.Backend/"]
-COPY ["./SSO.Services/SSO.Services.csproj", "SSO.Services/"]
+COPY ["SSO.Backend/SSO.Backend.csproj", "SSO.Backend/"]
+COPY ["SSO.Services/SSO.Services.csproj", "SSO.Services/"]
 RUN dotnet restore "SSO.Backend/SSO.Backend.csproj"
 COPY . .
 WORKDIR "/src/SSO.Backend"

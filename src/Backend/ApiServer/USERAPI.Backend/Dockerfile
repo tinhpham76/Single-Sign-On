@@ -2,11 +2,12 @@
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
-EXPOSE 5001
+EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["./USERAPI.Backend/USERAPI.Backend.csproj", "USERAPI.Backend/"]
+COPY ["USERAPI.Backend/USERAPI.Backend.csproj", "USERAPI.Backend/"]
 RUN dotnet restore "USERAPI.Backend/USERAPI.Backend.csproj"
 COPY . .
 WORKDIR "/src/USERAPI.Backend"

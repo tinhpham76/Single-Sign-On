@@ -1,11 +1,12 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
 namespace SSO.BackendIdentityServer
 {
     //Seed data identity server if db is null
-    public class Config
+    public class ConfigHttp
     {
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
@@ -93,9 +94,9 @@ namespace SSO.BackendIdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
 
-                    RedirectUris =           { "https://localhost:5000/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { "https://localhost:5000/swagger" },
-                    AllowedCorsOrigins =     { "https://localhost:5000" },
+                    RedirectUris =           { "http://localhost:5001/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { "http://localhost:5001/swagger" },
+                    AllowedCorsOrigins =     { "http://localhost:5001" },
 
                     AllowedScopes = new List<string>
                     {
@@ -113,9 +114,9 @@ namespace SSO.BackendIdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
 
-                    RedirectUris =           { "https://localhost:5001/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { "https://localhost:5001/swagger" },
-                    AllowedCorsOrigins =     { "https://localhost:5001" },
+                    RedirectUris =           { "http://localhost:5003/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { "http://localhost:5003/swagger" },
+                    AllowedCorsOrigins =     { "http://localhost:5003" },
 
                     AllowedScopes = new List<string>
                     {

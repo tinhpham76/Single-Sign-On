@@ -3,13 +3,16 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>0c243832-a1d5-4b28-97c4-5566c24adb54</ProjectGuid>
+    <ProjectGuid>7cb7e2a8-6f7a-4f86-bcbe-b08de64b72ff</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/weatherforecast</DockerServiceUrl>
+    <DockerServiceName>userapi.backend</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
-    <None Include="./src/Backend/AuthServer/dockerignore" />
+    <None Include=".dockerignore" />
   </ItemGroup>
 </Project>

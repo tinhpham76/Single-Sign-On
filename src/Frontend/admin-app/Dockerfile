@@ -19,7 +19,7 @@ COPY . .
 RUN npm run ng build -- --prod
 
 # Stage 2
-FROM nginx:alpine
+FROM nginx:latest
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 

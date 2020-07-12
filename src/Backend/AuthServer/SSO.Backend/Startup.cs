@@ -3,6 +3,7 @@ using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -18,14 +19,13 @@ using SSO.Service.Validator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 
 namespace SSO.Backend
 {
     public class Startup
     {
-        private readonly string SSOSpecificOrigins = "SSOSpecificOrigins";
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -47,7 +47,14 @@ namespace SSO.Backend
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddIdentityServer()
+            services.AddIdentityServer(options =>
+            {
+                options.IssuerUri = Configuration["IssuerUri"];
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+            })
                 .AddDeveloperSigningCredential()
                 .AddAspNetIdentity<User>()
                 // this adds the config data from DB (clients, resources)
@@ -70,16 +77,7 @@ namespace SSO.Backend
                  })
                 .AddProfileService<IdentityProfileService>();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy(SSOSpecificOrigins,
-                builder =>
-                {
-                    builder.WithOrigins(Configuration["AllowOrigins"])
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });
+            
 
 
             services.Configure<IdentityOptions>(options =>
@@ -143,7 +141,7 @@ namespace SSO.Backend
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("https://localhost:5000/connect/authorize"),
+                            AuthorizationUrl = new Uri(Configuration["SwaggerAuthorityUrl"] + "/connect/authorize"),
                             Scopes = new Dictionary<string, string> { { "SSO_API", "SSO API" } }
                         },
                     },
@@ -169,20 +167,41 @@ namespace SSO.Backend
                 app.UseDeveloperExceptionPage();
             }
 
-            InitializeDatabase(app);
+            app.UseCors(corsPolicyBuilder =>
+            corsPolicyBuilder.WithOrigins(Configuration["AllowOrigin"], "http://localhost:4300")
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           );
+
+            //InitializeDatabase(app);
 
             app.UseStaticFiles();
+
+            if (!(Configuration["Https"] == "true"))
+            {
+                var fordwardedHeaderOptions = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                };
+                fordwardedHeaderOptions.KnownNetworks.Clear();
+                fordwardedHeaderOptions.KnownProxies.Clear();
+
+                app.UseForwardedHeaders(fordwardedHeaderOptions);
+
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseIdentityServer();
 
             app.UseAuthentication();
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
-            app.UseCors(SSOSpecificOrigins);
+           
 
             app.UseEndpoints(endpoints =>
             {
@@ -201,19 +220,20 @@ namespace SSO.Backend
         }
 
         //Initialize database and seed data: IdentityServer & AspNetIdentity if project can't found database on SqlServer
-        private void InitializeDatabase(IApplicationBuilder app)
+       /* private void InitializeDatabase(IApplicationBuilder app)
         {
+            // Create db User
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
             }
-
+            // Add User data
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitializer>();
                 dbInitializer.Seed().Wait();
             }
-
+            // Create db and add data AuthServer
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
@@ -222,39 +242,83 @@ namespace SSO.Backend
                 context.Database.Migrate();
                 if (!context.Clients.Any())
                 {
-                    foreach (var client in Config.GetClients())
+                    if (Configuration["Https"] == "true")
                     {
-                        context.Clients.Add(client.ToEntity());
+                        foreach (var client in ConfigHttps.GetClients())
+                        {
+                            context.Clients.Add(client.ToEntity());
+                        }
                     }
+                    else
+                    {
+                        foreach (var client in ConfigHttp.GetClients())
+                        {
+                            context.Clients.Add(client.ToEntity());
+                        }
+                    }
+
                     context.SaveChanges();
                 }
 
                 if (!context.IdentityResources.Any())
                 {
-                    foreach (var resource in Config.GetIdentityResources())
+                    if (Configuration["Https"] == "true")
                     {
-                        context.IdentityResources.Add(resource.ToEntity());
+                        foreach (var resource in ConfigHttps.GetIdentityResources())
+                        {
+                            context.IdentityResources.Add(resource.ToEntity());
+                        }
                     }
+                    else
+                    {
+                        foreach (var resource in ConfigHttp.GetIdentityResources())
+                        {
+                            context.IdentityResources.Add(resource.ToEntity());
+                        }
+                    }
+
                     context.SaveChanges();
                 }
 
                 if (!context.ApiResources.Any())
                 {
-                    foreach (var resource in Config.GetApiResources())
+                    if (Configuration["Https"] == "true")
                     {
-                        context.ApiResources.Add(resource.ToEntity());
+                        foreach (var resource in ConfigHttps.GetApiResources())
+                        {
+                            context.ApiResources.Add(resource.ToEntity());
+                        }
                     }
+                    else
+                    {
+
+                        foreach (var resource in ConfigHttp.GetApiResources())
+                        {
+                            context.ApiResources.Add(resource.ToEntity());
+                        }
+                    }
+
                     context.SaveChanges();
                 }
                 if (!context.ApiScopes.Any())
                 {
-                    foreach (var resource in Config.GetApiScopes())
+                    if (Configuration["Https"] == "true")
                     {
-                        context.ApiScopes.Add(resource.ToEntity());
+                        foreach (var resource in ConfigHttps.GetApiScopes())
+                        {
+                            context.ApiScopes.Add(resource.ToEntity());
+                        }
+                    }
+                    else
+                    {
+                        foreach (var resource in ConfigHttp.GetApiScopes())
+                        {
+                            context.ApiScopes.Add(resource.ToEntity());
+                        }
                     }
                     context.SaveChanges();
                 }
             }
-        }
+        }*/
     }
 }

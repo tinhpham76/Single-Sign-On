@@ -50,8 +50,12 @@ namespace USERAPI.Backend
                 //{
                 //    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
                 //}
-                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+
+
+                handler.ServerCertificateCustomValidationCallback += (message, cert, chain, errors) => { return true; };
                 return handler;
+
+                
             });
             services.AddSession(options =>
             {
@@ -60,18 +64,22 @@ namespace USERAPI.Backend
             });
 
             services.AddControllersWithViews();
-            services.AddAuthentication(options=>
+
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+
+
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-              
+
             })
             .AddIdentityServerAuthentication(options =>
             {
-                options.Authority = Configuration["Authorization:AuthorityUrl"];
-                options.ApiSecret = Configuration["Authorization:ClientSecret"];
+                options.Authority = Configuration["Authority"];
+                options.ApiSecret = "secret";
                 options.ApiName = "USER_API";
                 options.ApiName = "SSO_API";
-
+                options.RequireHttpsMetadata = bool.Parse(Configuration["RequireHttpsMetadata"]);
             });
 
 
@@ -96,7 +104,7 @@ namespace USERAPI.Backend
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("https://localhost:5000/connect/authorize"),
+                            AuthorizationUrl = new Uri(Configuration["SwaggerAuthorityUrl"] + "/connect/authorize"),
                             Scopes = new Dictionary<string, string> { { "SSO_API", "SSO API" }, { "USER_API", "USER API" } }
                         },
                     },
@@ -119,8 +127,8 @@ namespace USERAPI.Backend
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUserApiClient, UserApiClient>();
 
-            
-    }
+
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -131,7 +139,10 @@ namespace USERAPI.Backend
             }
             app.UseSession();
 
-            app.UseHttpsRedirection();  
+            if (Configuration["Https"] == "true")
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 

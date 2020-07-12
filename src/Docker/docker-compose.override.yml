@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  auth-server:
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=kAa36qDc
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=C:\https\auth-server.pfx
+    volumes: 
+      - ~/.aspnet/https:/https:ro  
+  user-api:
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=kAa36qDc
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=C:\https\user-api.pfx
+    volumes: 
+      - ~/.aspnet/https:/https:ro
