@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  auth-server:
-    image: "auth-server"
-    build:
-      context: .
-      dockerfile: SSO.Backend/Dockerfile

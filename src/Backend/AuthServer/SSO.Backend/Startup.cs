@@ -173,7 +173,7 @@ namespace SSO.Backend
            .AllowAnyHeader()
            );
 
-            //InitializeDatabase(app);
+            InitializeDatabase(app);
 
             app.UseStaticFiles();
 
@@ -220,7 +220,7 @@ namespace SSO.Backend
         }
 
         //Initialize database and seed data: IdentityServer & AspNetIdentity if project can't found database on SqlServer
-       /* private void InitializeDatabase(IApplicationBuilder app)
+        private void InitializeDatabase(IApplicationBuilder app)
         {
             // Create db User
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
@@ -319,6 +319,6 @@ namespace SSO.Backend
                     context.SaveChanges();
                 }
             }
-        }*/
+        }
     }
 }
